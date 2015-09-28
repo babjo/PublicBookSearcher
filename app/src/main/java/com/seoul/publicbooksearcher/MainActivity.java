@@ -5,11 +5,25 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Filter;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements NaverListener{
+
+    private UserRequester naver;
+    private ArrayAdapter<String> booksAdapter;
+
+    private final static String TAG = MainActivity.class.getName();
+    private AutoCompleteTextView autoCompleteTextView;
+
+    private Filter filter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +40,52 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        naver = new Naver(this);
+        filter = new Filter() {
+            @Override
+            protected void publishResults(CharSequence constraint,
+                                          FilterResults results) {
+            }
+
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                Log.i("Filter",
+                        "Filter:" + constraint + " thread: " + Thread.currentThread());
+                if (constraint != null && constraint.length() > 1) {
+                    Log.i("Filter", "doing a search ..");
+                    naver.search(constraint.toString());
+                }
+                return null;
+            }
+        };
+
+        booksAdapter = new ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line){
+            @Override
+            public Filter getFilter() {
+                return filter;
+            }
+        };
+        /*booksAdapter = new BookAdapter(this, android.R.layout.simple_dropdown_item_1line);*/
+        autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.auto_edit);
+        autoCompleteTextView.setAdapter(booksAdapter);
+        /*
+        autoCompleteTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Log.i(TAG, "================================== afterTextChanged ======================================");
+                naver.search(s.toString().trim());
+            }
+        });*/
+        booksAdapter.setNotifyOnChange(false);
     }
 
     @Override
@@ -48,5 +108,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void searchCompleted(List<Book> books) {
+        Log.i("UPDATE", "3");
+        booksAdapter.clear();
+
+        for (Book book : books) {
+            booksAdapter.add(book.getTitle());
+        }
+
+
+        booksAdapter.notifyDataSetChanged();
+        autoCompleteTextView.showDropDown();
     }
 }
