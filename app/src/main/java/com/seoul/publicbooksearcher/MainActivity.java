@@ -1,14 +1,13 @@
 package com.seoul.publicbooksearcher;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Filter;
@@ -23,8 +22,6 @@ public class MainActivity extends AppCompatActivity implements NaverListener{
     private final static String TAG = MainActivity.class.getName();
     private AutoCompleteTextView autoCompleteTextView;
 
-    private Filter filter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,44 +29,29 @@ public class MainActivity extends AppCompatActivity implements NaverListener{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         naver = new Naver(this);
-        filter = new Filter() {
-            @Override
-            protected void publishResults(CharSequence constraint,
-                                          FilterResults results) {
-            }
 
+        final Filter nullFilter = new Filter() {
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+            }
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
-                Log.i("Filter",
-                        "Filter:" + constraint + " thread: " + Thread.currentThread());
-                if (constraint != null && constraint.length() > 1) {
-                    Log.i("Filter", "doing a search ..");
-                    naver.search(constraint.toString());
-                }
+                Log.i("Filter", "Filter:" + constraint + " thread: " + Thread.currentThread());
                 return null;
             }
         };
 
         booksAdapter = new ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line){
+
             @Override
             public Filter getFilter() {
-                return filter;
+                return nullFilter;
             }
         };
-        /*booksAdapter = new BookAdapter(this, android.R.layout.simple_dropdown_item_1line);*/
+
         autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.auto_edit);
         autoCompleteTextView.setAdapter(booksAdapter);
-        /*
         autoCompleteTextView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -84,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements NaverListener{
                 Log.i(TAG, "================================== afterTextChanged ======================================");
                 naver.search(s.toString().trim());
             }
-        });*/
+        });
         booksAdapter.setNotifyOnChange(false);
     }
 

@@ -72,11 +72,10 @@ public class Naver implements UserRequester {
                 Node node = nodeList.item(i);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) node;
-                    String title = eElement.getElementsByTagName("title").item(0).getTextContent();
-                    String title2 = Html.fromHtml(title).toString();
+                    String title = Html.fromHtml(eElement.getElementsByTagName("title").item(0).getTextContent()).toString().replaceAll("\\(.*\\)", "").trim();
                     String isbn = eElement.getElementsByTagName("isbn").item(0).getTextContent();
-                    Log.i(TAG, i + "번째 책 : " + title2);
-                    books.add(new Book(title2, isbn));
+                    Log.i(TAG, i + "번째 책 : " + title);
+                    books.add(new Book(title, isbn));
                 }
             }
         } catch (SAXException e) {
