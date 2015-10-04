@@ -29,9 +29,14 @@ public class Naver implements UserRequester {
         this.naverListener = naverListener;
     }
 
+    private NaverAsyncTask naverAsyncTask;
+
     @Override
     public void search(String keyword) {
-        new NaverAsyncTask().execute(keyword);
+        if(naverAsyncTask != null)
+            naverAsyncTask.cancel(true);
+        naverAsyncTask = new NaverAsyncTask();
+        naverAsyncTask.execute(keyword);
     }
 
     private class NaverAsyncTask extends AsyncTask<String, Void, List<Book>> {

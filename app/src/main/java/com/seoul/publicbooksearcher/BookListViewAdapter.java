@@ -13,12 +13,12 @@ import java.util.List;
 
 public class BookListViewAdapter extends BaseAdapter {
 
-    private Context mContext = null;
+    private Context context = null;
     private List<Book> books = new ArrayList();
 
     public BookListViewAdapter(Context mContext) {
         super();
-        this.mContext = mContext;
+        this.context = mContext;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class BookListViewAdapter extends BaseAdapter {
         if (convertView == null) {
             holder = new ViewHolder();
 
-            LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.book_listview_item_row, null);
 
             holder.library = (TextView) convertView.findViewById(R.id.book_library);
@@ -58,15 +58,16 @@ public class BookListViewAdapter extends BaseAdapter {
 
         holder.library.setText(book.getLibrary());
         holder.title.setText(book.getTitle());
+
         switch (book.getStatusCode()){
             case 1:
-                holder.status.setBackgroundColor(0x2ecc71);
+                holder.status.setBackgroundResource(R.color.flatGreen);
                 break;
             case 2:
-                holder.status.setBackgroundColor(0xe74c3c);
+                holder.status.setBackgroundResource(R.color.flatRed);
                 break;
             case 3:
-                holder.status.setBackgroundColor(0xf1c40f);
+                holder.status.setBackgroundResource(R.color.flatYellow);
                 break;
         }
 
@@ -75,7 +76,7 @@ public class BookListViewAdapter extends BaseAdapter {
 
     public void clearAndAddAll(List<Book> books){
         this.books.clear();
-        books.addAll(books);
+        this.books.addAll(books);
         notifyDataSetChanged();
     }
 

@@ -1,29 +1,29 @@
 package com.seoul.publicbooksearcher;
 
+import android.app.Activity;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Filter;
+import android.widget.LinearLayout;
 
 import java.util.List;
 
 public class NaverBookAutoCompleteTextView implements UserRequestListener {
 
-    private AutoCompleteTextView autoCompleteTextView;
     private UserRequester naver;
-    private UserRequester library;
 
     private ArrayAdapter<String> booksAdapter;
     private final static String TAG = MainActivity.class.getName();
 
-    public NaverBookAutoCompleteTextView(Context context, final UserRequester library, final AutoCompleteTextView autoCompleteTextView) {
-        this.autoCompleteTextView = autoCompleteTextView;
-        this.library = library;
+    public NaverBookAutoCompleteTextView(final Context context, final UserRequester library, final AutoCompleteTextView autoCompleteTextView) {
         this.naver = new Naver(this);
 
         final Filter nullFilter = new Filter() {
@@ -61,8 +61,6 @@ public class NaverBookAutoCompleteTextView implements UserRequestListener {
                 naver.search(s.toString().trim());
             }
         });
-        booksAdapter.setNotifyOnChange(false);
-
 
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -70,6 +68,9 @@ public class NaverBookAutoCompleteTextView implements UserRequestListener {
                 String selection = (String) parent.getItemAtPosition(position);
                 Log.i(TAG, "selected keyword = " + selection);
                 library.search(selection);
+
+                Activity activity = (Activity) context;
+                activity.findViewById(R.id.forFocus).requestFocus();
             }
 
         });
@@ -83,9 +84,6 @@ public class NaverBookAutoCompleteTextView implements UserRequestListener {
         for (Book book : books) {
             booksAdapter.add(book.getTitle());
         }
-
-
         booksAdapter.notifyDataSetChanged();
-        autoCompleteTextView.showDropDown();
     }
 }
