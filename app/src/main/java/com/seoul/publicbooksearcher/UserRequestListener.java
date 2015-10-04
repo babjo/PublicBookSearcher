@@ -2,7 +2,7 @@ package com.seoul.publicbooksearcher;
 
 import java.util.List;
 
-public interface NaverListener {
+public interface UserRequestListener {
 
     void searchCompleted(List<Book> books);
 

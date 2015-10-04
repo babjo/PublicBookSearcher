@@ -23,9 +23,9 @@ import javax.xml.parsers.ParserConfigurationException;
 public class Naver implements UserRequester {
 
     private final static String TAG = Naver.class.getName();
-    private NaverListener naverListener;
+    private UserRequestListener naverListener;
 
-    public Naver(NaverListener naverListener) {
+    public Naver(UserRequestListener naverListener) {
         this.naverListener = naverListener;
     }
 
@@ -73,9 +73,9 @@ public class Naver implements UserRequester {
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) node;
                     String title = Html.fromHtml(eElement.getElementsByTagName("title").item(0).getTextContent()).toString().replaceAll("\\(.*\\)", "").trim();
-                    String isbn = eElement.getElementsByTagName("isbn").item(0).getTextContent();
+                    //String isbn = eElement.getElementsByTagName("isbn").item(0).getTextContent();
                     Log.i(TAG, i + "번째 책 : " + title);
-                    books.add(new Book(title, isbn));
+                    books.add(new Book(title));
                 }
             }
         } catch (SAXException e) {

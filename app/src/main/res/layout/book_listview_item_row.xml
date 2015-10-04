@@ -20,12 +20,7 @@
             android:layout_weight="2"
             android:text="고덕평생학습관2"
             />
-        <TextView android:id="@+id/book_info"
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="고덕평생학습관3"
-            />
+
     </LinearLayout>
 
     <TextView android:id="@+id/book_status"

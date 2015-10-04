@@ -11,16 +11,13 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Filter;
+import android.widget.ListView;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements NaverListener{
-
-    private UserRequester naver;
-    private ArrayAdapter<String> booksAdapter;
+public class MainActivity extends AppCompatActivity{
 
     private final static String TAG = MainActivity.class.getName();
-    private AutoCompleteTextView autoCompleteTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,45 +26,8 @@ public class MainActivity extends AppCompatActivity implements NaverListener{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        naver = new Naver(this);
-
-        final Filter nullFilter = new Filter() {
-            @Override
-            protected void publishResults(CharSequence constraint, FilterResults results) {
-            }
-            @Override
-            protected FilterResults performFiltering(CharSequence constraint) {
-                Log.i("Filter", "Filter:" + constraint + " thread: " + Thread.currentThread());
-                return null;
-            }
-        };
-
-        booksAdapter = new ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line){
-
-            @Override
-            public Filter getFilter() {
-                return nullFilter;
-            }
-        };
-
-        autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.auto_edit);
-        autoCompleteTextView.setAdapter(booksAdapter);
-        autoCompleteTextView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                Log.i(TAG, "================================== afterTextChanged ======================================");
-                naver.search(s.toString().trim());
-            }
-        });
-        booksAdapter.setNotifyOnChange(false);
+        GodeoLibraryListView godeoLibraryListView = new GodeoLibraryListView(this,  (ListView) findViewById(R.id.book_list));
+        new NaverBookAutoCompleteTextView(this, new GodeokLibrary(godeoLibraryListView), (AutoCompleteTextView) findViewById(R.id.auto_edit));
     }
 
     @Override
@@ -90,19 +50,5 @@ public class MainActivity extends AppCompatActivity implements NaverListener{
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void searchCompleted(List<Book> books) {
-        Log.i("UPDATE", "3");
-        booksAdapter.clear();
-
-        for (Book book : books) {
-            booksAdapter.add(book.getTitle());
-        }
-
-
-        booksAdapter.notifyDataSetChanged();
-        autoCompleteTextView.showDropDown();
     }
 }

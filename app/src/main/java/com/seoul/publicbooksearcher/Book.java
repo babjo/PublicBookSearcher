@@ -3,13 +3,17 @@ package com.seoul.publicbooksearcher;
 public class Book {
 
     private String title;
-    private String isbn;
     private String library;
-    private String status;
+    private int statusCode;
 
-    public Book(String title, String isbn) {
+    public Book(String title) {
         this.title = title;
-        this.isbn = isbn;
+    }
+
+    public Book(String title, String library, int statusCode) {
+        this.title = title;
+        this.library = library;
+        this.statusCode = statusCode;
     }
 
     public String getTitle() {
@@ -20,11 +24,11 @@ public class Book {
         this.title = title;
     }
 
-    public String getIsbn() {
-        return isbn;
+    public String getLibrary() {
+        return library;
     }
 
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
+    public int getStatusCode() {
+        return statusCode;
     }
 }
