@@ -69,6 +69,7 @@ public class NaverBookAutoCompleteTextView implements UserRequestListener {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String selection = (String) parent.getItemAtPosition(position);
                 Log.i(TAG, "selected keyword = " + selection);
+                autoCompleteTextView.clearFocus();
                 library.search(selection);
             }
 
@@ -81,6 +82,7 @@ public class NaverBookAutoCompleteTextView implements UserRequestListener {
                     String keyword = autoCompleteTextView.getText().toString();
                     Log.i(TAG, "entered keyword = " + keyword);
                     autoCompleteTextView.dismissDropDown();
+                    autoCompleteTextView.clearFocus();
                     library.search(keyword);
                 }
 
@@ -91,7 +93,6 @@ public class NaverBookAutoCompleteTextView implements UserRequestListener {
 
     @Override
     public void searchBefore() {
-        autoCompleteTextView.clearFocus();
     }
 
     @Override
