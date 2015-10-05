@@ -1,19 +1,15 @@
 package com.seoul.publicbooksearcher;
 
-import android.app.Activity;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Filter;
-import android.widget.LinearLayout;
 
 import java.util.List;
 
@@ -81,8 +77,13 @@ public class NaverBookAutoCompleteTextView implements UserRequestListener {
         autoCompleteTextView.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if(keyCode == KeyEvent.KEYCODE_ENTER)
-                    library.search(autoCompleteTextView.getText().toString());
+                if(event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                    String keyword = autoCompleteTextView.getText().toString();
+                    Log.i(TAG, "entered keyword = " + keyword);
+                    autoCompleteTextView.dismissDropDown();
+                    library.search(keyword);
+                }
+
                 return false;
             }
         });
@@ -90,6 +91,7 @@ public class NaverBookAutoCompleteTextView implements UserRequestListener {
 
     @Override
     public void searchBefore() {
+        autoCompleteTextView.clearFocus();
     }
 
     @Override
