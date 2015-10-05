@@ -1,22 +1,12 @@
 package com.seoul.publicbooksearcher;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Filter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -30,7 +20,7 @@ public class MainActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
 
         GodeoLibraryListView godeoLibraryListView = new GodeoLibraryListView(this,  (ListView) findViewById(R.id.book_list));
-        new NaverBookAutoCompleteTextView(this, new GodeokLibrary(godeoLibraryListView), (AutoCompleteTextView) findViewById(R.id.auto_edit));
+        new NaverBookAutoCompleteTextView(this, (AutoCompleteTextView) findViewById(R.id.auto_edit), new GodeokLibrary(godeoLibraryListView));
     }
 
     @Override

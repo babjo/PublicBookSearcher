@@ -5,6 +5,7 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -20,11 +21,16 @@ public class NaverBookAutoCompleteTextView implements UserRequestListener {
 
     private UserRequester naver;
 
+    private Context context;
+    private AutoCompleteTextView autoCompleteTextView;
+
     private ArrayAdapter<String> booksAdapter;
     private final static String TAG = MainActivity.class.getName();
 
-    public NaverBookAutoCompleteTextView(final Context context, final UserRequester library, final AutoCompleteTextView autoCompleteTextView) {
+    public NaverBookAutoCompleteTextView(final Context context, final AutoCompleteTextView autoCompleteTextView, final UserRequester library) {
         this.naver = new Naver(this);
+        this.context = context;
+        this.autoCompleteTextView = autoCompleteTextView;
 
         final Filter nullFilter = new Filter() {
             @Override
@@ -68,12 +74,22 @@ public class NaverBookAutoCompleteTextView implements UserRequestListener {
                 String selection = (String) parent.getItemAtPosition(position);
                 Log.i(TAG, "selected keyword = " + selection);
                 library.search(selection);
-
-                Activity activity = (Activity) context;
-                activity.findViewById(R.id.forFocus).requestFocus();
             }
 
         });
+
+        autoCompleteTextView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(keyCode == KeyEvent.KEYCODE_ENTER)
+                    library.search(autoCompleteTextView.getText().toString());
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public void searchBefore() {
     }
 
     @Override
@@ -84,6 +100,7 @@ public class NaverBookAutoCompleteTextView implements UserRequestListener {
         for (Book book : books) {
             booksAdapter.add(book.getTitle());
         }
+
         booksAdapter.notifyDataSetChanged();
     }
 }

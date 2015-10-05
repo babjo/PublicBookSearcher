@@ -32,6 +32,7 @@ public class GodeokLibrary implements UserRequester {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            userRequestListener.searchBefore();
         }
 
         @Override
