@@ -5,7 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.ListView;
 
 public class MainActivity extends AppCompatActivity{
@@ -20,7 +22,18 @@ public class MainActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
 
         GodeoLibraryListView godeoLibraryListView = new GodeoLibraryListView(this,  (ListView) findViewById(R.id.book_list));
-        new NaverBookAutoCompleteTextView(this, (AutoCompleteTextView) findViewById(R.id.auto_edit), new GodeokLibrary(godeoLibraryListView));
+        final UserRequester godeokLibrary = new GodeokLibrary(godeoLibraryListView);
+        final NaverBookAutoCompleteTextView naverBookAutoCompleteTextView = new NaverBookAutoCompleteTextView(this, (AutoCompleteTextView) findViewById(R.id.auto_edit), godeokLibrary);
+
+        ((Button) findViewById(R.id.search_btn)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String keyword = naverBookAutoCompleteTextView.getText();
+                naverBookAutoCompleteTextView.dismissDropDown();
+                naverBookAutoCompleteTextView.clearFocus();
+                godeokLibrary.search(keyword);
+            }
+        });
     }
 
     @Override

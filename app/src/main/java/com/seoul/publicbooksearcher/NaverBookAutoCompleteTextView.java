@@ -79,7 +79,7 @@ public class NaverBookAutoCompleteTextView implements UserRequestListener {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if(event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                    String keyword = autoCompleteTextView.getText().toString();
+                    String keyword = getText();
                     Log.i(TAG, "entered keyword = " + keyword);
                     autoCompleteTextView.dismissDropDown();
                     autoCompleteTextView.clearFocus();
@@ -89,6 +89,18 @@ public class NaverBookAutoCompleteTextView implements UserRequestListener {
                 return false;
             }
         });
+    }
+
+    public String getText(){
+        return autoCompleteTextView.getText().toString();
+    }
+
+    public void clearFocus(){
+        autoCompleteTextView.clearFocus();
+    }
+
+    public void dismissDropDown(){
+        autoCompleteTextView.dismissDropDown();
     }
 
     @Override
