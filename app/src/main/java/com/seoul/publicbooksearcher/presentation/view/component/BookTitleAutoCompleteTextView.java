@@ -1,4 +1,4 @@
-package com.seoul.publicbooksearcher;
+package com.seoul.publicbooksearcher.presentation.view.component;
 
 import android.content.Context;
 import android.text.Editable;
@@ -11,11 +11,18 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Filter;
 
+import com.seoul.publicbooksearcher.domain.Book;
+import com.seoul.publicbooksearcher.domain.SearchTitles;
+import com.seoul.publicbooksearcher.domain.UseCase;
+import com.seoul.publicbooksearcher.presentation.presenter.SearchBooksPresenter;
+import com.seoul.publicbooksearcher.presentation.presenter.SearchTitlesPresenter;
+import com.seoul.publicbooksearcher.presentation.view.activity.MainActivity;
+
 import java.util.List;
 
-public class NaverBookAutoCompleteTextView implements UserRequestListener {
+public class BookTitleAutoCompleteTextView implements SearchTitlesPresenter {
 
-    private UserRequester naver;
+    private UseCase usecase;
 
     private Context context;
     private AutoCompleteTextView autoCompleteTextView;
@@ -23,8 +30,8 @@ public class NaverBookAutoCompleteTextView implements UserRequestListener {
     private ArrayAdapter<String> booksAdapter;
     private final static String TAG = MainActivity.class.getName();
 
-    public NaverBookAutoCompleteTextView(final Context context, final AutoCompleteTextView autoCompleteTextView, final UserRequester library) {
-        this.naver = new Naver(this);
+    public BookTitleAutoCompleteTextView(final Context context, final AutoCompleteTextView autoCompleteTextView, final UseCase usecase) {
+        this.usecase = new SearchTitles(this);
         this.context = context;
         this.autoCompleteTextView = autoCompleteTextView;
 
@@ -60,7 +67,7 @@ public class NaverBookAutoCompleteTextView implements UserRequestListener {
             @Override
             public void afterTextChanged(Editable s) {
                 Log.i(TAG, "================================== afterTextChanged ======================================");
-                naver.search(s.toString().trim());
+                BookTitleAutoCompleteTextView.this.usecase.execute(s.toString().trim());
             }
         });
 
@@ -69,8 +76,7 @@ public class NaverBookAutoCompleteTextView implements UserRequestListener {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String selection = (String) parent.getItemAtPosition(position);
                 Log.i(TAG, "selected keyword = " + selection);
-                autoCompleteTextView.clearFocus();
-                library.search(selection);
+                usecase.execute(selection);
             }
 
         });
@@ -82,8 +88,7 @@ public class NaverBookAutoCompleteTextView implements UserRequestListener {
                     String keyword = getText();
                     Log.i(TAG, "entered keyword = " + keyword);
                     autoCompleteTextView.dismissDropDown();
-                    autoCompleteTextView.clearFocus();
-                    library.search(keyword);
+                    usecase.execute(keyword);
                 }
 
                 return false;
@@ -105,17 +110,15 @@ public class NaverBookAutoCompleteTextView implements UserRequestListener {
 
     @Override
     public void searchBefore() {
+        autoCompleteTextView.clearFocus();
     }
 
     @Override
-    public void searchCompleted(List<Book> books) {
+    public void searchCompleted(List<String> titles) {
         Log.i("UPDATE", "3");
         booksAdapter.clear();
-
-        for (Book book : books) {
-            booksAdapter.add(book.getTitle());
-        }
-
+        booksAdapter.addAll(titles);
         booksAdapter.notifyDataSetChanged();
     }
+
 }

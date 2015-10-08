@@ -1,19 +1,23 @@
-package com.seoul.publicbooksearcher;
+package com.seoul.publicbooksearcher.presentation.view.component;
 
 import android.content.Context;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
 
+import com.seoul.publicbooksearcher.domain.Book;
+import com.seoul.publicbooksearcher.presentation.presenter.SearchBooksPresenter;
+import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewAdapter;
+
 import java.util.List;
 
-public class GodeoLibraryListView implements UserRequestListener{
+public class BookListView implements SearchBooksPresenter {
 
     private ListView bookListView = null;
     private BookListViewAdapter bookListViewAdapter = null;
 
     private Context context;
 
-    public GodeoLibraryListView(Context context, ListView listView){
+    public BookListView(Context context, ListView listView){
         this.bookListView = listView;
         this.context = context;
 

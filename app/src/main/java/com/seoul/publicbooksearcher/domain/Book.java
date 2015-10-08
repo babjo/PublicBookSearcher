@@ -1,4 +1,4 @@
-package com.seoul.publicbooksearcher;
+package com.seoul.publicbooksearcher.domain;
 
 public class Book {
 

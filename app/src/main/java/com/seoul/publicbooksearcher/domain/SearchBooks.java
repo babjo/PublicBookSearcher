@@ -1,8 +1,11 @@
-package com.seoul.publicbooksearcher;
+package com.seoul.publicbooksearcher.domain;
 
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
+
+import com.seoul.publicbooksearcher.presentation.presenter.SearchBooksPresenter;
+import com.seoul.publicbooksearcher.presentation.presenter.SearchTitlesPresenter;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,18 +16,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GodeokLibrary implements UserRequester {
+public class SearchBooks implements UseCase <Void, String> {
 
-    private static final String TAG = GodeokLibrary.class.getName();
-    private UserRequestListener userRequestListener;
+    private static final String TAG = SearchBooks.class.getName();
+    private final SearchBooksPresenter searchBooksPresenter;
+    private final SearchTitlesPresenter searchTitlesPresenter;
 
-    public GodeokLibrary(UserRequestListener userRequestListener){
-        this.userRequestListener = userRequestListener;
+    public SearchBooks(SearchBooksPresenter searchBooksPresenter, SearchTitlesPresenter searchTitlesPresenter){
+        this.searchBooksPresenter = searchBooksPresenter;
+        this.searchTitlesPresenter = searchTitlesPresenter;
     }
 
     @Override
-    public void search(String keyword) {
+    public Void execute(String keyword) {
         new LibraryAsyncTask().execute(keyword);
+        return null;
     }
 
     private class LibraryAsyncTask extends AsyncTask<String, Void, List<Book>> {
@@ -32,7 +38,8 @@ public class GodeokLibrary implements UserRequester {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            userRequestListener.searchBefore();
+            searchBooksPresenter.searchBefore();
+            searchTitlesPresenter.searchBefore();
         }
 
         @Override
@@ -43,7 +50,7 @@ public class GodeokLibrary implements UserRequester {
         @Override
         protected void onPostExecute(List<Book> books) {
             super.onPostExecute(books);
-            userRequestListener.searchCompleted(books);
+            searchBooksPresenter.searchCompleted(books);
         }
     }
 

@@ -1,9 +1,11 @@
-package com.seoul.publicbooksearcher;
+package com.seoul.publicbooksearcher.domain;
 
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.text.Html;
 import android.util.Log;
+
+import com.seoul.publicbooksearcher.presentation.presenter.SearchTitlesPresenter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -20,23 +22,26 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-public class Naver implements UserRequester {
+public class SearchTitles implements UseCase <Void, String> {
 
-    private final static String TAG = Naver.class.getName();
-    private UserRequestListener naverListener;
+    private final static String TAG = SearchTitles.class.getName();
 
-    public Naver(UserRequestListener naverListener) {
-        this.naverListener = naverListener;
-    }
+        private final SearchTitlesPresenter searchTitlesPresenter;
 
     private NaverAsyncTask naverAsyncTask;
 
+    public SearchTitles(SearchTitlesPresenter searchTitlesPresenter){
+            this.searchTitlesPresenter = searchTitlesPresenter;
+    }
+
     @Override
-    public void search(String keyword) {
+    public Void execute(String keyword) {
         if(naverAsyncTask != null)
             naverAsyncTask.cancel(true);
         naverAsyncTask = new NaverAsyncTask();
         naverAsyncTask.execute(keyword);
+
+        return null;
     }
 
     private class NaverAsyncTask extends AsyncTask<String, Void, List<Book>> {
@@ -54,7 +59,13 @@ public class Naver implements UserRequester {
         @Override
         protected void onPostExecute(List<Book> books) {
             super.onPostExecute(books);
-            naverListener.searchCompleted(books);
+
+            List<String> titles = new ArrayList();
+            for (Book book : books) {
+                titles.add(book.getTitle());
+            }
+
+            searchTitlesPresenter.searchCompleted(titles);
         }
     }
 
@@ -65,7 +76,7 @@ public class Naver implements UserRequester {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        String url = "http://openapi.naver.com/search?key=28c9d970595a4155958faa596c7b38c2&query="+keyword+"&display=10&start=1&target=book";
+        String url = "http://openapi.naver.com/execute?key=28c9d970595a4155958faa596c7b38c2&query="+keyword+"&display=10&start=1&target=book";
         Log.i(TAG, "keyword : "+keyword+" and request Url : "+url);
         List<Book> books = new ArrayList<Book>();
 

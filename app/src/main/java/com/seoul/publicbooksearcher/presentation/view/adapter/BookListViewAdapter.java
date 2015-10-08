@@ -1,4 +1,4 @@
-package com.seoul.publicbooksearcher;
+package com.seoul.publicbooksearcher.presentation.view.adapter;
 
 
 import android.content.Context;
@@ -7,6 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.seoul.publicbooksearcher.R;
+import com.seoul.publicbooksearcher.domain.Book;
 
 import java.util.ArrayList;
 import java.util.List;
