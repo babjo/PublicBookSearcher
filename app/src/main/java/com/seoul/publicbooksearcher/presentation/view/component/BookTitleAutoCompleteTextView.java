@@ -14,6 +14,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.seoul.publicbooksearcher.R;
@@ -79,67 +80,32 @@ public class BookTitleAutoCompleteTextView implements SearchTitlesListener {
                     Log.i(TAG, "entered keyword = " + keyword);
                     BookTitleAutoCompleteTextView.this.autoCompleteTextView.dismissDropDown();
                     BookTitleAutoCompleteTextView.this.searchBooks.execute(keyword);
+                    return true;
                 }
 
-                return true;
+                return false;
             }
         });
 
+
         /*
-        autoCompleteTextView.setOnClickListener(new View.OnClickListener() {
+        autoCompleteTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onClick(View v) {
-                ((LinearLayout) ((Activity) BookTitleAutoCompleteTextView.this.context).findViewById(R.id.main_root_layout)).setGravity(Gravity.NO_GRAVITY);
-
-
-                if(isTouch == false)
-                    moveViewToScreenTop(BookTitleAutoCompleteTextView.this.autoCompleteTextView);
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus && isLocationCenter) {
+                    Log.i(TAG, "autoCompleteTextView up !");
+                    ((LinearLayout) ((Activity) BookTitleAutoCompleteTextView.this.context).findViewById(R.id.main_root_layout)).setGravity(Gravity.NO_GRAVITY);
+                    ((Activity) BookTitleAutoCompleteTextView.this.context).findViewById(R.id.book_list).setVisibility(View.VISIBLE);
+                    isLocationCenter = false;
+                }
             }
         });*/
     }
 
-    private boolean isTouch = false;
-    private void moveViewToScreenTop(View view)  {
-
-        final LinearLayout root = (LinearLayout) ((Activity) context).findViewById(R.id.main_root_layout);
-        DisplayMetrics dm = new DisplayMetrics();
-        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(dm);
-        int statusBarOffset = dm.heightPixels - root.getMeasuredHeight();
-
-        int originalPos[] = new int[2]; view.getLocationOnScreen( originalPos );
-
-        int yDest = dm.heightPixels/2 - (view.getMeasuredHeight()/2) - statusBarOffset;
-
-        int height = autoCompleteTextView.getMeasuredHeight();
-        int amountToMove = -200;
-
-        TranslateAnimation anim = new TranslateAnimation(0, 0, 0, 500 - originalPos[1]);
-        anim.setDuration(1000);
-        anim.setFillAfter(true);
-
-        anim.setAnimationListener(new TranslateAnimation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                ((LinearLayout) ((Activity) context).findViewById(R.id.main_root_layout)).setGravity(Gravity.NO_GRAVITY);
-                BookTitleAutoCompleteTextView.this.isTouch = true;
-                // BookTitleAutoCompleteTextView.this.autoCompleteTextView.setVisibility(View.VISIBLE);
-            }
-        });
-
-        view.startAnimation(anim);
-    }
+    private boolean isLocationCenter = true;
 
     public String getText() {
         return autoCompleteTextView.getText().toString();
-    }
-    public void dismissDropDown(){
-        autoCompleteTextView.dismissDropDown();
     }
 
     @Override
