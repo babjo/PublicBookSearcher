@@ -7,14 +7,13 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Filter;
 
 import com.seoul.publicbooksearcher.domain.SearchTitles;
 import com.seoul.publicbooksearcher.domain.UseCase;
 import com.seoul.publicbooksearcher.presentation.listener.SearchTitlesListener;
 import com.seoul.publicbooksearcher.presentation.view.activity.MainActivity;
+import com.seoul.publicbooksearcher.presentation.view.adapter.BookTitleAutoCompleteTextViewAdapter;
 
 import java.util.List;
 
@@ -25,32 +24,17 @@ public class BookTitleAutoCompleteTextView implements SearchTitlesListener {
 
     private AutoCompleteTextView autoCompleteTextView;
 
-    private ArrayAdapter<String> booksTitleListAdapter;
+    private BookTitleAutoCompleteTextViewAdapter BookTitleAutoCompleteTextViewAdapter;
     private final static String TAG = MainActivity.class.getName();
 
-    public BookTitleAutoCompleteTextView(Context context, final AutoCompleteTextView autoCompleteTextView) {
+    public BookTitleAutoCompleteTextView(Context context, AutoCompleteTextView autoCompleteTextView) {
         this.searchTitles = new SearchTitles(this);
         this.autoCompleteTextView = autoCompleteTextView;
 
-        final Filter nullFilter = new Filter() {
-            @Override
-            protected void publishResults(CharSequence constraint, FilterResults results) {
-            }
+        this.BookTitleAutoCompleteTextViewAdapter =
+                new BookTitleAutoCompleteTextViewAdapter(context, android.R.layout.simple_dropdown_item_1line);
 
-            @Override
-            protected FilterResults performFiltering(CharSequence constraint) {
-                Log.i("Filter", "Filter:" + constraint + " thread: " + Thread.currentThread());
-                return null;
-            }
-        };
-        booksTitleListAdapter = new ArrayAdapter(context, android.R.layout.simple_dropdown_item_1line) {
-            @Override
-            public Filter getFilter() {
-                return nullFilter;
-            }
-        };
-
-        autoCompleteTextView.setAdapter(booksTitleListAdapter);
+        autoCompleteTextView.setAdapter(BookTitleAutoCompleteTextViewAdapter);
         autoCompleteTextView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -83,7 +67,7 @@ public class BookTitleAutoCompleteTextView implements SearchTitlesListener {
                 if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                     String keyword = getText();
                     Log.i(TAG, "entered keyword = " + keyword);
-                    autoCompleteTextView.dismissDropDown();
+                    BookTitleAutoCompleteTextView.this.autoCompleteTextView.dismissDropDown();
                     BookTitleAutoCompleteTextView.this.searchBooks.execute(keyword);
                 }
 
@@ -95,6 +79,9 @@ public class BookTitleAutoCompleteTextView implements SearchTitlesListener {
     public String getText(){
         return autoCompleteTextView.getText().toString();
     }
+    public void dismissDropDown(){
+        autoCompleteTextView.dismissDropDown();
+    }
 
     @Override
     public void searchBefore() {
@@ -104,9 +91,9 @@ public class BookTitleAutoCompleteTextView implements SearchTitlesListener {
     @Override
     public void searchCompleted(List<String> titles) {
         Log.i("UPDATE", "3");
-        booksTitleListAdapter.clear();
-        booksTitleListAdapter.addAll(titles);
-        booksTitleListAdapter.notifyDataSetChanged();
+        BookTitleAutoCompleteTextViewAdapter.clear();
+        BookTitleAutoCompleteTextViewAdapter.addAll(titles);
+        BookTitleAutoCompleteTextViewAdapter.notifyDataSetChanged();
     }
 
     public void setSearchBooks(UseCase searchBooks){

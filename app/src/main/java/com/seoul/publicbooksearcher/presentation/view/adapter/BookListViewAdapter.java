@@ -83,6 +83,11 @@ public class BookListViewAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void clear() {
+        this.books.clear();
+        notifyDataSetChanged();
+    }
+
     private class ViewHolder {
         public TextView library;
         public TextView title;

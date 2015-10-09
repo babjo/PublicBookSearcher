@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.seoul.publicbooksearcher.R;
 import com.seoul.publicbooksearcher.domain.SearchBooks;
@@ -24,7 +25,7 @@ public class MainActivity extends AppCompatActivity{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        BookListView bookListView = new BookListView(this, (ListView) findViewById(R.id.book_list));
+        BookListView bookListView = new BookListView(this, (ListView)findViewById(R.id.book_list), (RelativeLayout)findViewById(R.id.google_progress));
         BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView = new BookTitleAutoCompleteTextView(this, (AutoCompleteTextView) findViewById(R.id.auto_edit));
         bookTitleAutoCompleteTextView.setSearchBooks(new SearchBooks(bookListView, bookTitleAutoCompleteTextView));
 
