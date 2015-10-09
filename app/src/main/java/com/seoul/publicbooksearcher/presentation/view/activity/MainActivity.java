@@ -5,16 +5,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.ListView;
 
-import com.seoul.publicbooksearcher.presentation.view.component.BookListView;
-import com.seoul.publicbooksearcher.presentation.view.component.BookTitleAutoCompleteTextView;
 import com.seoul.publicbooksearcher.R;
 import com.seoul.publicbooksearcher.domain.SearchBooks;
-import com.seoul.publicbooksearcher.domain.UseCase;
+import com.seoul.publicbooksearcher.presentation.view.component.BookListView;
+import com.seoul.publicbooksearcher.presentation.view.component.BookTitleAutoCompleteTextView;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -27,19 +24,10 @@ public class MainActivity extends AppCompatActivity{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        BookListView godeoLibraryListView = new BookListView(this,  (ListView) findViewById(R.id.book_list));
-        final UseCase godeokLibrary = new SearchBooks(godeoLibraryListView);
-        final BookTitleAutoCompleteTextView naverBookAutoCompleteTextView = new BookTitleAutoCompleteTextView(this, (AutoCompleteTextView) findViewById(R.id.auto_edit), godeokLibrary);
+        BookListView bookListView = new BookListView(this, (ListView) findViewById(R.id.book_list));
+        BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView = new BookTitleAutoCompleteTextView(this, (AutoCompleteTextView) findViewById(R.id.auto_edit));
+        bookTitleAutoCompleteTextView.setSearchBooks(new SearchBooks(bookListView, bookTitleAutoCompleteTextView));
 
-        ((Button) findViewById(R.id.search_btn)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String keyword = naverBookAutoCompleteTextView.getText();
-                naverBookAutoCompleteTextView.dismissDropDown();
-                naverBookAutoCompleteTextView.clearFocus();
-                godeokLibrary.execute(keyword);
-            }
-        });
     }
 
     @Override

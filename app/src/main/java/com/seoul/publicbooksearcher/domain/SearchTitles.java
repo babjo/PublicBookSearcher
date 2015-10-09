@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import android.text.Html;
 import android.util.Log;
 
-import com.seoul.publicbooksearcher.presentation.presenter.SearchTitlesPresenter;
+import com.seoul.publicbooksearcher.presentation.listener.SearchTitlesListener;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -25,13 +25,11 @@ import javax.xml.parsers.ParserConfigurationException;
 public class SearchTitles implements UseCase <Void, String> {
 
     private final static String TAG = SearchTitles.class.getName();
-
-        private final SearchTitlesPresenter searchTitlesPresenter;
-
+    private final SearchTitlesListener searchTitlesListener;
     private NaverAsyncTask naverAsyncTask;
 
-    public SearchTitles(SearchTitlesPresenter searchTitlesPresenter){
-            this.searchTitlesPresenter = searchTitlesPresenter;
+    public SearchTitles(SearchTitlesListener searchTitlesListener){
+            this.searchTitlesListener = searchTitlesListener;
     }
 
     @Override
@@ -65,7 +63,7 @@ public class SearchTitles implements UseCase <Void, String> {
                 titles.add(book.getTitle());
             }
 
-            searchTitlesPresenter.searchCompleted(titles);
+            searchTitlesListener.searchCompleted(titles);
         }
     }
 
@@ -76,7 +74,7 @@ public class SearchTitles implements UseCase <Void, String> {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        String url = "http://openapi.naver.com/execute?key=28c9d970595a4155958faa596c7b38c2&query="+keyword+"&display=10&start=1&target=book";
+        String url = "http://openapi.naver.com/search?key=28c9d970595a4155958faa596c7b38c2&query="+keyword+"&display=10&start=1&target=book";
         Log.i(TAG, "keyword : "+keyword+" and request Url : "+url);
         List<Book> books = new ArrayList<Book>();
 

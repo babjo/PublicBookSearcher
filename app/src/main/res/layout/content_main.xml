@@ -19,34 +19,18 @@
         android:focusable="true" android:focusableInTouchMode="true"
         android:layout_width="0px" android:layout_height="0px"/>
 
-        <LinearLayout
+        <AutoCompleteTextView
+            android:id="@+id/auto_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <AutoCompleteTextView
-                android:id="@+id/auto_edit"
-                android:layout_width="0dp"
-                android:layout_weight="3"
-                android:layout_height="wrap_content"
-                android:completionThreshold="1"
-                android:singleLine="true"
-                android:layout_marginBottom="5sp"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:nextFocusLeft="@id/auto_edit"
-                android:nextFocusUp="@id/auto_edit"
-                />
-
-            <Button
-                android:id="@+id/search_btn"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="search"
-                android:background="@color/flatGrey"
-                android:layout_marginBottom="5sp"
-                />
-        </LinearLayout>
+            android:completionThreshold="1"
+            android:singleLine="true"
+            android:layout_marginBottom="5sp"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:imeOptions="actionSearch"
+            android:nextFocusLeft="@id/auto_edit"
+            android:nextFocusUp="@id/auto_edit"
+            />
 
         <ListView
             android:id="@+id/book_list"

@@ -4,8 +4,8 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.seoul.publicbooksearcher.presentation.presenter.SearchBooksPresenter;
-import com.seoul.publicbooksearcher.presentation.presenter.SearchTitlesPresenter;
+import com.seoul.publicbooksearcher.presentation.listener.SearchBooksListener;
+import com.seoul.publicbooksearcher.presentation.listener.SearchTitlesListener;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,12 +19,12 @@ import java.util.List;
 public class SearchBooks implements UseCase <Void, String> {
 
     private static final String TAG = SearchBooks.class.getName();
-    private final SearchBooksPresenter searchBooksPresenter;
-    private final SearchTitlesPresenter searchTitlesPresenter;
+    private final SearchBooksListener searchBooksListener;
+    private final SearchTitlesListener searchTitlesListener;
 
-    public SearchBooks(SearchBooksPresenter searchBooksPresenter, SearchTitlesPresenter searchTitlesPresenter){
-        this.searchBooksPresenter = searchBooksPresenter;
-        this.searchTitlesPresenter = searchTitlesPresenter;
+    public SearchBooks(SearchBooksListener searchBooksListener, SearchTitlesListener searchTitlesListener){
+        this.searchBooksListener = searchBooksListener;
+        this.searchTitlesListener = searchTitlesListener;
     }
 
     @Override
@@ -38,8 +38,8 @@ public class SearchBooks implements UseCase <Void, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            searchBooksPresenter.searchBefore();
-            searchTitlesPresenter.searchBefore();
+            searchBooksListener.searchBefore();
+            searchTitlesListener.searchBefore();
         }
 
         @Override
@@ -50,7 +50,7 @@ public class SearchBooks implements UseCase <Void, String> {
         @Override
         protected void onPostExecute(List<Book> books) {
             super.onPostExecute(books);
-            searchBooksPresenter.searchCompleted(books);
+            searchBooksListener.searchCompleted(books);
         }
     }
 

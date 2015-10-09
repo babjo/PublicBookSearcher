@@ -5,12 +5,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
 
 import com.seoul.publicbooksearcher.domain.Book;
-import com.seoul.publicbooksearcher.presentation.presenter.SearchBooksPresenter;
+import com.seoul.publicbooksearcher.presentation.listener.SearchBooksListener;
 import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewAdapter;
 
 import java.util.List;
 
-public class BookListView implements SearchBooksPresenter {
+public class BookListView implements SearchBooksListener {
 
     private ListView bookListView = null;
     private BookListViewAdapter bookListViewAdapter = null;
