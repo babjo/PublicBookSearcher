@@ -88,6 +88,14 @@ public class BookListViewAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public List<Book> getItems(){
+        return books;
+    }
+
+    public void setItems(List<Book> books) {
+        clearAndAddAll(books);
+    }
+
     private class ViewHolder {
         public TextView library;
         public TextView title;

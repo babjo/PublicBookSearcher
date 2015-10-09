@@ -18,7 +18,6 @@ public class BookListView implements SearchBooksListener {
 
     private BookListViewAdapter bookListViewAdapter = null;
 
-
     private Context context;
 
     public BookListView(Context context, ListView listView, RelativeLayout progressBar){
@@ -35,6 +34,14 @@ public class BookListView implements SearchBooksListener {
         hideKeyboard();
         progressBar.setVisibility(RelativeLayout.VISIBLE);
         bookListViewAdapter.clear();
+    }
+
+    public List<Book> getBooks(){
+        return bookListViewAdapter.getItems();
+    }
+
+    public void setBooks(List<Book> books){
+        bookListViewAdapter.setItems(books);
     }
 
 

@@ -14,14 +14,23 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.seoul.publicbooksearcher.R;
+import com.seoul.publicbooksearcher.domain.Book;
 import com.seoul.publicbooksearcher.domain.SearchBooks;
+import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewAdapter;
 import com.seoul.publicbooksearcher.presentation.view.component.BookListView;
 import com.seoul.publicbooksearcher.presentation.view.component.BookTitleAutoCompleteTextView;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity{
 
     private final static String TAG = MainActivity.class.getName();
+    private BookListView bookListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +41,15 @@ public class MainActivity extends AppCompatActivity{
 
         ListView listView = (ListView) findViewById(R.id.book_list);
         listView.setEmptyView(findViewById(R.id.empty_txt));
-        BookListView bookListView = new BookListView(this, listView, (RelativeLayout)findViewById(R.id.google_progress));
+        bookListView = new BookListView(this, listView, (RelativeLayout)findViewById(R.id.google_progress));
+
+        if(savedInstanceState != null && savedInstanceState.containsKey("books")){
+            Gson gson = new Gson();
+            Type type = new TypeToken<ArrayList<Book>>(){}.getType();
+            List<Book> books = gson.fromJson(savedInstanceState.getString("books"), type);
+            bookListView.setBooks(books);
+        }
+
         BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView = new BookTitleAutoCompleteTextView(this, (AutoCompleteTextView) findViewById(R.id.auto_edit));
         bookTitleAutoCompleteTextView.setSearchBooks(new SearchBooks(bookListView, bookTitleAutoCompleteTextView));
     }
@@ -58,6 +75,18 @@ public class MainActivity extends AppCompatActivity{
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        List<Book> books = bookListView.getBooks();
+        Gson gson = new Gson();
+        if(books.size() != 0)
+            outState.putString("books", gson.toJson(books));
+
+        super.onSaveInstanceState(outState);
+    }
+
+
 
     @Override
     public void onBackPressed() {
