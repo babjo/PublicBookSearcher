@@ -43,8 +43,6 @@ public class BookListView implements SearchBooksListener {
         mgr.hideSoftInputFromWindow(bookListView.getWindowToken(), 0);
     }
 
-
-
     @Override
     public void searchCompleted(List<Book> books) {
         progressBar.setVisibility(RelativeLayout.GONE);

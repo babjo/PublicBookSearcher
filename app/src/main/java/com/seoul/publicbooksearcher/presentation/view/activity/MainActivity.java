@@ -11,6 +11,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.seoul.publicbooksearcher.R;
@@ -29,7 +30,9 @@ public class MainActivity extends AppCompatActivity{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        BookListView bookListView = new BookListView(this, (ListView)findViewById(R.id.book_list), (RelativeLayout)findViewById(R.id.google_progress));
+        ListView listView = (ListView) findViewById(R.id.book_list);
+        listView.setEmptyView(findViewById(R.id.empty_txt));
+        BookListView bookListView = new BookListView(this, listView, (RelativeLayout)findViewById(R.id.google_progress));
         BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView = new BookTitleAutoCompleteTextView(this, (AutoCompleteTextView) findViewById(R.id.auto_edit));
         bookTitleAutoCompleteTextView.setSearchBooks(new SearchBooks(bookListView, bookTitleAutoCompleteTextView));
     }
