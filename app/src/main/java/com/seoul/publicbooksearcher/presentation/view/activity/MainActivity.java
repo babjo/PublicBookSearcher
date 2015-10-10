@@ -6,12 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -19,7 +16,6 @@ import com.google.gson.reflect.TypeToken;
 import com.seoul.publicbooksearcher.R;
 import com.seoul.publicbooksearcher.domain.Book;
 import com.seoul.publicbooksearcher.domain.SearchBooks;
-import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewAdapter;
 import com.seoul.publicbooksearcher.presentation.view.component.BookListView;
 import com.seoul.publicbooksearcher.presentation.view.component.BookTitleAutoCompleteTextView;
 

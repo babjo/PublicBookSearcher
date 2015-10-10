@@ -34,12 +34,12 @@ public class SearchBooks implements UseCase <Void, String> {
 
     @Override
     public Void execute(String keyword) {
-        new LibraryAsyncTask().execute(keyword);
+        new SeoulLibraryAsyncTask().execute(keyword);
+        new GdLibraryAsyncTask().execute(keyword);
         return null;
     }
 
-    private class LibraryAsyncTask extends AsyncTask<String, Void, List<Book>> {
-
+    private class GdLibraryAsyncTask extends AsyncTask<String, Void, List<Book>> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -49,7 +49,7 @@ public class SearchBooks implements UseCase <Void, String> {
 
         @Override
         protected List<Book> doInBackground(String... params) {
-            return getBooks(params[0]);
+            return searchGdlibrary(params[0]);
         }
 
         @Override
@@ -59,38 +59,50 @@ public class SearchBooks implements UseCase <Void, String> {
         }
     }
 
-    @NonNull
-    private List<Book> getBooks(String keyword) {
-        List<Book> books = new ArrayList();
+    private class SeoulLibraryAsyncTask extends AsyncTask<String, Void, List<Book>> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            searchBooksListener.searchBefore();
+            searchTitlesListener.searchBefore();
+        }
 
-        //books.addAll(searchSeoullibrary(keyword));
-        books.addAll(searchGdlibrary(keyword));
+        @Override
+        protected List<Book> doInBackground(String... params) {
+            return searchSeoullibrary(params[0]);
+        }
 
-        return books;
+        @Override
+        protected void onPostExecute(List<Book> books) {
+            super.onPostExecute(books);
+            searchBooksListener.searchCompleted(books);
+        }
     }
+
 
     private List<Book> searchSeoullibrary(String keyword) {
         List<Book> books = new ArrayList();
         try {
-            /*
+
             Document doc = Jsoup.connect("http://lib.seoul.go.kr/search/laz/result?" +
-                    "st=" +
+                    "st=KWRD" +
                     "&gubunFlag=" +
                     "&nation_id=" +
                     "&si=1" +
-                    "&q="+ keyword +
+                    "&q="+keyword+
                     "&b0=and" +
                     "&weight0=0.5" +
-                    "&si=2&q=" +
+                    "&si=2" +
+                    "&q=" +
                     "&b1=and" +
                     "&weight1=0.5" +
                     "&si=3" +
                     "&q=" +
                     "&weight2=0.5" +
-                    "&lmt0=TOTAL" +
                     "&_lmt0=on" +
                     "&lmtsn=000000000001" +
                     "&lmtst=OR" +
+                    "&lmt0=m%3Bzb" +
                     "&_lmt0=on" +
                     "&_lmt0=on" +
                     "&_lmt0=on" +
@@ -112,49 +124,49 @@ public class SearchBooks implements UseCase <Void, String> {
                     "&range=000000000021" +
                     "&cpp=10" +
                     "&msc=500")
-                    .get();*/
-            Document doc = Jsoup.connect("http://lib.seoul.go.kr/msearch/stz/result?si=TOTAL&st=KWRD&dbDiv=LAT&q=%EB%8F%84%EB%A9%94%EC%9D%B8&x=0&y=0").get();
-            Log.i(TAG, doc.toString());
-            Elements elements = doc.select("div.brie");
+                    .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\n")
+                    .header("User-Agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36")
+                    .header("Upgrade-Insecure-Requests", "1")
+                    .header("Cookie", "PCID=14444572212485265095190; RC_RESOLUTION=1920*1080; RC_COLOR=24; JSESSIONID=KlREWyoGhVhRDOOvrRqa4RfQ4nfFYza09DJTDwqtN6j2E52dOgoGRHwmCFZXIUYk.replibwas_servlet_engine6")
+                    .get();
+
+            Elements elements = doc.select("div.briefData");
             for(int i=0; i<elements.size(); i++){
                 Element element = elements.get(i);
+
                 String library = "서울도서관";
-                Log.i(TAG, library);
+                Log.i(TAG, "library : " + library);
 
-                Element input = element.child(0).child(0);
-                String title =  input.getElementsByAttribute("title").toString();
-                Log.i(TAG, title);
+                Elements titleTag = element.select("dd.searchTitle");
+                String title =  titleTag.get(0).text().replace("\n", "").replace("\r", "").trim();
+                Log.i(TAG, "title : " + title);
 
-                String bookId = input.getElementsByAttribute("value").toString();
-                Document d = Jsoup.connect("http://lib.seoul.go.kr/search/prevLoc/" + bookId).post();
-                Log.i(TAG, "http://lib.seoul.go.kr/search/prevLoc/"+bookId+"\n"+ d);
+                Elements bookLocationTag = element.select("dd.locCursor");
+                String[] javascriptArgs = bookLocationTag.get(0).child(0).attr("onmousedown").replaceAll("'", "").replace("javascript:callLocation(", "").replace(")", "").split(",");
+                String bookId = javascriptArgs[2];
+                String location = javascriptArgs[3];
+                Document d = Jsoup.connect("http://lib.seoul.go.kr/search/prevLoc/" + bookId)
+                        .data("loc", location)
+                        .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\n")
+                        .header("User-Agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36")
+                        .header("Upgrade-Insecure-Requests", "1")
+                        .header("Cookie", "PCID=14444572212485265095190; RC_RESOLUTION=1920*1080; RC_COLOR=24; JSESSIONID=KlREWyoGhVhRDOOvrRqa4RfQ4nfFYza09DJTDwqtN6j2E52dOgoGRHwmCFZXIUYk.replibwas_servlet_engine6")
+                        .post();
 
-                books.add(new Book(title, library, Integer.parseInt("1")));
+                Elements bookNumbers = d.getElementsByTag("call_no");
+                Elements bookStates = d.getElementsByTag("book_state");
+
+                Log.i(TAG, "http://lib.seoul.go.kr/search/prevLoc/"+bookId+" 청구번호 : "+ bookNumbers.html());
+                Log.i(TAG, "http://lib.seoul.go.kr/search/prevLoc/"+bookId+" 책상태 : "+ bookStates.html());
+
+                for(int j=0; j<bookStates.size(); j++){
+                    Element bookState = bookStates.get(j);
+                    if(bookState.html().equals("대출가능"))
+                        books.add(new Book(title, library, Integer.parseInt("1")));
+                    else
+                        books.add(new Book(title, library, Integer.parseInt("2")));
+                }
             }
-
-            /*
-            String apiKey = "4450506d546b6439353941724f5843";
-            String json = Jsoup.connect("http://openAPI.seoul.go.kr:8088/"+apiKey+"/json/SeoulLibraryBookSearch/1/5/ /"+keyword +"/ / /").get().text();
-            Log.i(TAG, "search books in Seoul library : "+json);
-
-            Gson gson = new Gson();
-            SeoulLibraryBookSearch seoulLibraryBookSearch = gson.fromJson(json, SeoulLibraryBookSearch.class);
-
-            for(SeoulLibraryBookSearch.Row row : seoulLibraryBookSearch.row){
-                String library = row.LOCA_NAME;
-                Log.i(TAG, library);
-
-                String title = row.TITLE;
-                Log.i(TAG, title);
-
-                String bookId = "CAT"+row.CTRLNO;
-                Document doc = Jsoup.connect("http://lib.seoul.go.kr/search/prevLoc/" + bookId).post();
-                Log.i(TAG, "http://lib.seoul.go.kr/search/prevLoc/"+bookId+"\n"+ doc);
-                //Log.i(TAG, statusCode);
-
-                //books.add(new Book(title, library, Integer.parseInt(statusCode)));
-            }*/
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -186,7 +198,7 @@ public class SearchBooks implements UseCase <Void, String> {
                 Log.i(TAG, library);
 
                 Element dt = element.child(1).child(0).child(0);
-                String title = dt.child(0).child(0).text();
+                String title = dt.child(0).child(0).text().replace("\n", "").replace("\r", "").trim();
                 Log.i(TAG, title);
 
                 String bookId = dt.child(1).child(1).attr("href").replaceAll(" ", "").replaceAll("'", "").split(",")[1];
