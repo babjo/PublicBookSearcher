@@ -17,9 +17,9 @@ import java.util.List;
 public abstract class AbstractBookCache implements BookRepository {
 
     private final static String DB_NAME = "book_cache_db";
-    private SQLiteDatabase db = null;
 
-    private final Context context;
+    private static SQLiteDatabase db = null;
+    private static Context context;
 
     public AbstractBookCache(Context context){
         this.context = context;
@@ -29,11 +29,9 @@ public abstract class AbstractBookCache implements BookRepository {
 
     @Override
     public List<Book> selectByKeyword(String keyword) {
-        if (db == null) {
-            db = context.openOrCreateDatabase(DB_NAME, SQLiteDatabase.CREATE_IF_NECESSARY, null);
-            if(!isTableExists(db, getTableName()))
-                db.execSQL("CREATE TABLE " + getTableName() + " (_KEYWORD text primary key not null, BOOKS_JSON text not null)");
-        }
+        db = getSQLiteDatabaseInstance();
+        if(!isTableExists(db, getTableName()))
+            db.execSQL("CREATE TABLE " + getTableName() + " (_KEYWORD text primary key not null, BOOKS_JSON text not null)");
 
         Cursor c = db.query(getTableName(),
                 new String[] {"_KEYWORD","BOOKS_JSON"}, //colum 명세
@@ -53,6 +51,12 @@ public abstract class AbstractBookCache implements BookRepository {
         }
 
         return books;
+    }
+
+    public static SQLiteDatabase getSQLiteDatabaseInstance(){
+        if(db == null)
+            db = context.openOrCreateDatabase(DB_NAME, SQLiteDatabase.CREATE_IF_NECESSARY, null);
+        return db;
     }
 
     boolean isTableExists(SQLiteDatabase db, String tableName)

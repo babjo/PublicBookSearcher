@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 
 import com.seoul.publicbooksearcher.data.BookRepository;
 import com.seoul.publicbooksearcher.data.cache.GdBookCache;
+import com.seoul.publicbooksearcher.data.cache.SeoulBookCache;
 import com.seoul.publicbooksearcher.data.crawler.GdLibrary;
 import com.seoul.publicbooksearcher.data.crawler.SeoulLibrary;
 import com.seoul.publicbooksearcher.presentation.listener.SearchBooksListener;
@@ -26,7 +27,7 @@ public class SearchBooks implements UseCase <Void, String> {
         this.searchTitlesListener = searchTitlesListener;
 
         this.gdLibrary = new GdLibrary(new GdBookCache(context));
-        this.seoulLibrary = new SeoulLibrary();
+        this.seoulLibrary = new SeoulLibrary(new SeoulBookCache(context));
     }
 
     @Override
