@@ -44,13 +44,14 @@
         <com.jpardogo.android.googleprogressbar.library.GoogleProgressBar
             android:layout_width="50dp"
             android:layout_height="50dp"
-            gpb:type="google_music_dices"/>
+            gpb:type="google_music_dices"
+            />
     </RelativeLayout>
 
     <ListView
         android:id="@+id/book_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:scrollbars="none"
         />
 

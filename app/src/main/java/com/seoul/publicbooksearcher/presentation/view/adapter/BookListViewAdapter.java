@@ -96,6 +96,11 @@ public class BookListViewAdapter extends BaseAdapter {
         clearAndAddAll(books);
     }
 
+    public void AddAll(List<Book> books) {
+        this.books.addAll(books);
+        notifyDataSetChanged();
+    }
+
     private class ViewHolder {
         public TextView library;
         public TextView title;

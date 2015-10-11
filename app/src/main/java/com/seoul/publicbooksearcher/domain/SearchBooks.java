@@ -1,13 +1,8 @@
 package com.seoul.publicbooksearcher.domain;
 
-import android.app.Service;
-import android.inputmethodservice.Keyboard;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.text.Html;
 import android.util.Log;
 
-import com.google.gson.Gson;
 import com.seoul.publicbooksearcher.presentation.listener.SearchBooksListener;
 import com.seoul.publicbooksearcher.presentation.listener.SearchTitlesListener;
 
@@ -18,7 +13,6 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class SearchBooks implements UseCase <Void, String> {
@@ -34,17 +28,27 @@ public class SearchBooks implements UseCase <Void, String> {
 
     @Override
     public Void execute(String keyword) {
+        onceSearchBefore = false;
         new SeoulLibraryAsyncTask().execute(keyword);
         new GdLibraryAsyncTask().execute(keyword);
         return null;
     }
 
+
+    private boolean onceSearchBefore = false;
+    private void searchBefore(){
+        if(!onceSearchBefore) {
+            searchBooksListener.searchBefore();
+            searchTitlesListener.searchBefore();
+            onceSearchBefore = true;
+        }
+    }
     private class GdLibraryAsyncTask extends AsyncTask<String, Void, List<Book>> {
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            searchBooksListener.searchBefore();
-            searchTitlesListener.searchBefore();
+            searchBefore();
         }
 
         @Override
@@ -63,14 +67,11 @@ public class SearchBooks implements UseCase <Void, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            searchBooksListener.searchBefore();
-            searchTitlesListener.searchBefore();
+            searchBefore();
         }
 
         @Override
-        protected List<Book> doInBackground(String... params) {
-            return searchSeoullibrary(params[0]);
-        }
+        protected List<Book> doInBackground(String... params) { return searchSeoullibrary(params[0]); }
 
         @Override
         protected void onPostExecute(List<Book> books) {
@@ -79,8 +80,17 @@ public class SearchBooks implements UseCase <Void, String> {
         }
     }
 
+    public static String replaceSpecial(String str){
+        String match = "[^\uAC00-\uD7A3xfe0-9a-zA-Z\\s]";
+        str =str.replaceAll(match, " ");
+        return str;
+    }
+
 
     private List<Book> searchSeoullibrary(String keyword) {
+        keyword = replaceSpecial(keyword);
+        keyword = keyword.replaceAll(" ", "+");
+
         List<Book> books = new ArrayList();
         try {
 
@@ -127,7 +137,6 @@ public class SearchBooks implements UseCase <Void, String> {
                     .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\n")
                     .header("User-Agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36")
                     .header("Upgrade-Insecure-Requests", "1")
-                    .header("Cookie", "PCID=14444572212485265095190; RC_RESOLUTION=1920*1080; RC_COLOR=24; JSESSIONID=KlREWyoGhVhRDOOvrRqa4RfQ4nfFYza09DJTDwqtN6j2E52dOgoGRHwmCFZXIUYk.replibwas_servlet_engine6")
                     .get();
 
             Elements elements = doc.select("div.briefData");
@@ -150,7 +159,6 @@ public class SearchBooks implements UseCase <Void, String> {
                         .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\n")
                         .header("User-Agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36")
                         .header("Upgrade-Insecure-Requests", "1")
-                        .header("Cookie", "PCID=14444572212485265095190; RC_RESOLUTION=1920*1080; RC_COLOR=24; JSESSIONID=KlREWyoGhVhRDOOvrRqa4RfQ4nfFYza09DJTDwqtN6j2E52dOgoGRHwmCFZXIUYk.replibwas_servlet_engine6")
                         .post();
 
                 Elements bookNumbers = d.getElementsByTag("call_no");
@@ -162,9 +170,9 @@ public class SearchBooks implements UseCase <Void, String> {
                 for(int j=0; j<bookStates.size(); j++){
                     Element bookState = bookStates.get(j);
                     if(bookState.html().equals("대출가능"))
-                        books.add(new Book(title, library, Integer.parseInt("1")));
+                        books.add(new Book(title, library, 1));
                     else
-                        books.add(new Book(title, library, Integer.parseInt("2")));
+                        books.add(new Book(title, library, 2));
                 }
             }
         } catch (IOException e) {

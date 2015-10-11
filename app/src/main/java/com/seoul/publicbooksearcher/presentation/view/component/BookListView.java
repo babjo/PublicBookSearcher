@@ -53,6 +53,6 @@ public class BookListView implements SearchBooksListener {
     @Override
     public void searchCompleted(List<Book> books) {
         progressBar.setVisibility(RelativeLayout.GONE);
-        bookListViewAdapter.clearAndAddAll(books);
+        bookListViewAdapter.AddAll(books);
     }
 }
