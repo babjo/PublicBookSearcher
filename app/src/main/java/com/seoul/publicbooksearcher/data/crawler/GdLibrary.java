@@ -68,9 +68,12 @@ public class GdLibrary implements BookRepository {
             String title = dt.child(0).child(0).text().replace("\n", "").replace("\r", "").trim();
             Log.i(TAG, title);
 
-            String callNumberAndLocation = dt.parent().child(2).text();
-            String callNumber = getCallNumber(callNumberAndLocation);
+            String callNumberAndLocation = dt.parent().select("dd.root").get(0).text();
+            Log.i(TAG, callNumberAndLocation);
             String location = getLocation(callNumberAndLocation);
+            Log.i(TAG, location);
+            String callNumber = getCallNumber(callNumberAndLocation);
+            Log.i(TAG, callNumber);
 
             String bookId = dt.child(1).child(1).attr("href").replaceAll(" ", "").replaceAll("'", "").split(",")[1];
             int statusCode = getBookState(bookId);
@@ -81,13 +84,14 @@ public class GdLibrary implements BookRepository {
     }
 
     private String getCallNumber(String callNumberAndLocation){
-        int start = callNumberAndLocation.indexOf(":");
-        int end = callNumberAndLocation.lastIndexOf("|");
-        return callNumberAndLocation.substring(start, end).trim();
+        String callNumber = callNumberAndLocation.split("[|]")[0];
+        int start = callNumber.lastIndexOf(":");
+        return callNumber.substring(start+1).trim();
     }
     private String getLocation(String callNumberAndLocation){
-        int start = callNumberAndLocation.lastIndexOf(":");
-        return callNumberAndLocation.substring(start).trim();
+        String location = callNumberAndLocation.split("[|]")[1];
+        int start = location.lastIndexOf(":");
+        return location.substring(start+1).trim();
     }
 
     @Override

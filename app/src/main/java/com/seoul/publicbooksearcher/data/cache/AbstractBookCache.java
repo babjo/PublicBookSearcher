@@ -30,8 +30,11 @@ public abstract class AbstractBookCache implements BookRepository {
     @Override
     public List<Book> selectByKeyword(String keyword) {
         db = getSQLiteDatabaseInstance();
-        if(!isTableExists(db, getTableName()))
+
+        //db.execSQL("DROP TABLE " + getTableName());
+        if(!isTableExists(db, getTableName())) {
             db.execSQL("CREATE TABLE " + getTableName() + " (_KEYWORD text primary key not null, BOOKS_JSON text not null)");
+        }
 
         Cursor c = db.query(getTableName(),
                 new String[] {"_KEYWORD","BOOKS_JSON"}, //colum 명세
