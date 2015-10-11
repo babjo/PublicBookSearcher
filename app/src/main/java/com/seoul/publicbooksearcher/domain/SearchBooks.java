@@ -1,10 +1,12 @@
 package com.seoul.publicbooksearcher.domain;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import com.seoul.publicbooksearcher.data.BookRepository;
-import com.seoul.publicbooksearcher.data.GdLibrary;
-import com.seoul.publicbooksearcher.data.SeoulLibrary;
+import com.seoul.publicbooksearcher.data.cache.GdBookCache;
+import com.seoul.publicbooksearcher.data.crawler.GdLibrary;
+import com.seoul.publicbooksearcher.data.crawler.SeoulLibrary;
 import com.seoul.publicbooksearcher.presentation.listener.SearchBooksListener;
 import com.seoul.publicbooksearcher.presentation.listener.SearchTitlesListener;
 
@@ -19,19 +21,19 @@ public class SearchBooks implements UseCase <Void, String> {
     private final SearchBooksListener searchBooksListener;
     private final SearchTitlesListener searchTitlesListener;
 
-    public SearchBooks(SearchBooksListener searchBooksListener, SearchTitlesListener searchTitlesListener){
+    public SearchBooks(Context context, SearchBooksListener searchBooksListener, SearchTitlesListener searchTitlesListener){
         this.searchBooksListener = searchBooksListener;
         this.searchTitlesListener = searchTitlesListener;
 
-        this.gdLibrary = new GdLibrary();
+        this.gdLibrary = new GdLibrary(new GdBookCache(context));
         this.seoulLibrary = new SeoulLibrary();
     }
 
     @Override
     public Void execute(String keyword) {
         onceSearchBefore = false;
-        new SeoulLibraryAsyncTask().execute(keyword);
         new GdLibraryAsyncTask().execute(keyword);
+        new SeoulLibraryAsyncTask().execute(keyword);
         return null;
     }
 
@@ -43,8 +45,8 @@ public class SearchBooks implements UseCase <Void, String> {
             onceSearchBefore = true;
         }
     }
-    private class GdLibraryAsyncTask extends AsyncTask<String, Void, List<Book>> {
 
+    private abstract class LibraryAsyncTas extends AsyncTask<String, Void, List<Book>> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -52,9 +54,7 @@ public class SearchBooks implements UseCase <Void, String> {
         }
 
         @Override
-        protected List<Book> doInBackground(String... params) {
-            return SearchBooks.this.gdLibrary.selectByKeyword(params[0]);
-        }
+        protected  abstract List<Book> doInBackground(String... params);
 
         @Override
         protected void onPostExecute(List<Book> books) {
@@ -62,23 +62,17 @@ public class SearchBooks implements UseCase <Void, String> {
             searchBooksListener.searchCompleted(books);
         }
     }
-
-    private class SeoulLibraryAsyncTask extends AsyncTask<String, Void, List<Book>> {
+    private class GdLibraryAsyncTask extends LibraryAsyncTas {
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            searchBefore();
+        protected List<Book> doInBackground(String... params) {
+            return SearchBooks.this.gdLibrary.selectByKeyword(params[0]);
         }
+    }
 
+    private class SeoulLibraryAsyncTask extends LibraryAsyncTas{
         @Override
         protected List<Book> doInBackground(String... params) {
             return SearchBooks.this.seoulLibrary.selectByKeyword(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(List<Book> books) {
-            super.onPostExecute(books);
-            searchBooksListener.searchCompleted(books);
         }
     }
 }

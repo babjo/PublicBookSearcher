@@ -1,6 +1,7 @@
 package com.seoul.publicbooksearcher.presentation.view.activity;
 
 import android.app.Activity;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity{
         }
 
         BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView = new BookTitleAutoCompleteTextView(this, (AutoCompleteTextView) findViewById(R.id.auto_edit));
-        bookTitleAutoCompleteTextView.setSearchBooks(new SearchBooks(bookListView, bookTitleAutoCompleteTextView));
+        bookTitleAutoCompleteTextView.setSearchBooks(new SearchBooks(this, bookListView, bookTitleAutoCompleteTextView));
     }
 
     @Override
@@ -81,8 +82,6 @@ public class MainActivity extends AppCompatActivity{
 
         super.onSaveInstanceState(outState);
     }
-
-
 
     @Override
     public void onBackPressed() {
@@ -120,5 +119,4 @@ public class MainActivity extends AppCompatActivity{
             toast.show();
         }
     }
-
 }

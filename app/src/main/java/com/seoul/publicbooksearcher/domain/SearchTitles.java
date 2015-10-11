@@ -3,7 +3,7 @@ package com.seoul.publicbooksearcher.domain;
 import android.os.AsyncTask;
 
 import com.seoul.publicbooksearcher.data.BookRepository;
-import com.seoul.publicbooksearcher.data.NaverBookOpenApi;
+import com.seoul.publicbooksearcher.data.api.NaverBookOpenApi;
 import com.seoul.publicbooksearcher.presentation.listener.SearchTitlesListener;
 
 import java.util.ArrayList;
