@@ -106,9 +106,9 @@ public class SeoulLibrary implements BookRepository {
             Elements bookLocationTag = element.select("dd.locCursor");
             String[] javascriptArgs = bookLocationTag.get(0).child(0).attr("onmousedown").replaceAll("'", "").replace("javascript:callLocation(", "").replace(")", "").split(",");
             String bookId = javascriptArgs[2];
-            String location = javascriptArgs[3];
+            String locationCode = javascriptArgs[3];
             Document d = Jsoup.connect("http://lib.seoul.go.kr/search/prevLoc/" + bookId)
-                    .data("loc", location)
+                    .data("loc", locationCode)
                     .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\n")
                     .header("User-Agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36")
                     .header("Upgrade-Insecure-Requests", "1")
@@ -125,10 +125,10 @@ public class SeoulLibrary implements BookRepository {
                 Element bookState = bookStates.get(j);
 
                 if(bookState.html().equals("대출가능")) {
-                    books.add(new Book(title, library, 1, bookId, bookCallNumber.html(), location));
+                    books.add(new Book(title, library, 1, bookId, bookCallNumber.html(), locationCode, ""));
                 }
                 else {
-                    books.add(new Book(title, library, 2, bookId, bookCallNumber.html(), location));
+                    books.add(new Book(title, library, 2, bookId, bookCallNumber.html(), locationCode, ""));
                 }
             }
         }

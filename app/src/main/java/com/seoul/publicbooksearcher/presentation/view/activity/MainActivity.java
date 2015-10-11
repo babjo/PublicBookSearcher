@@ -1,7 +1,6 @@
 package com.seoul.publicbooksearcher.presentation.view.activity;
 
 import android.app.Activity;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -40,15 +39,19 @@ public class MainActivity extends AppCompatActivity{
         listView.setEmptyView(findViewById(R.id.empty_txt));
         bookListView = new BookListView(this, listView, (RelativeLayout)findViewById(R.id.google_progress));
 
+        setBooksIfBooksExist(savedInstanceState);
+
+        BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView = new BookTitleAutoCompleteTextView(this, (AutoCompleteTextView) findViewById(R.id.auto_edit));
+        bookTitleAutoCompleteTextView.setSearchBooks(new SearchBooks(this, bookListView, bookTitleAutoCompleteTextView));
+    }
+
+    private void setBooksIfBooksExist(Bundle savedInstanceState) {
         if(savedInstanceState != null && savedInstanceState.containsKey("books")){
             Gson gson = new Gson();
             Type type = new TypeToken<ArrayList<Book>>(){}.getType();
             List<Book> books = gson.fromJson(savedInstanceState.getString("books"), type);
             bookListView.setBooks(books);
         }
-
-        BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView = new BookTitleAutoCompleteTextView(this, (AutoCompleteTextView) findViewById(R.id.auto_edit));
-        bookTitleAutoCompleteTextView.setSearchBooks(new SearchBooks(this, bookListView, bookTitleAutoCompleteTextView));
     }
 
     @Override

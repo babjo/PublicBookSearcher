@@ -68,12 +68,26 @@ public class GdLibrary implements BookRepository {
             String title = dt.child(0).child(0).text().replace("\n", "").replace("\r", "").trim();
             Log.i(TAG, title);
 
+            String callNumberAndLocation = dt.parent().child(2).text();
+            String callNumber = getCallNumber(callNumberAndLocation);
+            String location = getLocation(callNumberAndLocation);
+
             String bookId = dt.child(1).child(1).attr("href").replaceAll(" ", "").replaceAll("'", "").split(",")[1];
             int statusCode = getBookState(bookId);
-            books.add(new Book(title, library, statusCode, bookId));
+            books.add(new Book(title, library, statusCode, bookId, callNumber, location));
         }
 
         return books;
+    }
+
+    private String getCallNumber(String callNumberAndLocation){
+        int start = callNumberAndLocation.indexOf(":");
+        int end = callNumberAndLocation.lastIndexOf("|");
+        return callNumberAndLocation.substring(start, end).trim();
+    }
+    private String getLocation(String callNumberAndLocation){
+        int start = callNumberAndLocation.lastIndexOf(":");
+        return callNumberAndLocation.substring(start).trim();
     }
 
     @Override

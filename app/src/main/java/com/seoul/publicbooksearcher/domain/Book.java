@@ -7,6 +7,7 @@ public class Book {
     private String library;
     private int statusCode;
     private String callNumber;
+    private String location;
 
     // 서울시용
     private String locationCode;
@@ -22,20 +23,22 @@ public class Book {
         this.statusCode = statusCode;
     }
 
-    public Book(String title, String library, int statusCode, String bookId, String callNumber) {
+    public Book(String title, String library, int statusCode, String bookId, String callNumber, String location) {
         this.bookId = bookId;
         this.title = title;
         this.library = library;
         this.statusCode = statusCode;
         this.callNumber = callNumber;
+        this.location = location;
     }
 
-    public Book(String title, String library, int statusCode, String bookId, String callNumber, String locationCode) {
+    public Book(String title, String library, int statusCode, String bookId, String callNumber, String location, String locationCode) {
         this.bookId = bookId;
         this.title = title;
         this.library = library;
         this.statusCode = statusCode;
         this.callNumber = callNumber;
+        this.location = location;
         this.locationCode = locationCode;
     }
 
@@ -61,4 +64,7 @@ public class Book {
     public void setLocationCode(String locationCode) {this.locationCode = locationCode;}
     public String getCallNumber() {return callNumber;}
     public void setCallNumber(String callNumber) {this.callNumber = callNumber;}
+    public String getLocation() {
+        return location;
+    }
 }

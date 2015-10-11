@@ -51,6 +51,8 @@ public class BookListViewAdapter extends BaseAdapter {
             holder.library = (TextView) convertView.findViewById(R.id.book_library);
             holder.title = (TextView) convertView.findViewById(R.id.book_title);
             holder.status = (TextView) convertView.findViewById(R.id.book_status);
+            holder.location = (TextView) convertView.findViewById(R.id.book_location);
+            holder.callNumber = (TextView) convertView.findViewById(R.id.book_callNumber);
 
             convertView.setTag(holder);
         }else{
@@ -61,6 +63,8 @@ public class BookListViewAdapter extends BaseAdapter {
 
         holder.library.setText(book.getLibrary());
         holder.title.setText(book.getTitle());
+        holder.callNumber.setText(book.getCallNumber());
+        holder.location.setText(book.getLocation());
 
         switch (book.getStatusCode()){
             case 1:
@@ -105,5 +109,7 @@ public class BookListViewAdapter extends BaseAdapter {
         public TextView library;
         public TextView title;
         public TextView status;
+        public TextView location;
+        public TextView callNumber;
     }
 }
