@@ -1,4 +1,4 @@
-package com.seoul.publicbooksearcher.data.cache;
+package com.seoul.publicbooksearcher.data.cache.book;
 
 import android.content.ContentValues;
 import android.content.Context;

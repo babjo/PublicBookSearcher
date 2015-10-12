@@ -1,23 +1,18 @@
 package com.seoul.publicbooksearcher.presentation.view.component;
 
-import android.app.Activity;
 import android.content.Context;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 
-import com.seoul.publicbooksearcher.R;
+import com.seoul.publicbooksearcher.data.cache.keyword.RecentSearchKeywordCache;
+import com.seoul.publicbooksearcher.domain.AddRecentKeyword;
+import com.seoul.publicbooksearcher.domain.GetRecentKeywords;
 import com.seoul.publicbooksearcher.domain.SearchTitles;
 import com.seoul.publicbooksearcher.domain.UseCase;
 import com.seoul.publicbooksearcher.presentation.listener.SearchTitlesListener;
@@ -28,24 +23,32 @@ import java.util.List;
 
 public class BookTitleAutoCompleteTextView implements SearchTitlesListener {
 
+    private final AddRecentKeyword addRecentKeyword;
+    private final GetRecentKeywords getRecentKeywords;
+
     private Context context;
     private UseCase searchTitles;
     private UseCase searchBooks;
 
     private AutoCompleteTextView autoCompleteTextView;
 
-    private BookTitleAutoCompleteTextViewAdapter BookTitleAutoCompleteTextViewAdapter;
+    private BookTitleAutoCompleteTextViewAdapter bookTitleAutoCompleteTextViewAdapter;
     private final static String TAG = MainActivity.class.getName();
 
-    public BookTitleAutoCompleteTextView(Context context, AutoCompleteTextView autoCompleteTextView) {
+    public BookTitleAutoCompleteTextView(Context context, final AutoCompleteTextView autoCompleteTextView) {
         this.searchTitles = new SearchTitles(this);
+
+        RecentSearchKeywordCache keywordRepository = new RecentSearchKeywordCache(context);
+        this.addRecentKeyword = new AddRecentKeyword(keywordRepository);
+        this.getRecentKeywords = new GetRecentKeywords(keywordRepository);
+        
         this.autoCompleteTextView = autoCompleteTextView;
         this.context = context;
 
-        this.BookTitleAutoCompleteTextViewAdapter =
+        this.bookTitleAutoCompleteTextViewAdapter =
                 new BookTitleAutoCompleteTextViewAdapter(context, android.R.layout.simple_dropdown_item_1line);
 
-        autoCompleteTextView.setAdapter(BookTitleAutoCompleteTextViewAdapter);
+        autoCompleteTextView.setAdapter(bookTitleAutoCompleteTextViewAdapter);
         autoCompleteTextView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -66,8 +69,7 @@ public class BookTitleAutoCompleteTextView implements SearchTitlesListener {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String selection = (String) parent.getItemAtPosition(position);
-                Log.i(TAG, "selected keyword = " + selection);
-                BookTitleAutoCompleteTextView.this.searchBooks.execute(selection);
+                search(selection);
             }
 
         });
@@ -77,9 +79,7 @@ public class BookTitleAutoCompleteTextView implements SearchTitlesListener {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                     String keyword = getText();
-                    Log.i(TAG, "entered keyword = " + keyword);
-                    BookTitleAutoCompleteTextView.this.autoCompleteTextView.dismissDropDown();
-                    BookTitleAutoCompleteTextView.this.searchBooks.execute(keyword);
+                    search(keyword);
                     return true;
                 }
 
@@ -87,22 +87,31 @@ public class BookTitleAutoCompleteTextView implements SearchTitlesListener {
             }
         });
 
-
-        /*
         autoCompleteTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus && isLocationCenter) {
-                    Log.i(TAG, "autoCompleteTextView up !");
-                    ((LinearLayout) ((Activity) BookTitleAutoCompleteTextView.this.context).findViewById(R.id.main_root_layout)).setGravity(Gravity.NO_GRAVITY);
-                    ((Activity) BookTitleAutoCompleteTextView.this.context).findViewById(R.id.book_list).setVisibility(View.VISIBLE);
-                    isLocationCenter = false;
+                if(hasFocus) {
+                    List<String> keywords = BookTitleAutoCompleteTextView.this.getRecentKeywords.execute(null);
+                    String keywordContents = "";
+                    for(String keyword : keywords)
+                        keywordContents += keyword + ", ";
+                    Log.i(TAG, "Recent Keyword : " + keywordContents);
+                    setTitles(keywords);
                 }
             }
-        });*/
+        });
     }
 
-    private boolean isLocationCenter = true;
+    private void search(String keyword) {
+        Log.i(TAG, "entered keyword = " + keyword + "\n search start");
+        addRecentKeyword.execute(keyword);
+        autoCompleteTextView.dismissDropDown();
+        searchBooks.execute(keyword);
+    }
+
+    private void setTitles(List<String> titles){
+        bookTitleAutoCompleteTextViewAdapter.setTitles(titles);
+    }
 
     public String getText() {
         return autoCompleteTextView.getText().toString();
@@ -116,9 +125,7 @@ public class BookTitleAutoCompleteTextView implements SearchTitlesListener {
     @Override
     public void searchCompleted(List<String> titles) {
         Log.i("UPDATE", "3");
-        BookTitleAutoCompleteTextViewAdapter.clear();
-        BookTitleAutoCompleteTextViewAdapter.addAll(titles);
-        BookTitleAutoCompleteTextViewAdapter.notifyDataSetChanged();
+        setTitles(titles);
     }
 
     public void setSearchBooks(UseCase searchBooks){

@@ -1,4 +1,4 @@
-package com.seoul.publicbooksearcher.data.api;
+package com.seoul.publicbooksearcher.data.open_api;
 
 import android.text.Html;
 import android.util.Log;

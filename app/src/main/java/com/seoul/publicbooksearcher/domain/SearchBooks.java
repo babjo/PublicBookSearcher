@@ -4,8 +4,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.seoul.publicbooksearcher.data.BookRepository;
-import com.seoul.publicbooksearcher.data.cache.GdBookCache;
-import com.seoul.publicbooksearcher.data.cache.SeoulBookCache;
+import com.seoul.publicbooksearcher.data.cache.book.GdBookCache;
+import com.seoul.publicbooksearcher.data.cache.book.SeoulBookCache;
 import com.seoul.publicbooksearcher.data.crawler.GdLibrary;
 import com.seoul.publicbooksearcher.data.crawler.SeoulLibrary;
 import com.seoul.publicbooksearcher.presentation.listener.SearchBooksListener;

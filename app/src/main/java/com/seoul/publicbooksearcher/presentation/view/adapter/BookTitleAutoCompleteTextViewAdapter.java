@@ -5,6 +5,8 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 
+import java.util.List;
+
 /**
  * Created by LCH on 2015. 10. 9..
  */
@@ -24,6 +26,12 @@ public class BookTitleAutoCompleteTextViewAdapter extends ArrayAdapter {
 
     public BookTitleAutoCompleteTextViewAdapter(Context context, int resource) {
         super(context, resource);
+    }
+
+    public void setTitles(List<String> titles){
+        clear();
+        addAll(titles);
+        notifyDataSetChanged();
     }
 
     @Override

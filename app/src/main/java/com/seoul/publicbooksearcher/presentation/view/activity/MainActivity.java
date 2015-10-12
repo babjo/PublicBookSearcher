@@ -18,6 +18,7 @@ import com.seoul.publicbooksearcher.domain.Book;
 import com.seoul.publicbooksearcher.domain.SearchBooks;
 import com.seoul.publicbooksearcher.presentation.view.component.BookListView;
 import com.seoul.publicbooksearcher.presentation.view.component.BookTitleAutoCompleteTextView;
+import com.seoul.publicbooksearcher.presentation.view.component.InstantAutoComplete;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity{
 
         setBooksIfBooksExist(savedInstanceState);
 
-        BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView = new BookTitleAutoCompleteTextView(this, (AutoCompleteTextView) findViewById(R.id.auto_edit));
+        BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView = new BookTitleAutoCompleteTextView(this, (InstantAutoComplete) findViewById(R.id.auto_edit));
         bookTitleAutoCompleteTextView.setSearchBooks(new SearchBooks(this, bookListView, bookTitleAutoCompleteTextView));
     }
 
