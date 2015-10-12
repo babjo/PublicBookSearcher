@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity{
 
         ListView listView = (ListView) findViewById(R.id.book_list);
         listView.setEmptyView(findViewById(R.id.empty_txt));
+
         bookListView = new BookListView(this, listView, (RelativeLayout)findViewById(R.id.google_progress));
 
         setBooksIfBooksExist(savedInstanceState);

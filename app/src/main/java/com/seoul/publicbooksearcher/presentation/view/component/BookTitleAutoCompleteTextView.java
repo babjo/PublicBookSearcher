@@ -45,8 +45,7 @@ public class BookTitleAutoCompleteTextView implements SearchTitlesListener {
         this.autoCompleteTextView = autoCompleteTextView;
         this.context = context;
 
-        this.bookTitleAutoCompleteTextViewAdapter =
-                new BookTitleAutoCompleteTextViewAdapter(context, android.R.layout.simple_dropdown_item_1line);
+        this.bookTitleAutoCompleteTextViewAdapter = new BookTitleAutoCompleteTextViewAdapter(context, android.R.layout.simple_dropdown_item_1line);
 
         autoCompleteTextView.setAdapter(bookTitleAutoCompleteTextViewAdapter);
         autoCompleteTextView.addTextChangedListener(new TextWatcher() {
@@ -91,12 +90,18 @@ public class BookTitleAutoCompleteTextView implements SearchTitlesListener {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(hasFocus) {
-                    List<String> keywords = BookTitleAutoCompleteTextView.this.getRecentKeywords.execute(null);
+                    final List<String> keywords = BookTitleAutoCompleteTextView.this.getRecentKeywords.execute(null);
                     String keywordContents = "";
-                    for(String keyword : keywords)
+                    for (String keyword : keywords)
                         keywordContents += keyword + ", ";
                     Log.i(TAG, "Recent Keyword : " + keywordContents);
-                    setTitles(keywords);
+
+                    new Handler().post(new Runnable() { // new Handler and Runnable
+                        @Override
+                        public void run() {
+                            setTitles(keywords);
+                        }
+                    });
                 }
             }
         });
@@ -110,7 +115,7 @@ public class BookTitleAutoCompleteTextView implements SearchTitlesListener {
     }
 
     private void setTitles(List<String> titles){
-        bookTitleAutoCompleteTextViewAdapter.setTitles(titles);
+        this.bookTitleAutoCompleteTextViewAdapter.setTitles(titles);
     }
 
     public String getText() {

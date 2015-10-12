@@ -7,9 +7,6 @@ import android.widget.Filter;
 
 import java.util.List;
 
-/**
- * Created by LCH on 2015. 10. 9..
- */
 public class BookTitleAutoCompleteTextViewAdapter extends ArrayAdapter {
 
     private final static Filter NULL_FILTER = new Filter() {
@@ -31,7 +28,6 @@ public class BookTitleAutoCompleteTextViewAdapter extends ArrayAdapter {
     public void setTitles(List<String> titles){
         clear();
         addAll(titles);
-        notifyDataSetChanged();
     }
 
     @Override

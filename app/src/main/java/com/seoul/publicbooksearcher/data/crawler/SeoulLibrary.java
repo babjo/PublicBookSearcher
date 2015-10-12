@@ -100,7 +100,12 @@ public class SeoulLibrary implements BookRepository {
             Log.i(TAG, "library : " + library);
 
             Elements titleTag = element.select("dd.searchTitle");
-            String title =  titleTag.get(0).text().replace("\n", "").replace("\r", "").trim();
+            String title = null;
+            if(titleTag.size() > 0)
+                title = titleTag.get(0).text().replace("\n", "").replace("\r", "").trim();
+            else
+                return books;
+
             Log.i(TAG, "title : " + title);
 
             Elements bookLocationTag = element.select("dd.locCursor");
