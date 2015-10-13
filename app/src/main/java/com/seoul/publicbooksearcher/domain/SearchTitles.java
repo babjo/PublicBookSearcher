@@ -3,8 +3,7 @@ package com.seoul.publicbooksearcher.domain;
 import android.os.AsyncTask;
 
 import com.seoul.publicbooksearcher.data.BookRepository;
-import com.seoul.publicbooksearcher.data.open_api.NaverBookOpenApi;
-import com.seoul.publicbooksearcher.presentation.listener.SearchTitlesListener;
+import com.seoul.publicbooksearcher.presentation.UseCaseListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +13,12 @@ public class SearchTitles implements UseCase <Void, String> {
     private final static String TAG = SearchTitles.class.getName();
 
     private final BookRepository bookRepository;
-    private final SearchTitlesListener searchTitlesListener;
+    private final UseCaseListener searchTitlesListener;
     private NaverAsyncTask naverAsyncTask;
 
-    public SearchTitles(SearchTitlesListener searchTitlesListener){
+    public SearchTitles(UseCaseListener searchTitlesListener, BookRepository bookRepository){
         this.searchTitlesListener = searchTitlesListener;
-        this.bookRepository = new NaverBookOpenApi();
+        this.bookRepository = bookRepository;
     }
 
     @Override
@@ -53,7 +52,7 @@ public class SearchTitles implements UseCase <Void, String> {
                 titles.add(book.getTitle());
             }
 
-            searchTitlesListener.searchCompleted(titles);
+            searchTitlesListener.executeAfter(titles);
         }
     }
 }

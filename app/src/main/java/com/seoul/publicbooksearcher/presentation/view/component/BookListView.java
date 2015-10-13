@@ -6,12 +6,12 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.seoul.publicbooksearcher.domain.Book;
-import com.seoul.publicbooksearcher.presentation.listener.SearchBooksListener;
+import com.seoul.publicbooksearcher.presentation.UseCaseListener;
 import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewAdapter;
 
 import java.util.List;
 
-public class BookListView implements SearchBooksListener {
+public class BookListView implements UseCaseListener<Void, List<Book>> {
 
     private ListView bookListView = null;
     private RelativeLayout progressBar = null;
@@ -29,13 +29,6 @@ public class BookListView implements SearchBooksListener {
         bookListView.setAdapter(bookListViewAdapter);
     }
 
-    @Override
-    public void searchBefore() {
-        hideKeyboard();
-        progressBar.setVisibility(RelativeLayout.VISIBLE);
-        bookListViewAdapter.clear();
-    }
-
     public List<Book> getBooks(){
         return bookListViewAdapter.getItems();
     }
@@ -51,8 +44,20 @@ public class BookListView implements SearchBooksListener {
     }
 
     @Override
-    public void searchCompleted(List<Book> books) {
+    public void executeBefore(Void Void) {
+        hideKeyboard();
+        progressBar.setVisibility(RelativeLayout.VISIBLE);
+        bookListViewAdapter.clear();
+    }
+
+    @Override
+    public void executeAfter(List<Book> books) {
         progressBar.setVisibility(RelativeLayout.GONE);
         bookListViewAdapter.AddAll(books);
+    }
+
+    @Override
+    public void error(Exception e) {
+
     }
 }

@@ -16,7 +16,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -34,7 +37,8 @@ public class NaverBookOpenApi implements BookRepository {
         }
         String url = "http://openapi.naver.com/search?key=28c9d970595a4155958faa596c7b38c2&query="+keyword+"&display=10&start=1&target=book";
         Log.i(TAG, "keyword : " + keyword + " and request Url : " + url);
-        List<Book> books = new ArrayList<Book>();
+        List<String> titles = new ArrayList();
+        List<Book> books = new ArrayList();
 
         try {
             Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(url);
@@ -47,7 +51,10 @@ public class NaverBookOpenApi implements BookRepository {
                     String title = Html.fromHtml(eElement.getElementsByTagName("title").item(0).getTextContent()).toString().replaceAll("\\(.*\\)", "").trim();
                     //String isbn = eElement.getElementsByTagName("isbn").item(0).getTextContent();
                     Log.i(TAG, i + "번째 책 : " + title);
-                    books.add(new Book(title));
+                    if(!titles.contains(title)) {
+                        titles.add(title);
+                        books.add(new Book(title));
+                    }
                 }
             }
         } catch (SAXException e) {
@@ -57,6 +64,7 @@ public class NaverBookOpenApi implements BookRepository {
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         }
+
         return books;
     }
 

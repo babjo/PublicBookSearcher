@@ -8,8 +8,7 @@ import com.seoul.publicbooksearcher.data.cache.book.GdBookCache;
 import com.seoul.publicbooksearcher.data.cache.book.SeoulBookCache;
 import com.seoul.publicbooksearcher.data.crawler.GdLibrary;
 import com.seoul.publicbooksearcher.data.crawler.SeoulLibrary;
-import com.seoul.publicbooksearcher.presentation.listener.SearchBooksListener;
-import com.seoul.publicbooksearcher.presentation.listener.SearchTitlesListener;
+import com.seoul.publicbooksearcher.presentation.UseCaseListener;
 
 import java.util.List;
 
@@ -19,10 +18,10 @@ public class SearchBooks implements UseCase <Void, String> {
     private final BookRepository gdLibrary;
     private final BookRepository seoulLibrary;
 
-    private final SearchBooksListener searchBooksListener;
-    private final SearchTitlesListener searchTitlesListener;
+    private final UseCaseListener searchBooksListener;
+    private final UseCaseListener searchTitlesListener;
 
-    public SearchBooks(Context context, SearchBooksListener searchBooksListener, SearchTitlesListener searchTitlesListener){
+    public SearchBooks(Context context, UseCaseListener searchBooksListener, UseCaseListener searchTitlesListener){
         this.searchBooksListener = searchBooksListener;
         this.searchTitlesListener = searchTitlesListener;
 
@@ -41,8 +40,8 @@ public class SearchBooks implements UseCase <Void, String> {
     private boolean onceSearchBefore = false;
     private void searchBefore(){
         if(!onceSearchBefore) {
-            searchBooksListener.searchBefore();
-            searchTitlesListener.searchBefore();
+            searchBooksListener.executeBefore(null);
+            searchTitlesListener.executeBefore(null);
             onceSearchBefore = true;
         }
     }
@@ -60,7 +59,7 @@ public class SearchBooks implements UseCase <Void, String> {
         @Override
         protected void onPostExecute(List<Book> books) {
             super.onPostExecute(books);
-            searchBooksListener.searchCompleted(books);
+            searchBooksListener.executeAfter(books);
         }
     }
     private class GdLibraryAsyncTask extends LibraryAsyncTas {

@@ -11,17 +11,17 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 
 import com.seoul.publicbooksearcher.data.RecentSearchKeywordRepository;
+import com.seoul.publicbooksearcher.data.open_api.NaverBookOpenApi;
 import com.seoul.publicbooksearcher.domain.AddRecentKeyword;
 import com.seoul.publicbooksearcher.domain.GetRecentKeywords;
 import com.seoul.publicbooksearcher.domain.SearchTitles;
 import com.seoul.publicbooksearcher.domain.UseCase;
-import com.seoul.publicbooksearcher.presentation.listener.SearchTitlesListener;
-import com.seoul.publicbooksearcher.presentation.view.activity.MainActivity;
+import com.seoul.publicbooksearcher.presentation.UseCaseListener;
 import com.seoul.publicbooksearcher.presentation.view.adapter.BookTitleAutoCompleteTextViewAdapter;
 
 import java.util.List;
 
-public class BookTitleAutoCompleteTextView implements SearchTitlesListener {
+public class BookTitleAutoCompleteTextView implements UseCaseListener<Void, List<String>> {
 
     private final AddRecentKeyword addRecentKeyword;
     private final GetRecentKeywords getRecentKeywords;
@@ -33,10 +33,10 @@ public class BookTitleAutoCompleteTextView implements SearchTitlesListener {
     private AutoCompleteTextView autoCompleteTextView;
 
     private BookTitleAutoCompleteTextViewAdapter bookTitleAutoCompleteTextViewAdapter;
-    private final static String TAG = MainActivity.class.getName();
+    private final static String TAG = BookTitleAutoCompleteTextView.class.getName();
 
     public BookTitleAutoCompleteTextView(Context context, final AutoCompleteTextView autoCompleteTextView) {
-        this.searchTitles = new SearchTitles(this);
+        this.searchTitles = new SearchTitles(this, new NaverBookOpenApi());
 
         RecentSearchKeywordRepository keywordRepository = new RecentSearchKeywordRepository(context);
         this.addRecentKeyword = new AddRecentKeyword(keywordRepository);
@@ -60,8 +60,10 @@ public class BookTitleAutoCompleteTextView implements SearchTitlesListener {
             @Override
             public void afterTextChanged(Editable s) {
                 Log.i(TAG, "================================== afterTextChanged ======================================");
-                if (s.toString().equals(""))
+                if (s.toString().equals("")) {
+                    Log.i(TAG, "===========afterTextChanged getRecentKeywords=============");
                     getRecentKeywords();
+                }
                 else
                     BookTitleAutoCompleteTextView.this.searchTitles.execute(s.toString().trim());
             }
@@ -130,20 +132,23 @@ public class BookTitleAutoCompleteTextView implements SearchTitlesListener {
         return autoCompleteTextView.getText().toString();
     }
 
-    @Override
-    public void searchBefore() {
-        autoCompleteTextView.clearFocus();
-    }
-
-    @Override
-    public void searchCompleted(List<String> titles) {
-        Log.i("UPDATE", "3");
-        setTitles(titles);
-    }
-
     public void setSearchBooks(UseCase searchBooks){
         this.searchBooks = searchBooks;
     }
 
+    @Override
+    public void executeBefore(Void beforeArgs) {
+        autoCompleteTextView.clearFocus();
+    }
 
+    @Override
+    public void executeAfter(List<String> titles) {
+        Log.i("UPDATE", "3");
+        setTitles(titles);
+    }
+
+    @Override
+    public void error(Exception e) {
+
+    }
 }
