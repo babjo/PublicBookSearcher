@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 
-import com.seoul.publicbooksearcher.data.cache.keyword.RecentSearchKeywordCache;
+import com.seoul.publicbooksearcher.data.RecentSearchKeywordRepository;
 import com.seoul.publicbooksearcher.domain.AddRecentKeyword;
 import com.seoul.publicbooksearcher.domain.GetRecentKeywords;
 import com.seoul.publicbooksearcher.domain.SearchTitles;
@@ -38,7 +38,7 @@ public class BookTitleAutoCompleteTextView implements SearchTitlesListener {
     public BookTitleAutoCompleteTextView(Context context, final AutoCompleteTextView autoCompleteTextView) {
         this.searchTitles = new SearchTitles(this);
 
-        RecentSearchKeywordCache keywordRepository = new RecentSearchKeywordCache(context);
+        RecentSearchKeywordRepository keywordRepository = new RecentSearchKeywordRepository(context);
         this.addRecentKeyword = new AddRecentKeyword(keywordRepository);
         this.getRecentKeywords = new GetRecentKeywords(keywordRepository);
         
@@ -60,7 +60,10 @@ public class BookTitleAutoCompleteTextView implements SearchTitlesListener {
             @Override
             public void afterTextChanged(Editable s) {
                 Log.i(TAG, "================================== afterTextChanged ======================================");
-                BookTitleAutoCompleteTextView.this.searchTitles.execute(s.toString().trim());
+                if (s.toString().equals(""))
+                    getRecentKeywords();
+                else
+                    BookTitleAutoCompleteTextView.this.searchTitles.execute(s.toString().trim());
             }
         });
 
@@ -76,7 +79,7 @@ public class BookTitleAutoCompleteTextView implements SearchTitlesListener {
         autoCompleteTextView.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER && !"".equals(getText().trim())) {
                     String keyword = getText();
                     search(keyword);
                     return true;
@@ -89,27 +92,32 @@ public class BookTitleAutoCompleteTextView implements SearchTitlesListener {
         autoCompleteTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus) {
-                    final List<String> keywords = BookTitleAutoCompleteTextView.this.getRecentKeywords.execute(null);
-                    String keywordContents = "";
-                    for (String keyword : keywords)
-                        keywordContents += keyword + ", ";
-                    Log.i(TAG, "Recent Keyword : " + keywordContents);
-
-                    new Handler().post(new Runnable() { // new Handler and Runnable
-                        @Override
-                        public void run() {
-                            setTitles(keywords);
-                        }
-                    });
+                if (hasFocus) {
+                    getRecentKeywords();
                 }
             }
         });
     }
 
+    private void getRecentKeywords() {
+        final List<String> keywords = BookTitleAutoCompleteTextView.this.getRecentKeywords.execute(null);
+        String keywordContents = "";
+        for (String keyword : keywords)
+            keywordContents += keyword + ", ";
+        Log.i(TAG, "Recent Keyword : " + keywordContents);
+
+        new Handler().postDelayed(new Runnable() { // new Handler and Runnable
+            @Override
+            public void run() {
+                setTitles(keywords);
+            }
+        }, 500);
+    }
+
     private void search(String keyword) {
         Log.i(TAG, "entered keyword = " + keyword + "\n search start");
         addRecentKeyword.execute(keyword);
+        Log.i(TAG, "addRecentKeyword = " + keyword);
         autoCompleteTextView.dismissDropDown();
         searchBooks.execute(keyword);
     }

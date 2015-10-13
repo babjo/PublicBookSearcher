@@ -1,4 +1,4 @@
-package com.seoul.publicbooksearcher.data.cache.keyword;
+package com.seoul.publicbooksearcher.data;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -14,7 +14,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecentSearchKeywordCache implements KeywordRepository{
+public class RecentSearchKeywordRepository implements KeywordRepository{
 
     private final static String DB_NAME = "book_cache_db";
     private final static String TABLE_NAME = "keyword_table";
@@ -22,7 +22,7 @@ public class RecentSearchKeywordCache implements KeywordRepository{
     private static SQLiteDatabase db = null;
     private static Context context;
 
-    public RecentSearchKeywordCache(Context context){
+    public RecentSearchKeywordRepository(Context context){
         this.context = context;
     }
 
@@ -54,13 +54,12 @@ public class RecentSearchKeywordCache implements KeywordRepository{
                 null, //where 절에 전달할 데이터
                 null, //group by
                 null, //having
-                null
+                "_ID DESC"
         );
 
         List<String> keywords = new ArrayList();
-        if(c.moveToFirst()) {
+        while(c.moveToNext())
             keywords.add(c.getString(c.getColumnIndex("KEYWORD")));
-        }
 
         return keywords;
     }
