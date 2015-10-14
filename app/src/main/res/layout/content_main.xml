@@ -40,14 +40,12 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:visibility="gone">
-        <com.pnikosis.materialishprogress.ProgressWheel
-            android:id="@+id/progress_wheel"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+        <ProgressBar
+            android:layout_width="57dp"
+            android:layout_height="57dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            wheel:matProg_barColor="#5588FF"
-            wheel:matProg_progressIndeterminate="true" />
+            />
     </RelativeLayout>
 
     <ListView
