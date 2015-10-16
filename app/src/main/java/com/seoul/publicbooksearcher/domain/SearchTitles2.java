@@ -8,27 +8,25 @@ import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchTitles implements UseCase <Void, String> {
+public class SearchTitles2 implements AsyncUseCase<String> {
 
-    private final static String TAG = SearchTitles.class.getName();
+    private final static String TAG = SearchTitles2.class.getName();
 
     private final BookRepository bookRepository;
-    private final AsyncUseCaseListener searchTitlesListener;
+    private AsyncUseCaseListener asyncUseCaseListener;
     private NaverAsyncTask naverAsyncTask;
 
-    public SearchTitles(AsyncUseCaseListener searchTitlesListener, BookRepository bookRepository){
-        this.searchTitlesListener = searchTitlesListener;
+    public SearchTitles2(BookRepository bookRepository){
         this.bookRepository = bookRepository;
     }
 
     @Override
-    public Void execute(String keyword) {
+    public void execute(String keyword, AsyncUseCaseListener asyncUseCaseListener) {
+        this.asyncUseCaseListener = asyncUseCaseListener;
         if(naverAsyncTask != null)
             naverAsyncTask.cancel(true);
         naverAsyncTask = new NaverAsyncTask();
         naverAsyncTask.execute(keyword);
-
-        return null;
     }
 
     private class NaverAsyncTask extends AsyncTask<String, Void, List<Book>> {
@@ -40,7 +38,7 @@ public class SearchTitles implements UseCase <Void, String> {
 
         @Override
         protected List<Book> doInBackground(String... params) {
-            return SearchTitles.this.bookRepository.selectByKeyword(params[0]);
+            return SearchTitles2.this.bookRepository.selectByKeyword(params[0]);
         }
 
         @Override
@@ -52,7 +50,7 @@ public class SearchTitles implements UseCase <Void, String> {
                 titles.add(book.getTitle());
             }
 
-            searchTitlesListener.onAfter(titles);
+            asyncUseCaseListener.onAfter(titles);
         }
     }
 }

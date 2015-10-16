@@ -17,14 +17,17 @@ import com.seoul.publicbooksearcher.domain.GetRecentKeywords;
 import com.seoul.publicbooksearcher.domain.SearchTitles;
 import com.seoul.publicbooksearcher.domain.UseCase;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
+import com.seoul.publicbooksearcher.presentation.presenter.BookPresenter;
 import com.seoul.publicbooksearcher.presentation.view.adapter.BookTitleAutoCompleteTextViewAdapter;
 
 import java.util.List;
 
-public class BookTitleAutoCompleteTextView implements AsyncUseCaseListener<Void, List<String>> {
+public class BookTitleAutoCompleteTextView2 implements AsyncUseCaseListener<Void, List<String>> {
 
     private final AddRecentKeyword addRecentKeyword;
     private final GetRecentKeywords getRecentKeywords;
+
+    private final BookPresenter bookPresenter;
 
     private Context context;
     private UseCase searchTitles;
@@ -33,9 +36,10 @@ public class BookTitleAutoCompleteTextView implements AsyncUseCaseListener<Void,
     private AutoCompleteTextView autoCompleteTextView;
 
     private BookTitleAutoCompleteTextViewAdapter bookTitleAutoCompleteTextViewAdapter;
-    private final static String TAG = BookTitleAutoCompleteTextView.class.getName();
+    private final static String TAG = BookTitleAutoCompleteTextView2.class.getName();
 
-    public BookTitleAutoCompleteTextView(Context context, final AutoCompleteTextView autoCompleteTextView) {
+    public BookTitleAutoCompleteTextView2(BookPresenter bookPresenter, Context context, final AutoCompleteTextView autoCompleteTextView) {
+        this.bookPresenter = bookPresenter;
         this.searchTitles = new SearchTitles(this, new NaverBookOpenApi());
 
         RecentSearchKeywordRepository keywordRepository = new RecentSearchKeywordRepository(context);
@@ -65,7 +69,7 @@ public class BookTitleAutoCompleteTextView implements AsyncUseCaseListener<Void,
                     getRecentKeywords();
                 }
                 else
-                    BookTitleAutoCompleteTextView.this.searchTitles.execute(s.toString().trim());
+                    BookTitleAutoCompleteTextView2.this.searchTitles.execute(s.toString().trim());
             }
         });
 
@@ -102,7 +106,7 @@ public class BookTitleAutoCompleteTextView implements AsyncUseCaseListener<Void,
     }
 
     private void getRecentKeywords() {
-        final List<String> keywords = BookTitleAutoCompleteTextView.this.getRecentKeywords.execute(null);
+        final List<String> keywords = BookTitleAutoCompleteTextView2.this.getRecentKeywords.execute(null);
         String keywordContents = "";
         for (String keyword : keywords)
             keywordContents += keyword + ", ";
