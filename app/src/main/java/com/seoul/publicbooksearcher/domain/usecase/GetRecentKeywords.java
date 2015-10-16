@@ -1,4 +1,4 @@
-package com.seoul.publicbooksearcher.domain;
+package com.seoul.publicbooksearcher.domain.usecase;
 
 import com.seoul.publicbooksearcher.data.KeywordRepository;
 

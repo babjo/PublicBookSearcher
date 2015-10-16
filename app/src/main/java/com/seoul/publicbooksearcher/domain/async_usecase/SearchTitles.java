@@ -1,34 +1,33 @@
-package com.seoul.publicbooksearcher.domain;
+package com.seoul.publicbooksearcher.domain.async_usecase;
 
 import android.os.AsyncTask;
 
 import com.seoul.publicbooksearcher.data.BookRepository;
+import com.seoul.publicbooksearcher.domain.Book;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchTitles implements UseCase <Void, String> {
+public class SearchTitles implements AsyncUseCase<String> {
 
     private final static String TAG = SearchTitles.class.getName();
 
     private final BookRepository bookRepository;
-    private final AsyncUseCaseListener searchTitlesListener;
+    private AsyncUseCaseListener asyncUseCaseListener;
     private NaverAsyncTask naverAsyncTask;
 
-    public SearchTitles(AsyncUseCaseListener searchTitlesListener, BookRepository bookRepository){
-        this.searchTitlesListener = searchTitlesListener;
+    public SearchTitles(BookRepository bookRepository){
         this.bookRepository = bookRepository;
     }
 
     @Override
-    public Void execute(String keyword) {
+    public void execute(String keyword, AsyncUseCaseListener asyncUseCaseListener) {
+        this.asyncUseCaseListener = asyncUseCaseListener;
         if(naverAsyncTask != null)
             naverAsyncTask.cancel(true);
         naverAsyncTask = new NaverAsyncTask();
         naverAsyncTask.execute(keyword);
-
-        return null;
     }
 
     private class NaverAsyncTask extends AsyncTask<String, Void, List<Book>> {
@@ -52,7 +51,7 @@ public class SearchTitles implements UseCase <Void, String> {
                 titles.add(book.getTitle());
             }
 
-            searchTitlesListener.onAfter(titles);
+            asyncUseCaseListener.onAfter(titles);
         }
     }
 }

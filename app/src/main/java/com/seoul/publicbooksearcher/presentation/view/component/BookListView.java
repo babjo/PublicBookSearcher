@@ -11,19 +11,16 @@ import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewAdapte
 
 import java.util.List;
 
-public class BookListView implements AsyncUseCaseListener<Void, List<Book>> {
+public class BookListView {
 
     private ListView bookListView = null;
-    private RelativeLayout progressBar = null;
 
     private BookListViewAdapter bookListViewAdapter = null;
-
     private Context context;
 
-    public BookListView(Context context, ListView listView, RelativeLayout progressBar){
+    public BookListView(Context context, ListView listView){
         this.context = context;
         this.bookListView = listView;
-        this.progressBar = progressBar;
 
         bookListViewAdapter = new BookListViewAdapter(context);
         bookListView.setAdapter(bookListViewAdapter);
@@ -32,32 +29,20 @@ public class BookListView implements AsyncUseCaseListener<Void, List<Book>> {
     public List<Book> getBooks(){
         return bookListViewAdapter.getItems();
     }
-
     public void setBooks(List<Book> books){
         bookListViewAdapter.setItems(books);
     }
 
-
-    private void hideKeyboard() {
+    public void hideKeyboard() {
         InputMethodManager mgr = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         mgr.hideSoftInputFromWindow(bookListView.getWindowToken(), 0);
     }
 
-    @Override
-    public void onBefore(Void Void) {
-        hideKeyboard();
-        progressBar.setVisibility(RelativeLayout.VISIBLE);
+    public void clear() {
         bookListViewAdapter.clear();
     }
 
-    @Override
-    public void onAfter(List<Book> afterArg) {
-        progressBar.setVisibility(RelativeLayout.GONE);
-        bookListViewAdapter.AddAll(afterArg);
-    }
-
-    @Override
-    public void onError(Exception e) {
-
+    public void addAll(List<Book> books) {
+        bookListViewAdapter.addAll(books);
     }
 }

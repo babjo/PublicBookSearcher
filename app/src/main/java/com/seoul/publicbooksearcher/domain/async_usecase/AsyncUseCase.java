@@ -1,4 +1,4 @@
-package com.seoul.publicbooksearcher.domain;
+package com.seoul.publicbooksearcher.domain.async_usecase;
 
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
 

@@ -14,10 +14,23 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.seoul.publicbooksearcher.R;
+import com.seoul.publicbooksearcher.data.RecentSearchKeywordRepository;
+import com.seoul.publicbooksearcher.data.cache.book.GdBookCache;
+import com.seoul.publicbooksearcher.data.cache.book.SeoulBookCache;
+import com.seoul.publicbooksearcher.data.crawler.GdLibrary;
+import com.seoul.publicbooksearcher.data.crawler.SeoulLibrary;
+import com.seoul.publicbooksearcher.data.open_api.NaverBookOpenApi;
 import com.seoul.publicbooksearcher.domain.Book;
-import com.seoul.publicbooksearcher.domain.SearchBooks;
+import com.seoul.publicbooksearcher.domain.async_usecase.AsyncUseCase;
+import com.seoul.publicbooksearcher.domain.async_usecase.SearchBooks;
+import com.seoul.publicbooksearcher.domain.async_usecase.SearchTitles;
+import com.seoul.publicbooksearcher.domain.usecase.AddRecentKeyword;
+import com.seoul.publicbooksearcher.domain.usecase.GetRecentKeywords;
+import com.seoul.publicbooksearcher.domain.usecase.UseCase;
+import com.seoul.publicbooksearcher.presentation.presenter.BookPresenter;
 import com.seoul.publicbooksearcher.presentation.view.component.BookListView;
 import com.seoul.publicbooksearcher.presentation.view.component.BookTitleAutoCompleteTextView;
+import com.seoul.publicbooksearcher.presentation.view.component.ProgressBarView;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -35,15 +48,23 @@ public class MainActivity extends AppCompatActivity{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        UseCase getRecentKeywords = new GetRecentKeywords(new RecentSearchKeywordRepository(this));
+        UseCase addRecentKeyword = new AddRecentKeyword(new RecentSearchKeywordRepository(this));
+        AsyncUseCase searchBooks = new SearchBooks(new GdLibrary(new GdBookCache(this)), new SeoulLibrary(new SeoulBookCache(this)));
+        AsyncUseCase searchTitles = new SearchTitles(new NaverBookOpenApi());
+
+        BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView2 = new BookTitleAutoCompleteTextView(this, (AutoCompleteTextView) findViewById(R.id.auto_edit));
+
         ListView listView = (ListView) findViewById(R.id.book_list);
         listView.setEmptyView(findViewById(R.id.empty_txt));
-
-        bookListView = new BookListView(this, listView, (RelativeLayout)findViewById(R.id.google_progress));
-
+        bookListView = new BookListView(this, listView);
         setBooksIfBooksExist(savedInstanceState);
 
-        BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView = new BookTitleAutoCompleteTextView(this, (AutoCompleteTextView) findViewById(R.id.auto_edit));
-        bookTitleAutoCompleteTextView.setSearchBooks(new SearchBooks(this, bookListView, bookTitleAutoCompleteTextView));
+        ProgressBarView progressBarView = new ProgressBarView((RelativeLayout)findViewById(R.id.google_progress));
+
+        BookPresenter bookPresenter = new BookPresenter(getRecentKeywords, addRecentKeyword, searchBooks, searchTitles, bookTitleAutoCompleteTextView2, bookListView, progressBarView);
+
+        bookTitleAutoCompleteTextView2.setBookPresenter(bookPresenter);
     }
 
     private void setBooksIfBooksExist(Bundle savedInstanceState) {

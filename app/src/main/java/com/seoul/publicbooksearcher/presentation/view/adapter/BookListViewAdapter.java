@@ -100,7 +100,7 @@ public class BookListViewAdapter extends BaseAdapter {
         clearAndAddAll(books);
     }
 
-    public void AddAll(List<Book> books) {
+    public void addAll(List<Book> books) {
         this.books.addAll(books);
         notifyDataSetChanged();
     }
