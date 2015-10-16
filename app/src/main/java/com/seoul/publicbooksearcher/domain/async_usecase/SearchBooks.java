@@ -6,6 +6,8 @@ import com.seoul.publicbooksearcher.data.BookRepository;
 import com.seoul.publicbooksearcher.domain.Book;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class SearchBooks implements AsyncUseCase<String> {
@@ -24,12 +26,44 @@ public class SearchBooks implements AsyncUseCase<String> {
     public void execute(String keyword, AsyncUseCaseListener asyncUseCaseListener) {
         this.asyncUseCaseListener = asyncUseCaseListener;
         try {
+
             new GdLibraryAsyncTask().execute(keyword);
             new SeoulLibraryAsyncTask().execute(keyword);
+            //new LibraryAsyncTask().execute(keyword);
         }catch (Exception e){
             asyncUseCaseListener.onError(e);
         }
     }
+
+    /*
+    private class LibraryAsyncTask extends AsyncTask<String, Void, List<Book>> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            asyncUseCaseListener.onBefore(null);
+        }
+
+        @Override
+        protected  List<Book> doInBackground(String... params){
+            List<Book> books = gdLibrary.selectByKeyword(params[0]);
+            books.addAll(seoulLibrary.selectByKeyword(params[0]));
+            Collections.sort(books, new Comparator<Book>() {
+                @Override
+                public int compare(Book lhs, Book rhs) {
+                    return 0;
+                }
+            });
+            return books;
+        }
+
+        @Override
+        protected void onPostExecute(List<Book> books) {
+            super.onPostExecute(books);
+            asyncUseCaseListener.onAfter(books);
+        }
+    }*/
+
+
 
     private abstract class LibraryAsyncTask extends AsyncTask<String, Void, List<Book>> {
         @Override
