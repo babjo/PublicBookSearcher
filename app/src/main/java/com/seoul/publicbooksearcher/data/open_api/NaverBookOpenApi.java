@@ -58,11 +58,14 @@ public class NaverBookOpenApi implements BookRepository {
                 }
             }
         } catch (SAXException e) {
-            e.printStackTrace();
+            throw new RuntimeException(TAG+" : SAXException");
+            //e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(TAG+" : IOException");
+            //e.printStackTrace();
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            throw new RuntimeException(TAG+": ParserConfigurationException");
+            //e.printStackTrace();
         }
 
         return books;

@@ -24,10 +24,14 @@ public class SearchTitles implements AsyncUseCase<String> {
     @Override
     public void execute(String keyword, AsyncUseCaseListener asyncUseCaseListener) {
         this.asyncUseCaseListener = asyncUseCaseListener;
-        if(naverAsyncTask != null)
-            naverAsyncTask.cancel(true);
-        naverAsyncTask = new NaverAsyncTask();
-        naverAsyncTask.execute(keyword);
+        try {
+            if(naverAsyncTask != null)
+                naverAsyncTask.cancel(true);
+            naverAsyncTask = new NaverAsyncTask();
+            naverAsyncTask.execute(keyword);
+        }catch (Exception e){
+            asyncUseCaseListener.onError(e);
+        }
     }
 
     private class NaverAsyncTask extends AsyncTask<String, Void, List<Book>> {

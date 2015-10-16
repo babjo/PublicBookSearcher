@@ -23,19 +23,20 @@ public class BookPresenter {
     private final AsyncUseCase searchBooks;
     private final AsyncUseCase searchTitles;
 
-    private final BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView2;
-    private final BookListView bookListView2;
+    private final BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView;
+    private final BookListView bookListView;
     private final ProgressBarView progressBarView;
 
-    public BookPresenter(UseCase getRecentKeywords, UseCase addRecentKeyword, AsyncUseCase searchBooks, AsyncUseCase searchTitles, BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView2, BookListView bookListView2, ProgressBarView progressBarView) {
+    public BookPresenter(UseCase getRecentKeywords, UseCase addRecentKeyword, AsyncUseCase searchBooks, AsyncUseCase searchTitles,
+                         BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView, BookListView bookListView, ProgressBarView progressBarView) {
 
         this.getRecentKeywords = getRecentKeywords;
         this.addRecentKeyword = addRecentKeyword;
         this.searchBooks = searchBooks;
         this.searchTitles = searchTitles;
 
-        this.bookTitleAutoCompleteTextView2 = bookTitleAutoCompleteTextView2;
-        this.bookListView2 = bookListView2;
+        this.bookTitleAutoCompleteTextView = bookTitleAutoCompleteTextView;
+        this.bookListView = bookListView;
         this.progressBarView = progressBarView;
     }
 
@@ -50,9 +51,9 @@ public class BookPresenter {
         new Handler().postDelayed(new Runnable() { // new Handler and Runnable
             @Override
             public void run() {
-                BookPresenter.this.bookTitleAutoCompleteTextView2.setTitles(keywords);
+                BookPresenter.this.bookTitleAutoCompleteTextView.setTitles(keywords);
             }
-        }, 500);
+        }, 700);
 
     }
 
@@ -64,7 +65,7 @@ public class BookPresenter {
             @Override
             public void onAfter(List<String> afterArg) {
                 Log.i("UPDATE", "3");
-                bookTitleAutoCompleteTextView2.setTitles(afterArg);
+                bookTitleAutoCompleteTextView.setTitles(afterArg);
             }
 
             @Override
@@ -80,17 +81,17 @@ public class BookPresenter {
         searchBooks.execute(keyword, new AsyncUseCaseListener<Void, List<Book>>() {
             @Override
             public void onBefore(Void Void) {
-                bookTitleAutoCompleteTextView2.dismissDropDown();
-                bookListView2.hideKeyboard();
+                bookTitleAutoCompleteTextView.dismissDropDown();
+                bookListView.hideKeyboard();
 
                 progressBarView.visible();
-                bookListView2.clear();
+                bookListView.clear();
             }
 
             @Override
             public void onAfter(List<Book> books) {
                 progressBarView.gone();
-                bookListView2.addAll(books);
+                bookListView.addAll(books);
             }
 
             @Override

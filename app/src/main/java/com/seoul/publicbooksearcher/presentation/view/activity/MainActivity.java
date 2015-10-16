@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
@@ -48,11 +49,13 @@ public class MainActivity extends AppCompatActivity{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Log.i(TAG, "=================================== Create UseCase ======================================");
         UseCase getRecentKeywords = new GetRecentKeywords(new RecentSearchKeywordRepository(this));
         UseCase addRecentKeyword = new AddRecentKeyword(new RecentSearchKeywordRepository(this));
         AsyncUseCase searchBooks = new SearchBooks(new GdLibrary(new GdBookCache(this)), new SeoulLibrary(new SeoulBookCache(this)));
         AsyncUseCase searchTitles = new SearchTitles(new NaverBookOpenApi());
 
+        Log.i(TAG, "=================================== Create View ==========================================");
         BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView2 = new BookTitleAutoCompleteTextView(this, (AutoCompleteTextView) findViewById(R.id.auto_edit));
 
         ListView listView = (ListView) findViewById(R.id.book_list);
@@ -62,6 +65,7 @@ public class MainActivity extends AppCompatActivity{
 
         ProgressBarView progressBarView = new ProgressBarView((RelativeLayout)findViewById(R.id.google_progress));
 
+        Log.i(TAG, "=================================== Create Presenter =====================================");
         BookPresenter bookPresenter = new BookPresenter(getRecentKeywords, addRecentKeyword, searchBooks, searchTitles, bookTitleAutoCompleteTextView2, bookListView, progressBarView);
 
         bookTitleAutoCompleteTextView2.setBookPresenter(bookPresenter);

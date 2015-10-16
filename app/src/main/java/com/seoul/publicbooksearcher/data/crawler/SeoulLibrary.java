@@ -39,7 +39,8 @@ public class SeoulLibrary implements BookRepository {
                     book.setStatusCode(getBookState(book.getBookId(), book.getLocationCode(), book.getCallNumber()));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(TAG+" : IOException");
+            //e.printStackTrace();
         }
 
         return books;

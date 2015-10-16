@@ -36,7 +36,8 @@ public class GdLibrary implements BookRepository {
                     book.setStatusCode(getBookState(book.getBookId()));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(TAG+" : IOException");
+            //e.printStackTrace();
         }
 
         return books;

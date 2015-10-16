@@ -23,8 +23,12 @@ public class SearchBooks implements AsyncUseCase<String> {
     @Override
     public void execute(String keyword, AsyncUseCaseListener asyncUseCaseListener) {
         this.asyncUseCaseListener = asyncUseCaseListener;
-        new GdLibraryAsyncTask().execute(keyword);
-        new SeoulLibraryAsyncTask().execute(keyword);
+        try {
+            new GdLibraryAsyncTask().execute(keyword);
+            new SeoulLibraryAsyncTask().execute(keyword);
+        }catch (Exception e){
+            asyncUseCaseListener.onError(e);
+        }
     }
 
     private abstract class LibraryAsyncTask extends AsyncTask<String, Void, List<Book>> {
