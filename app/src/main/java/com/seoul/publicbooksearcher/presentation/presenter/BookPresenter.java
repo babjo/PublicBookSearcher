@@ -1,5 +1,8 @@
 package com.seoul.publicbooksearcher.presentation.presenter;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.util.Log;
 
@@ -17,7 +20,10 @@ import java.util.List;
 public class BookPresenter {
 
     private final static String TAG = BookPresenter.class.getName();
+    public static final String NOT_ONLINE_MSG = "인터넷 연결이 ㅜ ㅜ";
+    public static final String NO_RESULT_MSG = "검색 결과 없음";
 
+    private final UseCase isOnline;
     private final UseCase getRecentKeywords;
     private final UseCase addRecentKeyword;
     private final AsyncUseCase searchBooks;
@@ -27,17 +33,23 @@ public class BookPresenter {
     private final BookListView bookListView;
     private final ProgressBarView progressBarView;
 
-    public BookPresenter(UseCase getRecentKeywords, UseCase addRecentKeyword, AsyncUseCase searchBooks, AsyncUseCase searchTitles,
+    public BookPresenter(UseCase isOnline, UseCase getRecentKeywords, UseCase addRecentKeyword, AsyncUseCase searchBooks, AsyncUseCase searchTitles,
                          BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView, BookListView bookListView, ProgressBarView progressBarView) {
 
+        // use_case
+        this.isOnline = isOnline;
         this.getRecentKeywords = getRecentKeywords;
         this.addRecentKeyword = addRecentKeyword;
         this.searchBooks = searchBooks;
         this.searchTitles = searchTitles;
 
+        // view
         this.bookTitleAutoCompleteTextView = bookTitleAutoCompleteTextView;
         this.bookListView = bookListView;
         this.progressBarView = progressBarView;
+
+        if(!isOnline())
+            bookListView.showStateMsg(NOT_ONLINE_MSG);
     }
 
     public void getRecentKeywords() {
@@ -54,48 +66,69 @@ public class BookPresenter {
                 BookPresenter.this.bookTitleAutoCompleteTextView.setTitles(keywords);
             }
         }, 700);
-
     }
 
     public void searchTitles(String keyword){
-        searchTitles.execute(keyword, new AsyncUseCaseListener<Void, List<String>>() {
-            @Override
-            public void onBefore(Void beforeArgs) {}
+        if(isOnline()) {
+            searchTitles.execute(keyword, new AsyncUseCaseListener<Void, List<String>>() {
+                @Override
+                public void onBefore(Void beforeArgs) {
+                }
 
-            @Override
-            public void onAfter(List<String> afterArg) {
-                Log.i("UPDATE", "3");
-                bookTitleAutoCompleteTextView.setTitles(afterArg);
-            }
+                @Override
+                public void onAfter(List<String> afterArg) {
+                    Log.i("UPDATE", "3");
+                    bookTitleAutoCompleteTextView.setTitles(afterArg);
+                }
 
-            @Override
-            public void onError(Exception e) {}
-        });
+                @Override
+                public void onError(Exception e) {
+                }
+            });
+        }else{
+            bookListView.showStateMsg(NOT_ONLINE_MSG);
+        }
     }
 
     public void searchBooks(String keyword) {
-        Log.i(TAG, "entered keyword = " + keyword + "\n search start");
-        addRecentKeyword.execute(keyword);
-        Log.i(TAG, "addRecentKeyword = " + keyword);
+        if(isOnline()) {
 
-        searchBooks.execute(keyword, new AsyncUseCaseListener<Void, List<Book>>() {
-            @Override
-            public void onBefore(Void Void) {
-                bookTitleAutoCompleteTextView.dismissDropDown();
-                bookListView.hideKeyboard();
+            Log.i(TAG, "entered keyword = " + keyword + "\n search start");
+            addRecentKeyword.execute(keyword);
+            Log.i(TAG, "addRecentKeyword = " + keyword);
 
-                progressBarView.visible();
-                bookListView.clear();
-            }
+            searchBooks.execute(keyword, new AsyncUseCaseListener<Void, List<Book>>() {
+                @Override
+                public void onBefore(Void Void) {
+                    bookTitleAutoCompleteTextView.dismissDropDown();
+                    bookTitleAutoCompleteTextView.clearFocus();
+                    bookListView.hideKeyboard();
 
-            @Override
-            public void onAfter(List<Book> books) {
-                progressBarView.gone();
-                bookListView.addAll(books);
-            }
+                    progressBarView.visible();
+                    bookListView.clear();
+                }
 
-            @Override
-            public void onError(Exception e) {}
-        });
+                @Override
+                public void onAfter(List<Book> books) {
+                    progressBarView.gone();
+                    bookListView.addAll(books);
+                    if(books.isEmpty()) {
+                        bookListView.showStateMsg(NO_RESULT_MSG);
+                    }else{
+                        bookListView.showList();
+                    }
+                }
+
+                @Override
+                public void onError(Exception e) {
+                }
+            });
+        }else{
+            bookListView.showStateMsg(NOT_ONLINE_MSG);
+        }
+    }
+
+    private boolean isOnline(){
+        return (boolean) isOnline.execute(null);
     }
 }

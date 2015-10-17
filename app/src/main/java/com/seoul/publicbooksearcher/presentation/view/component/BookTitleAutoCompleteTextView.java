@@ -82,6 +82,7 @@ public class BookTitleAutoCompleteTextView {
 
     public void setTitles(List<String> titles){ this.bookTitleAutoCompleteTextViewAdapter.setTitles(titles); }
     public void dismissDropDown() { autoCompleteTextView.dismissDropDown(); }
+    public void clearFocus(){ autoCompleteTextView.clearFocus(); }
     private String getText() {
         return autoCompleteTextView.getText().toString();
     }

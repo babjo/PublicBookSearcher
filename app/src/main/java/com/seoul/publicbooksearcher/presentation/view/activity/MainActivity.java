@@ -1,6 +1,9 @@
 package com.seoul.publicbooksearcher.presentation.view.activity;
 
 import android.app.Activity;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -28,6 +32,7 @@ import com.seoul.publicbooksearcher.domain.async_usecase.SearchBooks;
 import com.seoul.publicbooksearcher.domain.async_usecase.SearchTitles;
 import com.seoul.publicbooksearcher.domain.usecase.AddRecentKeyword;
 import com.seoul.publicbooksearcher.domain.usecase.GetRecentKeywords;
+import com.seoul.publicbooksearcher.domain.usecase.IsOnline;
 import com.seoul.publicbooksearcher.domain.usecase.UseCase;
 import com.seoul.publicbooksearcher.presentation.presenter.BookPresenter;
 import com.seoul.publicbooksearcher.presentation.view.component.BookListView;
@@ -51,6 +56,7 @@ public class MainActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
 
         Log.i(TAG, "=================================== Create UseCase ======================================");
+        UseCase isOnline = new IsOnline(this);
         UseCase getRecentKeywords = new GetRecentKeywords(new RecentSearchKeywordRepository(this));
         UseCase addRecentKeyword = new AddRecentKeyword(new RecentSearchKeywordRepository(this));
         AsyncUseCase searchBooks = new SearchBooks(new GdLibrary(new GdBookCache(this)), new SeoulLibrary(new SeoulBookCache(this)));
@@ -62,13 +68,13 @@ public class MainActivity extends AppCompatActivity{
         RecyclerView listView = (RecyclerView) findViewById(R.id.book_list);
         listView.setHasFixedSize(true);
         listView.setLayoutManager(new LinearLayoutManager(this));
-        bookListView = new BookListView(this, listView);
+        bookListView = new BookListView(this, listView, (TextView) findViewById(R.id.empty_txt));
         setBooksIfBooksExist(savedInstanceState);
 
         ProgressBarView progressBarView = new ProgressBarView((RelativeLayout)findViewById(R.id.google_progress));
 
         Log.i(TAG, "=================================== Create Presenter =====================================");
-        BookPresenter bookPresenter = new BookPresenter(getRecentKeywords, addRecentKeyword, searchBooks, searchTitles, bookTitleAutoCompleteTextView, bookListView, progressBarView);
+        BookPresenter bookPresenter = new BookPresenter(isOnline, getRecentKeywords, addRecentKeyword, searchBooks, searchTitles, bookTitleAutoCompleteTextView, bookListView, progressBarView);
 
         bookTitleAutoCompleteTextView.setBookPresenter(bookPresenter);
     }
@@ -80,6 +86,12 @@ public class MainActivity extends AppCompatActivity{
             List<Book> books = gson.fromJson(savedInstanceState.getString("books"), type);
             bookListView.setBooks(books);
         }
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
     @Override

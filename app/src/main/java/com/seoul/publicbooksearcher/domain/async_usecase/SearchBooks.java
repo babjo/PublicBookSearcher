@@ -26,7 +26,6 @@ public class SearchBooks implements AsyncUseCase<String> {
     public void execute(String keyword, AsyncUseCaseListener asyncUseCaseListener) {
         this.asyncUseCaseListener = asyncUseCaseListener;
         try {
-
             new GdLibraryAsyncTask().execute(keyword);
             new SeoulLibraryAsyncTask().execute(keyword);
             //new LibraryAsyncTask().execute(keyword);
