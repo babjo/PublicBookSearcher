@@ -3,12 +3,13 @@ package com.seoul.publicbooksearcher.presentation.view.activity;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -56,19 +57,20 @@ public class MainActivity extends AppCompatActivity{
         AsyncUseCase searchTitles = new SearchTitles(new NaverBookOpenApi());
 
         Log.i(TAG, "=================================== Create View ==========================================");
-        BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView2 = new BookTitleAutoCompleteTextView(this, (AutoCompleteTextView) findViewById(R.id.auto_edit));
+        BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView = new BookTitleAutoCompleteTextView(this, (AutoCompleteTextView) findViewById(R.id.auto_edit));
 
-        ListView listView = (ListView) findViewById(R.id.book_list);
-        listView.setEmptyView(findViewById(R.id.empty_txt));
+        RecyclerView listView = (RecyclerView) findViewById(R.id.book_list);
+        listView.setHasFixedSize(true);
+        listView.setLayoutManager(new LinearLayoutManager(this));
         bookListView = new BookListView(this, listView);
         setBooksIfBooksExist(savedInstanceState);
 
         ProgressBarView progressBarView = new ProgressBarView((RelativeLayout)findViewById(R.id.google_progress));
 
         Log.i(TAG, "=================================== Create Presenter =====================================");
-        BookPresenter bookPresenter = new BookPresenter(getRecentKeywords, addRecentKeyword, searchBooks, searchTitles, bookTitleAutoCompleteTextView2, bookListView, progressBarView);
+        BookPresenter bookPresenter = new BookPresenter(getRecentKeywords, addRecentKeyword, searchBooks, searchTitles, bookTitleAutoCompleteTextView, bookListView, progressBarView);
 
-        bookTitleAutoCompleteTextView2.setBookPresenter(bookPresenter);
+        bookTitleAutoCompleteTextView.setBookPresenter(bookPresenter);
     }
 
     private void setBooksIfBooksExist(Bundle savedInstanceState) {
