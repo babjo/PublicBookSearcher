@@ -1,6 +1,7 @@
 package com.seoul.publicbooksearcher.data;
 
 import com.seoul.publicbooksearcher.domain.Book;
+import com.seoul.publicbooksearcher.domain.Library;
 
 import java.util.List;
 

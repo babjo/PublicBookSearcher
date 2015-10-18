@@ -1,14 +1,10 @@
 package com.seoul.publicbooksearcher.presentation.presenter;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Handler;
 import android.util.Log;
 
-
+import com.seoul.publicbooksearcher.domain.Library;
 import com.seoul.publicbooksearcher.domain.async_usecase.AsyncUseCase;
-import com.seoul.publicbooksearcher.domain.Book;
 import com.seoul.publicbooksearcher.domain.usecase.UseCase;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
 import com.seoul.publicbooksearcher.presentation.view.component.BookListView;
@@ -97,7 +93,7 @@ public class BookPresenter {
             addRecentKeyword.execute(keyword);
             Log.i(TAG, "addRecentKeyword = " + keyword);
 
-            searchBooks.execute(keyword, new AsyncUseCaseListener<Void, List<Book>>() {
+            searchBooks.execute(keyword, new AsyncUseCaseListener<Void, List<Library>>() {
                 @Override
                 public void onBefore(Void Void) {
                     bookTitleAutoCompleteTextView.dismissDropDown();
@@ -109,10 +105,10 @@ public class BookPresenter {
                 }
 
                 @Override
-                public void onAfter(List<Book> books) {
+                public void onAfter(List<Library> libraries) {
                     progressBarView.gone();
-                    bookListView.addAll(books);
-                    if(books.isEmpty()) {
+                    bookListView.setBooks(libraries);
+                    if(libraries.isEmpty()) {
                         bookListView.showStateMsg(NO_RESULT_MSG);
                     }else{
                         bookListView.showList();

@@ -27,6 +27,7 @@ import com.seoul.publicbooksearcher.data.crawler.GdLibrary;
 import com.seoul.publicbooksearcher.data.crawler.SeoulLibrary;
 import com.seoul.publicbooksearcher.data.open_api.NaverBookOpenApi;
 import com.seoul.publicbooksearcher.domain.Book;
+import com.seoul.publicbooksearcher.domain.Library;
 import com.seoul.publicbooksearcher.domain.async_usecase.AsyncUseCase;
 import com.seoul.publicbooksearcher.domain.async_usecase.SearchBooks;
 import com.seoul.publicbooksearcher.domain.async_usecase.SearchTitles;
@@ -35,6 +36,7 @@ import com.seoul.publicbooksearcher.domain.usecase.GetRecentKeywords;
 import com.seoul.publicbooksearcher.domain.usecase.IsOnline;
 import com.seoul.publicbooksearcher.domain.usecase.UseCase;
 import com.seoul.publicbooksearcher.presentation.presenter.BookPresenter;
+import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewAdapter;
 import com.seoul.publicbooksearcher.presentation.view.component.BookListView;
 import com.seoul.publicbooksearcher.presentation.view.component.BookTitleAutoCompleteTextView;
 import com.seoul.publicbooksearcher.presentation.view.component.ProgressBarView;
@@ -46,7 +48,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity{
 
     private final static String TAG = MainActivity.class.getName();
-    private BookListView bookListView;
+    //private BookListView bookListView;
+    private RecyclerView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,11 +68,14 @@ public class MainActivity extends AppCompatActivity{
         Log.i(TAG, "=================================== Create View ==========================================");
         BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView = new BookTitleAutoCompleteTextView(this, (AutoCompleteTextView) findViewById(R.id.auto_edit));
 
-        RecyclerView listView = (RecyclerView) findViewById(R.id.book_list);
+        listView = (RecyclerView) findViewById(R.id.book_list);
         listView.setHasFixedSize(true);
         listView.setLayoutManager(new LinearLayoutManager(this));
-        bookListView = new BookListView(this, listView, (TextView) findViewById(R.id.empty_txt));
-        setBooksIfBooksExist(savedInstanceState);
+        BookListViewAdapter bookListViewAdapter = new BookListViewAdapter(this, new ArrayList<Library>());
+        bookListViewAdapter.onRestoreInstanceState(savedInstanceState);
+        listView.setAdapter(bookListViewAdapter);
+        BookListView bookListView = new BookListView(this, listView, (TextView) findViewById(R.id.empty_txt));
+
 
         ProgressBarView progressBarView = new ProgressBarView((RelativeLayout)findViewById(R.id.google_progress));
 
@@ -77,15 +83,6 @@ public class MainActivity extends AppCompatActivity{
         BookPresenter bookPresenter = new BookPresenter(isOnline, getRecentKeywords, addRecentKeyword, searchBooks, searchTitles, bookTitleAutoCompleteTextView, bookListView, progressBarView);
 
         bookTitleAutoCompleteTextView.setBookPresenter(bookPresenter);
-    }
-
-    private void setBooksIfBooksExist(Bundle savedInstanceState) {
-        if(savedInstanceState != null && savedInstanceState.containsKey("books")){
-            Gson gson = new Gson();
-            Type type = new TypeToken<ArrayList<Book>>(){}.getType();
-            List<Book> books = gson.fromJson(savedInstanceState.getString("books"), type);
-            bookListView.setBooks(books);
-        }
     }
 
     public boolean isOnline() {
@@ -118,12 +115,8 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        List<Book> books = bookListView.getBooks();
-        Gson gson = new Gson();
-        if(books.size() != 0)
-            outState.putString("books", gson.toJson(books));
-
         super.onSaveInstanceState(outState);
+        ((BookListViewAdapter) listView.getAdapter()).onSaveInstanceState(outState);
     }
 
     @Override

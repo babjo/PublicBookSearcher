@@ -1,66 +1,88 @@
 package com.seoul.publicbooksearcher.presentation.view.adapter;
 
 
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.support.v7.widget.RecyclerView;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bignerdranch.expandablerecyclerview.Adapter.ExpandableRecyclerAdapter;
+import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
+import com.bignerdranch.expandablerecyclerview.ViewHolder.ChildViewHolder;
+import com.bignerdranch.expandablerecyclerview.ViewHolder.ParentViewHolder;
 import com.seoul.publicbooksearcher.R;
 import com.seoul.publicbooksearcher.domain.Book;
+import com.seoul.publicbooksearcher.domain.Library;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class BookListViewAdapter extends RecyclerView.Adapter<BookListViewAdapter.ViewHolder> {
+public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewAdapter.BookParentViewHolder, BookListViewAdapter.BookChildViewHolder> {
 
-    private List<Book> books = new ArrayList();
+    private LayoutInflater mInflater;
 
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.book_listview_item_row, parent, false);
-        ViewHolder viewHolder = new ViewHolder(view);
-        return viewHolder;
+    public BookListViewAdapter(Context context, List<Library> itemList) {
+        super(itemList);
+        mInflater = LayoutInflater.from(context);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        Book book = books.get(position);
+    public BookParentViewHolder onCreateParentViewHolder(ViewGroup viewGroup) {
+        View view = mInflater.inflate(R.layout.book_listview_parent_item, viewGroup, false);
+        return new BookParentViewHolder(view);
+    }
 
-        holder.library.setText(book.getLibrary());
-        holder.title.setText(book.getTitle());
-        holder.callNumber.setText(book.getCallNumber());
-        holder.location.setText(book.getLocation());
+    @Override
+    public BookChildViewHolder onCreateChildViewHolder(ViewGroup viewGroup) {
+        View view = mInflater.inflate(R.layout.book_listview_child_item, viewGroup, false);
+        return new BookChildViewHolder(view);
+    }
+
+    @Override
+    public void onBindParentViewHolder(BookParentViewHolder bookParentViewHolder, int i, ParentListItem parentListItem) {
+        Library library = (Library) parentListItem;
+        bookParentViewHolder.library2.setText(library.getName());
+    }
+
+    @Override
+    public void onBindChildViewHolder(BookChildViewHolder bookChildViewHolder, int position, Object o) {
+        Book book = (Book)o;
+
+        bookChildViewHolder.library.setText(book.getLibrary());
+        bookChildViewHolder.title.setText(book.getTitle());
+        bookChildViewHolder.callNumber.setText(book.getCallNumber());
+        bookChildViewHolder.location.setText(book.getLocation());
 
         switch (book.getStatusCode()){
             case 1:
-                holder.status.setBackgroundResource(R.color.flatGreen);
+                bookChildViewHolder.status.setBackgroundResource(R.color.flatGreen);
                 break;
             case 2:
-                holder.status.setBackgroundResource(R.color.flatRed);
+                bookChildViewHolder.status.setBackgroundResource(R.color.flatRed);
                 break;
             case 3:
-                holder.status.setBackgroundResource(R.color.flatYellow);
+                bookChildViewHolder.status.setBackgroundResource(R.color.flatYellow);
                 break;
         }
     }
 
-    @Override
-    public int getItemCount() {
-        return books.size();
+    public class BookParentViewHolder extends ParentViewHolder {
+        public TextView library2;
+
+        public BookParentViewHolder(View v) {
+            super(v);
+            library2 = (TextView) v.findViewById(R.id.book_library2);
+        }
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class BookChildViewHolder extends ChildViewHolder {
         public TextView library;
         public TextView title;
         public TextView status;
         public TextView location;
         public TextView callNumber;
 
-        public ViewHolder(View v) {
+        public BookChildViewHolder(View v) {
             super(v);
             library = (TextView) v.findViewById(R.id.book_library);
             title = (TextView) v.findViewById(R.id.book_title);
@@ -68,29 +90,5 @@ public class BookListViewAdapter extends RecyclerView.Adapter<BookListViewAdapte
             location = (TextView) v.findViewById(R.id.book_location);
             callNumber = (TextView) v.findViewById(R.id.book_callNumber);
         }
-    }
-
-    public void clearAndAddAll(List<Book> books){
-        this.books.clear();
-        this.books.addAll(books);
-        notifyDataSetChanged();
-    }
-
-    public void clear() {
-        this.books.clear();
-        notifyDataSetChanged();
-    }
-
-    public List<Book> getItems(){
-        return books;
-    }
-
-    public void setItems(List<Book> books) {
-        clearAndAddAll(books);
-    }
-
-    public void addAll(List<Book> books) {
-        this.books.addAll(books);
-        notifyDataSetChanged();
     }
 }

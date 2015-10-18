@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
-import com.seoul.publicbooksearcher.domain.Book;
+import com.seoul.publicbooksearcher.domain.Library;
 import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewAdapter;
 
 import java.util.List;
@@ -15,8 +15,6 @@ public class BookListView {
 
     private RecyclerView bookListView = null;
     private TextView stateView = null;
-
-    private BookListViewAdapter bookListViewAdapter = null;
     private Context context;
 
     public BookListView(Context context, RecyclerView listView, TextView stateView){
@@ -24,15 +22,11 @@ public class BookListView {
         this.bookListView = listView;
         this.stateView = stateView;
 
-        bookListViewAdapter = new BookListViewAdapter();
-        bookListView.setAdapter(bookListViewAdapter);
+        bookListView.setAdapter(null);
     }
 
-    public List<Book> getBooks(){
-        return bookListViewAdapter.getItems();
-    }
-    public void setBooks(List<Book> books){
-        bookListViewAdapter.setItems(books);
+    public void setBooks(List<Library> books){
+        bookListView.setAdapter(new BookListViewAdapter(context, books));
     }
 
     public void hideKeyboard() {
@@ -41,11 +35,7 @@ public class BookListView {
     }
 
     public void clear() {
-        bookListViewAdapter.clear();
-    }
-
-    public void addAll(List<Book> books) {
-        bookListViewAdapter.addAll(books);
+        bookListView.setAdapter(null);
     }
 
     public void showStateMsg(String msg) {
