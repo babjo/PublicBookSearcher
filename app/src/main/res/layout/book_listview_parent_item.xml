@@ -1,16 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="horizontal" android:layout_width="match_parent"
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:layout_height="match_parent">
 
-    <TextView
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_vertical">
+
+        <TextView
             android:id="@+id/book_library2"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:padding="16dp"
+            android:padding = "5dp"
             android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="@android:color/black"
             android:text="도서관 이름" />
 
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/book_state_1"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding = "5dp"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:text="대출가능" />
+            <TextView
+                android:id="@+id/book_state_2"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding = "5dp"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:text="대출중" />
+            <TextView
+                android:id="@+id/book_state_3"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding = "5dp"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:text="예약가능" />
+        </LinearLayout>
+    </LinearLayout>
 
+
+    <ImageView
+        android:id="@+id/arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        />
 </LinearLayout>

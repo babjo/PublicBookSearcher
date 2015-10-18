@@ -27,16 +27,38 @@ public class SearchBooks implements AsyncUseCase<String> {
     @Override
     public void execute(String keyword, AsyncUseCaseListener asyncUseCaseListener) {
         this.asyncUseCaseListener = asyncUseCaseListener;
-        this.libraries = new ArrayList();
         try {
-            new GdLibraryAsyncTask().execute(keyword);
-            new SeoulLibraryAsyncTask().execute(keyword);
-            //new LibraryAsyncTask().execute(keyword);
+            //new GdLibraryAsyncTask().execute(keyword);
+            //new SeoulLibraryAsyncTask().execute(keyword);
+            new LibraryAsyncTask().execute(keyword);
         }catch (Exception e){
             asyncUseCaseListener.onError(e);
         }
     }
 
+    private class LibraryAsyncTask extends AsyncTask<String, Void, List<Book>> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            asyncUseCaseListener.onBefore(null);
+        }
+
+        @Override
+        protected  List<Book> doInBackground(String... params){
+            List<Book> books = new ArrayList();
+            books.addAll(SearchBooks.this.seoulLibrary.selectByKeyword(params[0]));
+            books.addAll(SearchBooks.this.gdLibrary.selectByKeyword(params[0]));
+            return books;
+        }
+
+        @Override
+        protected void onPostExecute(List<Book> books) {
+            super.onPostExecute(books);
+            asyncUseCaseListener.onAfter(books);
+        }
+    }
+
+    /*
     private List<Library> libraries;
     private abstract class LibraryAsyncTask extends AsyncTask<String, Void, List<Library>> {
         @Override
@@ -68,6 +90,7 @@ public class SearchBooks implements AsyncUseCase<String> {
             libraries.add(new Library("서울도서관", SearchBooks.this.seoulLibrary.selectByKeyword(params[0])));
             return libraries;
         }
-    }
+    }*/
+
 }
 

@@ -3,6 +3,7 @@ package com.seoul.publicbooksearcher.presentation.presenter;
 import android.os.Handler;
 import android.util.Log;
 
+import com.seoul.publicbooksearcher.domain.Book;
 import com.seoul.publicbooksearcher.domain.Library;
 import com.seoul.publicbooksearcher.domain.async_usecase.AsyncUseCase;
 import com.seoul.publicbooksearcher.domain.usecase.UseCase;
@@ -11,7 +12,10 @@ import com.seoul.publicbooksearcher.presentation.view.component.BookListView;
 import com.seoul.publicbooksearcher.presentation.view.component.BookTitleAutoCompleteTextView;
 import com.seoul.publicbooksearcher.presentation.view.component.ProgressBarView;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BookPresenter {
 
@@ -93,7 +97,7 @@ public class BookPresenter {
             addRecentKeyword.execute(keyword);
             Log.i(TAG, "addRecentKeyword = " + keyword);
 
-            searchBooks.execute(keyword, new AsyncUseCaseListener<Void, List<Library>>() {
+            searchBooks.execute(keyword, new AsyncUseCaseListener<Void, List<Book>>() {
                 @Override
                 public void onBefore(Void Void) {
                     bookTitleAutoCompleteTextView.dismissDropDown();
@@ -105,9 +109,10 @@ public class BookPresenter {
                 }
 
                 @Override
-                public void onAfter(List<Library> libraries) {
+                public void onAfter(List<Book> books) {
                     progressBarView.gone();
-                    bookListView.setBooks(libraries);
+                    List<Library> libraries = sort(books);
+                    bookListView.setLibraries(libraries);
                     if(libraries.isEmpty()) {
                         bookListView.showStateMsg(NO_RESULT_MSG);
                     }else{
@@ -122,6 +127,21 @@ public class BookPresenter {
         }else{
             bookListView.showStateMsg(NOT_ONLINE_MSG);
         }
+    }
+
+    private List<Library> sort(List<Book> books) {
+        Map<String, Library> librariesMap = new HashMap();
+
+        List<Library> libraries = new ArrayList();
+        for(Book book : books){
+            if(!librariesMap.containsKey(book.getLibrary()))
+                librariesMap.put(book.getLibrary(), new Library(book.getLibrary()));
+            librariesMap.get(book.getLibrary()).addBook(book);
+        }
+
+        for(String key : librariesMap.keySet())
+            libraries.add(librariesMap.get(key));
+        return libraries;
     }
 
     private boolean isOnline(){

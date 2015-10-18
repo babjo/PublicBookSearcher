@@ -5,10 +5,7 @@
     xmlns:wheel="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_main"
     tools:context=".MainActivity"
@@ -27,8 +24,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:singleLine="true"
-        android:layout_marginBottom="5sp"
         android:textAppearance="?android:textAppearanceMedium"
+        android:layout_marginTop="10dp"
         android:imeOptions="actionSearch"
         android:nextFocusLeft="@id/auto_edit"
         android:nextFocusUp="@id/auto_edit"
@@ -53,6 +50,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="none"
+        android:padding="5dp"
         />
 
     <TextView

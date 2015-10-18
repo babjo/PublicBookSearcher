@@ -23,9 +23,10 @@ public class BookListView {
         this.stateView = stateView;
 
         bookListView.setAdapter(null);
+
     }
 
-    public void setBooks(List<Library> books){
+    public void setLibraries(List<Library> books){
         bookListView.setAdapter(new BookListViewAdapter(context, books));
     }
 
