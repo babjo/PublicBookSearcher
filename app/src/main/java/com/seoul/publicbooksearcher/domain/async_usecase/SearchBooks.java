@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import com.seoul.publicbooksearcher.data.BookRepository;
 import com.seoul.publicbooksearcher.domain.Book;
 import com.seoul.publicbooksearcher.domain.Library;
+import com.seoul.publicbooksearcher.domain.SearchResult;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
 
 import java.util.ArrayList;
@@ -28,14 +29,15 @@ public class SearchBooks implements AsyncUseCase<String> {
     public void execute(String keyword, AsyncUseCaseListener asyncUseCaseListener) {
         this.asyncUseCaseListener = asyncUseCaseListener;
         try {
-            //new GdLibraryAsyncTask().execute(keyword);
-            //new SeoulLibraryAsyncTask().execute(keyword);
-            new LibraryAsyncTask().execute(keyword);
+            new GdLibraryAsyncTask().execute(keyword);
+            new SeoulLibraryAsyncTask().execute(keyword);
+            //new LibraryAsyncTask().execute(keyword);
         }catch (Exception e){
             asyncUseCaseListener.onError(e);
         }
     }
 
+    /*
     private class LibraryAsyncTask extends AsyncTask<String, Void, List<Book>> {
         @Override
         protected void onPreExecute() {
@@ -56,11 +58,9 @@ public class SearchBooks implements AsyncUseCase<String> {
             super.onPostExecute(books);
             asyncUseCaseListener.onAfter(books);
         }
-    }
+    }*/
 
-    /*
-    private List<Library> libraries;
-    private abstract class LibraryAsyncTask extends AsyncTask<String, Void, List<Library>> {
+    private abstract class LibraryAsyncTask extends AsyncTask<String, Void, List<Book>> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -68,29 +68,39 @@ public class SearchBooks implements AsyncUseCase<String> {
         }
 
         @Override
-        protected  abstract List<Library> doInBackground(String... params);
+        protected abstract List<Book> doInBackground(String... params);
 
-        @Override
-        protected void onPostExecute(List<Library> libraries) {
-              super.onPostExecute(libraries);
-            asyncUseCaseListener.onAfter(libraries);
-        }
     }
     private class GdLibraryAsyncTask extends LibraryAsyncTask {
         @Override
-        protected List<Library> doInBackground(String... params) {
-            libraries.add(new Library("그외 도서관", SearchBooks.this.gdLibrary.selectByKeyword(params[0])));
-            return libraries;
+        protected List<Book> doInBackground(String... params) {
+            return SearchBooks.this.gdLibrary.selectByKeyword(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(List<Book> books) {
+            super.onPostExecute(books);
+            asyncUseCaseListener.onAfter(books);
         }
     }
 
     private class SeoulLibraryAsyncTask extends LibraryAsyncTask {
         @Override
-        protected List<Library> doInBackground(String... params) {
-            libraries.add(new Library("서울도서관", SearchBooks.this.seoulLibrary.selectByKeyword(params[0])));
-            return libraries;
+        protected List<Book> doInBackground(String... params) {
+            return SearchBooks.this.seoulLibrary.selectByKeyword(params[0]);
         }
-    }*/
+
+        @Override
+        protected void onPostExecute(List<Book> books) {
+            super.onPostExecute(books);
+            SearchResult searchResult = new SearchResult();
+            if(books.size() == 0)
+                searchResult.addEmptyLibrary("서울도서관");
+            else
+                searchResult.addLibrary(new Library("서울도서관", books));
+            asyncUseCaseListener.onAfter(searchResult);
+        }
+    }
 
 }
 

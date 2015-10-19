@@ -2,6 +2,7 @@ package com.seoul.publicbooksearcher.data.crawler;
 
 import android.util.Log;
 
+import com.seoul.publicbooksearcher.data.BaseBookRepository;
 import com.seoul.publicbooksearcher.data.BookRepository;
 import com.seoul.publicbooksearcher.domain.Book;
 
@@ -14,13 +15,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SeoulLibrary implements BookRepository {
+public class SeoulLibrary extends BaseBookRepository {
 
     private static final String TAG = SeoulLibrary.class.getName();
     private final BookRepository cache;
+    private String libraryId;
 
     public SeoulLibrary(BookRepository cache) {
         this.cache = cache;
+        libraryId = "000000";
     }
 
     @Override
@@ -28,11 +31,11 @@ public class SeoulLibrary implements BookRepository {
         keyword = replaceSpecial(keyword);
         keyword = keyword.replaceAll(" ", "+");
 
-        List<Book> books = cache.selectByKeyword(keyword);
+        List<Book> books = cache.selectByKeywordAndLibrary(keyword, libraryId);
         try {
             if(books == null) {
                 books = getBooks(keyword);
-                cache.insertOrUpdateBooks(keyword, books);
+                cache.insertOrUpdateBooks(keyword, libraryId, books);
             }
             else {
                 for (Book book : books)
@@ -177,9 +180,6 @@ public class SeoulLibrary implements BookRepository {
         Log.i(TAG, "getBookState result : "+stateCode);
         return stateCode;
     }
-
-    @Override
-    public void insertOrUpdateBooks(String keyword, List<Book> books) {}
 
     public static String replaceSpecial(String str){
         String match = "[^\uAC00-\uD7A3xfe0-9a-zA-Z\\s]";

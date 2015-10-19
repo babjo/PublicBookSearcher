@@ -3,6 +3,7 @@ package com.seoul.publicbooksearcher.data.open_api;
 import android.text.Html;
 import android.util.Log;
 
+import com.seoul.publicbooksearcher.data.BaseBookRepository;
 import com.seoul.publicbooksearcher.data.BookRepository;
 import com.seoul.publicbooksearcher.domain.Book;
 
@@ -24,7 +25,7 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-public class NaverBookOpenApi implements BookRepository {
+public class NaverBookOpenApi extends BaseBookRepository {
 
     private final static String TAG = NaverBookOpenApi.class.getName();
 
@@ -70,8 +71,5 @@ public class NaverBookOpenApi implements BookRepository {
 
         return books;
     }
-
-    @Override
-    public void insertOrUpdateBooks(String keyword, List<Book> books) {}
 
 }

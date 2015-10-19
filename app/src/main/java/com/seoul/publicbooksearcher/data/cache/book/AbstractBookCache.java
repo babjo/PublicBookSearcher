@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.seoul.publicbooksearcher.data.BaseBookRepository;
 import com.seoul.publicbooksearcher.data.BookRepository;
 import com.seoul.publicbooksearcher.domain.Book;
 
@@ -14,9 +15,11 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractBookCache implements BookRepository {
+public abstract class AbstractBookCache extends BaseBookRepository {
 
     private final static String DB_NAME = "book_cache_db";
+    private static final String ID_FIELD = "_ID";
+    private static final String BOOKS_JSON_FIELD = "BOOKS_JSON";
 
     private static SQLiteDatabase db = null;
     private static Context context;
@@ -28,18 +31,18 @@ public abstract class AbstractBookCache implements BookRepository {
     public abstract String getTableName();
 
     @Override
-    public List<Book> selectByKeyword(String keyword) {
+    public List<Book> selectByKeywordAndLibrary(String keyword, String library) {
         db = getSQLiteDatabaseInstance();
 
         //db.execSQL("DROP TABLE " + getTableName());
         if(!isTableExists(db, getTableName())) {
-            db.execSQL("CREATE TABLE " + getTableName() + " (_KEYWORD text primary key not null, BOOKS_JSON text not null)");
+            db.execSQL("CREATE TABLE " + getTableName() + " ("+ ID_FIELD +" text primary key not null, "+ BOOKS_JSON_FIELD +" text not null)");
         }
 
         Cursor c = db.query(getTableName(),
-                new String[] {"_KEYWORD","BOOKS_JSON"}, //colum 명세
-                "_KEYWORD = ?",
-                new String[] {keyword}, //where 절에 전달할 데이터
+                new String[] {ID_FIELD, BOOKS_JSON_FIELD}, //colum 명세
+                ID_FIELD+" = ?",
+                new String[] {makeId(keyword,library)}, //where 절에 전달할 데이터
                 null, //group by
                 null, //having
                 null
@@ -49,7 +52,7 @@ public abstract class AbstractBookCache implements BookRepository {
         if(c.moveToFirst()) {
             Gson gson = new Gson();
             Type type = new TypeToken<ArrayList<Book>>() {}.getType();
-            books = gson.fromJson(c.getString(c.getColumnIndex("BOOKS_JSON")), type);
+            books = gson.fromJson(c.getString(c.getColumnIndex(BOOKS_JSON_FIELD)), type);
             if(books.size() == 0) return null;
         }
 
@@ -79,13 +82,17 @@ public abstract class AbstractBookCache implements BookRepository {
     }
 
     @Override
-    public void insertOrUpdateBooks(String keyword, List<Book> books) {
+    public void insertOrUpdateBooks(String keyword, String library, List<Book> books) {
         ContentValues args = new ContentValues();
-        args.put("_KEYWORD", keyword);
+        args.put(ID_FIELD, makeId(keyword,library));
         Gson gson = new Gson();
-        args.put("BOOKS_JSON", gson.toJson(books));
+        args.put(BOOKS_JSON_FIELD, gson.toJson(books));
 
-        if(db.update(getTableName(), args, "_KEYWORD=?", new String[]{keyword}) == 0)
+        if(db.update(getTableName(), args, ID_FIELD+"=?", new String[]{keyword}) == 0)
             db.insert(getTableName(), null, args);
+    }
+
+    private String makeId(String keyword, String library){
+        return keyword + "_" + library;
     }
 }

@@ -15,22 +15,28 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GdLibrary extends BaseBookRepository {
+public class BaseLibrary extends BaseBookRepository {
 
-    private static final String TAG = GdLibrary.class.getName();
-    private BookRepository cache;
+    private static final String TAG = BaseLibrary.class.getName();
+    protected BookRepository cache;
+    private String libraryId;
 
-    public GdLibrary(BookRepository cache){
+    public BaseLibrary(BookRepository cache, String libraryId){
         this.cache = cache;
+        this.libraryId = libraryId;
+    }
+
+    public String getLibraryId(){
+        return libraryId;
     }
 
     @Override
     public List<Book> selectByKeyword(String keyword) {
-        List<Book> books = cache.selectByKeyword(keyword);
+        List<Book> books = cache.selectByKeywordAndLibrary(keyword, libraryId);
         try {
             if(books == null) {
                 books = getBooks(keyword);
-                //cache.insertOrUpdateBooks(keyword, books);
+                cache.insertOrUpdateBooks(keyword, getLibraryId(), books);
             }
             else {
                 for (Book book : books)
@@ -53,7 +59,7 @@ public class GdLibrary extends BaseBookRepository {
                 .data("collection", "sen_library")
                 .data("range", "A")
                 .data("searchField", "ALL")
-                .data("locExquery", "111003,111004,111005,111007,111008,111009,111006,111010,111022,111012,111011,111013,111014,111031,111016,111030,111015,111017,111018,111019,111020,111021")
+                .data("locExquery", getLibraryId())
                 .data("exquery_field", "MAT_CODE_NUM")
                 .data("realQuery", keyword + "|" + keyword)
                 .data("detailView", "0")
