@@ -21,6 +21,9 @@ public class Library implements ParentListItem{
     public Library(String name, List<Book> books) {
         this.name = name;
         this.books = books;
+
+        for(Book book : books)
+            arrange(book);
     }
 
     @Override
@@ -38,7 +41,7 @@ public class Library implements ParentListItem{
         return books.size();
     }
 
-    public void addBook(Book book){
+    public void arrange(Book book){
         if(book.getStatusCode() == 1){
             possibleLendSize++;
         }else if(book.getStatusCode() == 2){
@@ -46,7 +49,6 @@ public class Library implements ParentListItem{
         }else{
             possibleReserveSize++;
         }
-        books.add(book);
     }
 
     public int getPossibleLendSize() {

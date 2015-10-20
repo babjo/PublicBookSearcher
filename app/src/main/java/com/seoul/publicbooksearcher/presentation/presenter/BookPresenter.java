@@ -3,10 +3,8 @@ package com.seoul.publicbooksearcher.presentation.presenter;
 import android.os.Handler;
 import android.util.Log;
 
-import com.seoul.publicbooksearcher.domain.Book;
 import com.seoul.publicbooksearcher.domain.Library;
 import com.seoul.publicbooksearcher.domain.LibraryList;
-import com.seoul.publicbooksearcher.domain.SearchResult;
 import com.seoul.publicbooksearcher.domain.async_usecase.AsyncUseCase;
 import com.seoul.publicbooksearcher.domain.usecase.UseCase;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
@@ -14,10 +12,7 @@ import com.seoul.publicbooksearcher.presentation.view.component.BookListView;
 import com.seoul.publicbooksearcher.presentation.view.component.BookTitleAutoCompleteTextView;
 import com.seoul.publicbooksearcher.presentation.view.component.ProgressBarView;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class BookPresenter {
 
@@ -85,6 +80,7 @@ public class BookPresenter {
 
                 @Override
                 public void onError(Exception e) {
+
                 }
             });
         }else{

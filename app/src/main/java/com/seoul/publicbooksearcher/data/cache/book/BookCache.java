@@ -15,26 +15,29 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractBookCache extends BaseBookRepository {
+public class BookCache extends BaseBookRepository {
 
     private final static String DB_NAME = "book_cache_db";
+    private final static String TABLE_NAME = "books";
     private static final String ID_FIELD = "_ID";
     private static final String BOOKS_JSON_FIELD = "BOOKS_JSON";
 
     private static SQLiteDatabase db = null;
     private static Context context;
 
-    public AbstractBookCache(Context context){
+    public BookCache(Context context){
         this.context = context;
     }
 
-    public abstract String getTableName();
+    public String getTableName(){
+        return TABLE_NAME;
+    }
 
     @Override
     public List<Book> selectByKeywordAndLibrary(String keyword, String library) {
         db = getSQLiteDatabaseInstance();
 
-        //db.execSQL("DROP TABLE " + getTableName());
+        db.execSQL("DROP TABLE if EXISTS " + getTableName());
         if(!isTableExists(db, getTableName())) {
             db.execSQL("CREATE TABLE " + getTableName() + " ("+ ID_FIELD +" text primary key not null, "+ BOOKS_JSON_FIELD +" text not null)");
         }

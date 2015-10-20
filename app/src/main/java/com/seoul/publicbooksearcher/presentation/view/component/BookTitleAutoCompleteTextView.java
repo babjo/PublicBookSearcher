@@ -12,6 +12,7 @@ import android.widget.AutoCompleteTextView;
 import com.seoul.publicbooksearcher.presentation.presenter.BookPresenter;
 import com.seoul.publicbooksearcher.presentation.view.adapter.BookTitleAutoCompleteTextViewAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BookTitleAutoCompleteTextView {
