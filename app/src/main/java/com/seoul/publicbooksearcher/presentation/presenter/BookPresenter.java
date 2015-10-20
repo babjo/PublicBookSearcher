@@ -3,8 +3,7 @@ package com.seoul.publicbooksearcher.presentation.presenter;
 import android.os.Handler;
 import android.util.Log;
 
-import com.seoul.publicbooksearcher.domain.Library;
-import com.seoul.publicbooksearcher.domain.LibraryList;
+import com.seoul.publicbooksearcher.domain.SearchResult;
 import com.seoul.publicbooksearcher.domain.async_usecase.AsyncUseCase;
 import com.seoul.publicbooksearcher.domain.usecase.UseCase;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
@@ -28,10 +27,9 @@ public class BookPresenter {
 
     private final BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView;
     private final BookListView bookListView;
-    private final ProgressBarView progressBarView;
 
     public BookPresenter(UseCase isOnline, UseCase getRecentKeywords, UseCase addRecentKeyword, AsyncUseCase searchBooks, AsyncUseCase searchTitles,
-                         BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView, BookListView bookListView, ProgressBarView progressBarView) {
+                         BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView, BookListView bookListView) {
 
         // use_case
         this.isOnline = isOnline;
@@ -43,7 +41,6 @@ public class BookPresenter {
         // view
         this.bookTitleAutoCompleteTextView = bookTitleAutoCompleteTextView;
         this.bookListView = bookListView;
-        this.progressBarView = progressBarView;
 
         if(!isOnline())
             bookListView.showStateMsg(NOT_ONLINE_MSG);
@@ -88,36 +85,28 @@ public class BookPresenter {
         }
     }
 
-    private LibraryList libraryList;
+
     public void searchBooks(String keyword) {
         if(isOnline()) {
 
-            libraryList = new LibraryList();
             Log.i(TAG, "entered keyword = " + keyword + "\n search start");
             addRecentKeyword.execute(keyword);
             Log.i(TAG, "addRecentKeyword = " + keyword);
 
-            searchBooks.execute(keyword, new AsyncUseCaseListener<Void, Library>() {
+            searchBooks.execute(keyword, new AsyncUseCaseListener<String, SearchResult>() {
                 @Override
-                public void onBefore(Void Void) {
+                public void onBefore(String library) {
                     bookTitleAutoCompleteTextView.dismissDropDown();
                     bookTitleAutoCompleteTextView.clearFocus();
-                    bookListView.hideKeyboard();
 
-                    progressBarView.visible();
-                    bookListView.clear();
+                    bookListView.progressVisible(library);
+                    bookListView.hideKeyboard();
                 }
 
                 @Override
-                public void onAfter(Library library) {
-                    progressBarView.gone();
-                    libraryList.add(library);
-                    bookListView.setLibraries(libraryList.array());
-                    if(libraryList.isEmpty()) {
-                        bookListView.showStateMsg(NO_RESULT_MSG);
-                    }else{
-                        bookListView.showList();
-                    }
+                public void onAfter(SearchResult searchResult) {
+                    bookListView.updateLibrary(searchResult.getLibrary(), searchResult.getBooks());
+                    bookListView.progressGone(searchResult.getLibrary());
                 }
 
                 @Override
@@ -128,32 +117,6 @@ public class BookPresenter {
             bookListView.showStateMsg(NOT_ONLINE_MSG);
         }
     }
-
-    /*
-    private void sortAndAddAll(List<String> books) {
-        for(Book book : books){
-            if(!librariesMap.containsKey(book.getLibrary()))
-                librariesMap.put(book.getLibrary(), new Library(book.getLibrary()));
-            librariesMap.get(book.getLibrary()).addBook(book);
-        }
-
-    }
-
-
-    private List<Library> sort(List<Book> books) {
-        Map<String, Library> librariesMap = new HashMap();
-
-        List<Library> libraries = new ArrayList();
-        for(Book book : books){
-            if(!librariesMap.containsKey(book.getLibrary()))
-                librariesMap.put(book.getLibrary(), new Library(book.getLibrary()));
-            librariesMap.get(book.getLibrary()).addBook(book);
-        }
-
-        for(String key : librariesMap.keySet())
-            libraries.add(librariesMap.get(key));
-        return libraries;
-    }*/
 
     private boolean isOnline(){
         return (boolean) isOnline.execute(null);

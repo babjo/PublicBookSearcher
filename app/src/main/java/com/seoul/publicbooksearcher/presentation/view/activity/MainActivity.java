@@ -24,7 +24,6 @@ import com.seoul.publicbooksearcher.data.cache.book.BookCache;
 import com.seoul.publicbooksearcher.data.crawler.BaseLibrary;
 import com.seoul.publicbooksearcher.data.crawler.SeoulLibrary;
 import com.seoul.publicbooksearcher.data.open_api.NaverBookOpenApi;
-import com.seoul.publicbooksearcher.domain.Library;
 import com.seoul.publicbooksearcher.domain.async_usecase.AsyncUseCase;
 import com.seoul.publicbooksearcher.domain.async_usecase.SearchBooks;
 import com.seoul.publicbooksearcher.domain.async_usecase.SearchTitles;
@@ -34,18 +33,19 @@ import com.seoul.publicbooksearcher.domain.usecase.IsOnline;
 import com.seoul.publicbooksearcher.domain.usecase.UseCase;
 import com.seoul.publicbooksearcher.presentation.presenter.BookPresenter;
 import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewAdapter;
+import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewItem;
 import com.seoul.publicbooksearcher.presentation.view.component.BookListView;
 import com.seoul.publicbooksearcher.presentation.view.component.BookTitleAutoCompleteTextView;
 import com.seoul.publicbooksearcher.presentation.view.component.ProgressBarView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity{
 
     private final static String TAG = MainActivity.class.getName();
-    //private BookListView bookListView;
     private RecyclerView listView;
 
     @Override
@@ -59,7 +59,13 @@ public class MainActivity extends AppCompatActivity{
         UseCase isOnline = new IsOnline(this);
         UseCase getRecentKeywords = new GetRecentKeywords(new RecentSearchKeywordRepository(this));
         UseCase addRecentKeyword = new AddRecentKeyword(new RecentSearchKeywordRepository(this));
-        AsyncUseCase searchBooks = new SearchBooks(createLibrary());
+        Map<String, BookRepository> libraries = createLibraries();
+        List<BookListViewItem> bookListViewItems = new ArrayList();
+        for(String libraryName : libraries.keySet()) {
+            Log.i(TAG, libraryName);
+            bookListViewItems.add(new BookListViewItem(libraryName));
+        }
+        AsyncUseCase searchBooks = new SearchBooks(libraries);
         AsyncUseCase searchTitles = new SearchTitles(new NaverBookOpenApi());
 
         Log.i(TAG, "=================================== Create View ==========================================");
@@ -68,21 +74,20 @@ public class MainActivity extends AppCompatActivity{
         listView = (RecyclerView) findViewById(R.id.book_list);
         listView.setHasFixedSize(true);
         listView.setLayoutManager(new LinearLayoutManager(this));
-        BookListViewAdapter bookListViewAdapter = new BookListViewAdapter(this, new ArrayList<Library>());
-        bookListViewAdapter.onRestoreInstanceState(savedInstanceState);
+        BookListViewAdapter bookListViewAdapter = new BookListViewAdapter(this, bookListViewItems);
+        if(savedInstanceState != null)
+            bookListViewAdapter.onRestoreInstanceState(savedInstanceState);
         listView.setAdapter(bookListViewAdapter);
+
         BookListView bookListView = new BookListView(this, listView, (TextView) findViewById(R.id.empty_txt));
 
-
-        ProgressBarView progressBarView = new ProgressBarView((RelativeLayout)findViewById(R.id.google_progress));
-
         Log.i(TAG, "=================================== Create Presenter =====================================");
-        BookPresenter bookPresenter = new BookPresenter(isOnline, getRecentKeywords, addRecentKeyword, searchBooks, searchTitles, bookTitleAutoCompleteTextView, bookListView, progressBarView);
+        BookPresenter bookPresenter = new BookPresenter(isOnline, getRecentKeywords, addRecentKeyword, searchBooks, searchTitles, bookTitleAutoCompleteTextView, bookListView);
 
         bookTitleAutoCompleteTextView.setBookPresenter(bookPresenter);
     }
 
-    private Map createLibrary(){
+    private Map createLibraries(){
         Map<String, BookRepository> bookRepositoryMap = new HashMap<>();
         bookRepositoryMap.put("서울도서관", new SeoulLibrary(new BookCache(this)));
 

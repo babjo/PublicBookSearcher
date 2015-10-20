@@ -21,11 +21,29 @@
             android:textColor="@android:color/black"
             android:text="도서관 이름" />
 
+        <RelativeLayout
+            android:id="@+id/progress_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:visibility="gone">
+            <ProgressBar
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                />
+        </RelativeLayout>
+
         <LinearLayout
+            android:id="@+id/result_layout"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone"
+            >
             <TextView
                 android:id="@+id/book_state_1"
                 android:layout_width="0dp"
@@ -50,14 +68,13 @@
                 android:padding = "5dp"
                 android:textAppearance="?android:textAppearanceSmall"
                 android:text="예약가능" />
+
+            <ImageView
+                android:id="@+id/arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                />
         </LinearLayout>
     </LinearLayout>
-
-
-    <ImageView
-        android:id="@+id/arrow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        />
 </LinearLayout>
