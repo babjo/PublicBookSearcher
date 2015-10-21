@@ -36,7 +36,7 @@ public class NaverBookOpenApi extends BaseBookRepository {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        String url = "http://openapi.naver.com/search?key=28c9d970595a4155958faa596c7b38c2&query="+keyword+"&display=10&start=1&target=book";
+        String url = "http://openapi.naver.com/search?key=28c9d970595a4155958faa596c7b38c2&query="+keyword+"&display=20&start=1&target=book_adv&d_titl="+keyword;
         Log.i(TAG, "keyword : " + keyword + " and request Url : " + url);
         List<String> titles = new ArrayList();
         List<Book> books = new ArrayList();

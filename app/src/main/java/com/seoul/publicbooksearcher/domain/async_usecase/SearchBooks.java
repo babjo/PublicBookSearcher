@@ -1,6 +1,7 @@
 package com.seoul.publicbooksearcher.domain.async_usecase;
 
 import android.os.AsyncTask;
+import android.os.Build;
 
 import com.seoul.publicbooksearcher.data.BookRepository;
 import com.seoul.publicbooksearcher.domain.SearchResult;
@@ -26,7 +27,12 @@ public class SearchBooks implements AsyncUseCase<String> {
 
         try {
             for(String library : bookRepositoryMap.keySet()){
-                new LibraryAsyncTask(library, bookRepositoryMap.get(library)).execute(keyword);
+
+                LibraryAsyncTask libraryAsyncTask = new LibraryAsyncTask(library, bookRepositoryMap.get(library));
+                if(Build.VERSION.SDK_INT >= 11)
+                    libraryAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, keyword);
+                else
+                    libraryAsyncTask.execute(keyword);
             }
         }catch (Exception e){
             asyncUseCaseListener.onError(e);
