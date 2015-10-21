@@ -10,21 +10,38 @@
     tools:context=".MainActivity"
     android:orientation="vertical"
     android:id="@+id/main_root_layout"
+
+
     >
 
     <LinearLayout
         android:id="@+id/forFocus"
         android:orientation="horizontal"
         android:focusable="true" android:focusableInTouchMode="true"
-        android:layout_width="0px" android:layout_height="0px"/>
+        android:layout_width="0px" android:layout_height="0px" />
 
     <com.seoul.publicbooksearcher.presentation.view.component.InstantAutoCompleteView
         android:id="@+id/auto_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
+        android:paddingLeft="10dp"
+        android:paddingRight="9dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="10dp"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:gravity="center_vertical"
+
+        android:background="@drawable/searchbar_shadoweffect"
+        android:drawableLeft="@mipmap/searchbar_icon"
+        android:drawablePadding="5dp"
+
+        android:hint="@string/hint"
+
         android:singleLine="true"
         android:textAppearance="?android:textAppearanceMedium"
-        android:layout_marginTop="10dp"
         android:imeOptions="actionSearch"
         android:nextFocusLeft="@id/auto_edit"
         android:nextFocusUp="@id/auto_edit"
