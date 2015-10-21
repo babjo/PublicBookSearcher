@@ -8,6 +8,8 @@ public class Book {
     private int statusCode;
     private String callNumber;
     private String location;
+    private String publication;
+    private String writer;
 
     // 서울시용
     private String locationCode;

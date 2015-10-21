@@ -61,32 +61,6 @@
             android:orientation="horizontal"
             android:visibility="gone"
             >
-            <!--
-            <TextView
-                android:id="@+id/book_state_1"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:padding = "5dp"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:text="대출가능" />
-            <TextView
-                android:id="@+id/book_state_2"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:padding = "5dp"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:text="대출중" />
-            <TextView
-                android:id="@+id/book_state_3"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:padding = "5dp"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:text="예약가능" />-->
-
 
             <com.seoul.publicbooksearcher.presentation.view.component.CircleView
                 android:id="@+id/book_state_1"
