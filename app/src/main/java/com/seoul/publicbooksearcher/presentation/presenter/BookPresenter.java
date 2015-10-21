@@ -3,6 +3,7 @@ package com.seoul.publicbooksearcher.presentation.presenter;
 import android.os.Handler;
 import android.util.Log;
 
+import com.seoul.publicbooksearcher.domain.BookSearchException;
 import com.seoul.publicbooksearcher.domain.SearchResult;
 import com.seoul.publicbooksearcher.domain.async_usecase.AsyncUseCase;
 import com.seoul.publicbooksearcher.domain.usecase.UseCase;
@@ -64,7 +65,7 @@ public class BookPresenter {
 
     public void searchTitles(String keyword){
         if(isOnline()) {
-            searchTitles.execute(keyword, new AsyncUseCaseListener<Void, List<String>>() {
+            searchTitles.execute(keyword, new AsyncUseCaseListener<Void, List<String>, Void>() {
                 @Override
                 public void onBefore(Void beforeArgs) {
                 }
@@ -76,8 +77,7 @@ public class BookPresenter {
                 }
 
                 @Override
-                public void onError(Exception e) {
-
+                public void onError(Void e) {
                 }
             });
         }else{
@@ -93,7 +93,7 @@ public class BookPresenter {
             addRecentKeyword.execute(keyword);
             Log.i(TAG, "addRecentKeyword = " + keyword);
 
-            searchBooks.execute(keyword, new AsyncUseCaseListener<String, SearchResult>() {
+            searchBooks.execute(keyword, new AsyncUseCaseListener<String, SearchResult, BookSearchException>() {
                 @Override
                 public void onBefore(String library) {
                     bookTitleAutoCompleteTextView.dismissDropDown();
@@ -110,7 +110,9 @@ public class BookPresenter {
                 }
 
                 @Override
-                public void onError(Exception e) {
+                public void onError(BookSearchException e) {
+                    bookListView.showError(e.getLibrary(), e.getMessage());
+                    bookListView.progressGone(e.getLibrary());
                 }
             });
         }else{

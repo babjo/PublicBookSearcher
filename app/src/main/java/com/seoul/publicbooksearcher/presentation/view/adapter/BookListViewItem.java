@@ -17,6 +17,7 @@ public class BookListViewItem implements ParentListItem{
 
     public final static int PROGRESS_GONE = 1;
     public final static int PROGRESS_VISIBLE = 2;
+    public final static int ERROR = 3;
 
     public BookListViewItem(String library){
         this.library = library;

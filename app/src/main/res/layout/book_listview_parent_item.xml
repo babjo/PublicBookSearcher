@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:layout_height="match_parent">
@@ -37,6 +38,22 @@
         </RelativeLayout>
 
         <LinearLayout
+            android:id="@+id/error_layout"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="검색 중 문제발생"/>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/result_layout"
             android:layout_width="0dp"
             android:layout_weight="1"
@@ -44,6 +61,7 @@
             android:orientation="horizontal"
             android:visibility="gone"
             >
+            <!--
             <TextView
                 android:id="@+id/book_state_1"
                 android:layout_width="0dp"
@@ -67,7 +85,36 @@
                 android:layout_height="wrap_content"
                 android:padding = "5dp"
                 android:textAppearance="?android:textAppearanceSmall"
-                android:text="예약가능" />
+                android:text="예약가능" />-->
+
+
+            <com.seoul.publicbooksearcher.presentation.view.component.CircleView
+                android:id="@+id/book_state_1"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                app:titleColor="#FFFFFF"
+                app:titleSize="15dp"
+                app:backgroundColorValue="@color/flatGreen"
+                />
+            <com.seoul.publicbooksearcher.presentation.view.component.CircleView
+                android:id="@+id/book_state_2"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                app:titleColor="#FFFFFF"
+                app:titleSize="15dp"
+                app:backgroundColorValue="@color/flatRed"
+                />
+            <com.seoul.publicbooksearcher.presentation.view.component.CircleView
+                android:id="@+id/book_state_3"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                app:titleColor="#FFFFFF"
+                app:titleSize="15dp"
+                app:backgroundColorValue="@color/flatYellow"
+                />
 
             <ImageView
                 android:id="@+id/arrow"

@@ -17,6 +17,7 @@ import com.bignerdranch.expandablerecyclerview.ViewHolder.ChildViewHolder;
 import com.bignerdranch.expandablerecyclerview.ViewHolder.ParentViewHolder;
 import com.seoul.publicbooksearcher.R;
 import com.seoul.publicbooksearcher.domain.Book;
+import com.seoul.publicbooksearcher.presentation.view.component.CircleView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -67,15 +68,22 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
         switch (bookListViewItem.getState()){
             case BookListViewItem.PROGRESS_GONE:
                 bookParentViewHolder.arrowUpImageView.setImageResource(R.mipmap.ic_keyboard_arrow_up_black_24dp);
-                bookParentViewHolder.bookState1.setText("" + bookListViewItem.getPossibleLendSize());
-                bookParentViewHolder.bookState2.setText("" + bookListViewItem.getImpossibleLendSize());
-                bookParentViewHolder.bookState3.setText("" + bookListViewItem.getPossibleReserveSize());
+                bookParentViewHolder.bookState1.setTitleText("" + bookListViewItem.getPossibleLendSize());
+                bookParentViewHolder.bookState2.setTitleText("" + bookListViewItem.getImpossibleLendSize());
+                bookParentViewHolder.bookState3.setTitleText("" + bookListViewItem.getPossibleReserveSize());
                 bookParentViewHolder.progressBar.setVisibility(View.GONE);
+                bookParentViewHolder.errorLayout.setVisibility(View.GONE);
                 bookParentViewHolder.resultLayout.setVisibility(View.VISIBLE);
                 break;
             case BookListViewItem.PROGRESS_VISIBLE:
                 bookParentViewHolder.resultLayout.setVisibility(View.GONE);
+                bookParentViewHolder.errorLayout.setVisibility(View.GONE);
                 bookParentViewHolder.progressBar.setVisibility(View.VISIBLE);
+                break;
+            case BookListViewItem.ERROR:
+                bookParentViewHolder.resultLayout.setVisibility(View.GONE);
+                bookParentViewHolder.progressBar.setVisibility(View.GONE);
+                bookParentViewHolder.errorLayout.setVisibility(View.VISIBLE);
                 break;
         }
     }
@@ -106,20 +114,29 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
         public RelativeLayout progressBar;
 
         public LinearLayout resultLayout;
+        public LinearLayout errorLayout;
+
         public ImageView arrowUpImageView;
+        /*
         public TextView bookState1;
         public TextView bookState2;
         public TextView bookState3;
+        */
+        public CircleView bookState1;
+        public CircleView bookState2;
+        public CircleView bookState3;
+
 
         public BookParentViewHolder(View v) {
             super(v);
             library2 = (TextView) v.findViewById(R.id.book_library2);
             progressBar = (RelativeLayout) v.findViewById(R.id.progress_layout);
             resultLayout = (LinearLayout) v.findViewById(R.id.result_layout);
+            errorLayout = (LinearLayout) v.findViewById(R.id.error_layout);
             arrowUpImageView = (ImageView) v.findViewById(R.id.arrow);
-            bookState1 = (TextView) v.findViewById(R.id.book_state_1);
-            bookState2 = (TextView) v.findViewById(R.id.book_state_2);
-            bookState3 = (TextView) v.findViewById(R.id.book_state_3);
+            bookState1 = (CircleView) v.findViewById(R.id.book_state_1);
+            bookState2 = (CircleView) v.findViewById(R.id.book_state_2);
+            bookState3 = (CircleView) v.findViewById(R.id.book_state_3);
         }
 
         @Override
@@ -159,15 +176,6 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
     }
 
     private int getPosition(String library){
-        /*
-        int i=0;
-        for(BookListViewItem item : bookListViewItemList) {
-            if (item.getLibrary().equals(library))
-                return i;
-            else
-                i++;
-        }
-        return -1;*/
         return libraryPositionMap.get(library);
     }
 
@@ -177,10 +185,16 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
         notifyParentItemChanged(position);
     }
 
-
     public void progressGone(String library) {
         int position = getPosition(library);
         bookListViewItemList.get(position).setState(BookListViewItem.PROGRESS_GONE);
         notifyParentItemChanged(position);
     }
+
+    public void showError(String library, String message) {
+        int position = getPosition(library);
+        bookListViewItemList.get(position).setState(BookListViewItem.ERROR);
+        notifyParentItemChanged(position);
+    }
+
 }

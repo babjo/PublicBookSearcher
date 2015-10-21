@@ -4,9 +4,12 @@ import android.os.AsyncTask;
 import android.os.Build;
 
 import com.seoul.publicbooksearcher.data.BookRepository;
+import com.seoul.publicbooksearcher.domain.BookSearchException;
 import com.seoul.publicbooksearcher.domain.SearchResult;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class SearchBooks implements AsyncUseCase<String> {
@@ -15,28 +18,28 @@ public class SearchBooks implements AsyncUseCase<String> {
     private AsyncUseCaseListener asyncUseCaseListener;
 
     private Map<String, BookRepository> bookRepositoryMap;
+    private List<LibraryAsyncTask> libraryAsyncTaskList = new ArrayList();
 
 
     public SearchBooks(Map<String, BookRepository> bookRepositoryMap){
         this.bookRepositoryMap = bookRepositoryMap;
+
+        for(String library : bookRepositoryMap.keySet())
+            libraryAsyncTaskList.add(new LibraryAsyncTask(library, bookRepositoryMap.get(library)));
+
     }
 
     @Override
     public void execute(String keyword, final AsyncUseCaseListener asyncUseCaseListener) {
         this.asyncUseCaseListener = asyncUseCaseListener;
 
-        try {
-            for(String library : bookRepositoryMap.keySet()){
-
-                LibraryAsyncTask libraryAsyncTask = new LibraryAsyncTask(library, bookRepositoryMap.get(library));
-                if(Build.VERSION.SDK_INT >= 11)
-                    libraryAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, keyword);
-                else
-                    libraryAsyncTask.execute(keyword);
-            }
-        }catch (Exception e){
-            asyncUseCaseListener.onError(e);
+        for(LibraryAsyncTask libraryAsyncTask : libraryAsyncTaskList) {
+            if (Build.VERSION.SDK_INT >= 11)
+                libraryAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, keyword);
+            else
+                libraryAsyncTask.execute(keyword);
         }
+
     }
 
     private class LibraryAsyncTask extends AsyncTask<String, Void, SearchResult> {
@@ -57,12 +60,18 @@ public class SearchBooks implements AsyncUseCase<String> {
 
         @Override
         protected SearchResult doInBackground(String... params) {
-            return new SearchResult(library, bookRepository.selectByKeyword(params[0]));
+            try {
+                return new SearchResult(library, bookRepository.selectByKeyword(params[0]));
+            }catch (Exception e){
+                asyncUseCaseListener.onError(new BookSearchException(e.getMessage(), library));
+                return null;
+            }
         }
         @Override
         protected void onPostExecute(SearchResult searchResult) {
             super.onPostExecute(searchResult);
-            asyncUseCaseListener.onAfter(searchResult);
+            if(searchResult != null)
+                asyncUseCaseListener.onAfter(searchResult);
         }
     }
 }

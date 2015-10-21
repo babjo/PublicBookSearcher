@@ -44,7 +44,6 @@ public class BaseLibrary extends BaseBookRepository {
             }
         } catch (IOException e) {
             throw new RuntimeException(TAG+" : IOException");
-            //e.printStackTrace();
         }
 
         return books;

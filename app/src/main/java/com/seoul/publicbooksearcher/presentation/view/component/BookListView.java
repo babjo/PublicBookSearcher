@@ -48,9 +48,7 @@ public class BookListView {
         stateView.setVisibility(View.VISIBLE);
     }
 
-    public void showList() {
-        stateView.setVisibility(View.GONE);
-        bookListView.setVisibility(View.VISIBLE);
+    public void showError(String library, String message) {
+        bookListViewAdapter.showError(library, message);
     }
-
 }
