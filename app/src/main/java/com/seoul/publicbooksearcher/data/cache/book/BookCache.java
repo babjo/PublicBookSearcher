@@ -27,6 +27,12 @@ public class BookCache extends BaseBookRepository {
 
     public BookCache(Context context){
         this.context = context;
+        db = getSQLiteDatabaseInstance();
+
+        db.execSQL("DROP TABLE if EXISTS " + getTableName());
+        if(!isTableExists(db, getTableName())) {
+            db.execSQL("CREATE TABLE " + getTableName() + " ("+ ID_FIELD +" text primary key not null, "+ BOOKS_JSON_FIELD +" text not null)");
+        }
     }
 
     public String getTableName(){
@@ -35,13 +41,6 @@ public class BookCache extends BaseBookRepository {
 
     @Override
     public List<Book> selectByKeywordAndLibrary(String keyword, String library) {
-        db = getSQLiteDatabaseInstance();
-
-        db.execSQL("DROP TABLE if EXISTS " + getTableName());
-        if(!isTableExists(db, getTableName())) {
-            db.execSQL("CREATE TABLE " + getTableName() + " ("+ ID_FIELD +" text primary key not null, "+ BOOKS_JSON_FIELD +" text not null)");
-        }
-
         Cursor c = db.query(getTableName(),
                 new String[] {ID_FIELD, BOOKS_JSON_FIELD}, //colum 명세
                 ID_FIELD+" = ?",
