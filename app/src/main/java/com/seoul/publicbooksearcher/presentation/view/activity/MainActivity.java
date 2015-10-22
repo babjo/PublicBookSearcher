@@ -18,6 +18,7 @@ import com.seoul.publicbooksearcher.R;
 import com.seoul.publicbooksearcher.data.BookRepository;
 import com.seoul.publicbooksearcher.data.RecentSearchKeywordRepository;
 import com.seoul.publicbooksearcher.data.cache.book.BookCache;
+import com.seoul.publicbooksearcher.data.crawler.BandinlunisAutoCompleteCrawler;
 import com.seoul.publicbooksearcher.data.crawler.BaseLibrary;
 import com.seoul.publicbooksearcher.data.crawler.SeoulLibrary;
 import com.seoul.publicbooksearcher.data.open_api.NaverBookOpenApi;
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity{
             bookListViewItems.add(new BookListViewItem(libraryName));
         }
         AsyncUseCase searchBooks = new SearchBooks(libraries);
-        AsyncUseCase searchTitles = new SearchTitles(new NaverBookOpenApi());
+        AsyncUseCase searchTitles = new SearchTitles(new BandinlunisAutoCompleteCrawler());
 
         Log.i(TAG, "=================================== Create View ==========================================");
         BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView = new BookTitleAutoCompleteTextView(this, (AutoCompleteTextView) findViewById(R.id.auto_edit));
