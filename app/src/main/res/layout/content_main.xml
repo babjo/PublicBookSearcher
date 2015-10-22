@@ -61,6 +61,6 @@
         android:layout_height="match_parent"
         android:textAppearance="?android:textAppearanceSmall"
         android:gravity="center"
-        android:text="검색 결과 없음"/>
+        android:text="검색 결과가 없습니다"/>
 
 </LinearLayout>
