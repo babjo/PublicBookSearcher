@@ -18,26 +18,20 @@ public class SearchBooks implements AsyncUseCase<String> {
     private AsyncUseCaseListener asyncUseCaseListener;
 
     private Map<String, BookRepository> bookRepositoryMap;
-    private List<LibraryAsyncTask> libraryAsyncTaskList = new ArrayList();
-
 
     public SearchBooks(Map<String, BookRepository> bookRepositoryMap){
         this.bookRepositoryMap = bookRepositoryMap;
-
-        for(String library : bookRepositoryMap.keySet())
-            libraryAsyncTaskList.add(new LibraryAsyncTask(library, bookRepositoryMap.get(library)));
-
     }
 
     @Override
     public void execute(String keyword, final AsyncUseCaseListener asyncUseCaseListener) {
         this.asyncUseCaseListener = asyncUseCaseListener;
 
-        for(LibraryAsyncTask libraryAsyncTask : libraryAsyncTaskList) {
+        for(String library : bookRepositoryMap.keySet()){
             if (Build.VERSION.SDK_INT >= 11)
-                libraryAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, keyword);
+                new LibraryAsyncTask(library, bookRepositoryMap.get(library)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, keyword);
             else
-                libraryAsyncTask.execute(keyword);
+                new LibraryAsyncTask(library, bookRepositoryMap.get(library)).execute(keyword);
         }
 
     }

@@ -1,7 +1,11 @@
 package com.seoul.publicbooksearcher.presentation.view.component;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.text.Editable;
+import android.text.Html;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -26,7 +30,7 @@ public class BookTitleAutoCompleteTextView {
     public BookTitleAutoCompleteTextView(Context context, final AutoCompleteTextView autoCompleteTextView) {
 
         this.autoCompleteTextView = autoCompleteTextView;
-        this.bookTitleAutoCompleteTextViewAdapter = new BookTitleAutoCompleteTextViewAdapter(context, android.R.layout.simple_dropdown_item_1line);
+        this.bookTitleAutoCompleteTextViewAdapter = new BookTitleAutoCompleteTextViewAdapter(context, android.R.layout.simple_dropdown_item_1line, new ArrayList<String>());
 
         autoCompleteTextView.setAdapter(bookTitleAutoCompleteTextViewAdapter);
         autoCompleteTextView.addTextChangedListener(new TextWatcher() {
@@ -50,9 +54,10 @@ public class BookTitleAutoCompleteTextView {
         });
 
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String selection = (String) parent.getItemAtPosition(position);
+                String selection = parent.getItemAtPosition(position).toString();
                 bookPresenter.searchBooks(selection);
             }
 
@@ -81,7 +86,7 @@ public class BookTitleAutoCompleteTextView {
         });
     }
 
-    public void setTitles(List<String> titles){ this.bookTitleAutoCompleteTextViewAdapter.setTitles(titles); }
+    public void setTitles(List titles){ this.bookTitleAutoCompleteTextViewAdapter.setTitles(titles); }
     public void dismissDropDown() { autoCompleteTextView.dismissDropDown(); }
     public void clearFocus(){ autoCompleteTextView.clearFocus(); }
     private String getText() {

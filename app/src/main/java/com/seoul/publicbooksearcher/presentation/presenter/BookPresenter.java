@@ -1,6 +1,9 @@
 package com.seoul.publicbooksearcher.presentation.presenter;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Handler;
+import android.text.Html;
 import android.util.Log;
 
 import com.seoul.publicbooksearcher.domain.BookSearchException;
@@ -12,6 +15,7 @@ import com.seoul.publicbooksearcher.presentation.view.component.BookListView;
 import com.seoul.publicbooksearcher.presentation.view.component.BookTitleAutoCompleteTextView;
 import com.seoul.publicbooksearcher.presentation.view.component.ProgressBarView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BookPresenter {
@@ -63,7 +67,7 @@ public class BookPresenter {
         }, 700);
     }
 
-    public void searchTitles(String keyword){
+    public void searchTitles(final String keyword){
         if(isOnline()) {
             searchTitles.execute(keyword, new AsyncUseCaseListener<Void, List<String>, Void>() {
                 @Override
@@ -73,7 +77,16 @@ public class BookPresenter {
                 @Override
                 public void onAfter(List<String> afterArg) {
                     Log.i("UPDATE", "3");
-                    bookTitleAutoCompleteTextView.setTitles(afterArg);
+
+                    List highlighted = new ArrayList();
+                    for(String title : afterArg)
+                        highlighted.add(highlight(title));
+
+                    bookTitleAutoCompleteTextView.setTitles(highlighted);
+                }
+
+                private Object highlight(String title) {
+                    return Html.fromHtml(title.replaceAll(keyword, "<font color=\"red\">"+keyword+"</font>"));
                 }
 
                 @Override
@@ -88,7 +101,6 @@ public class BookPresenter {
 
     public void searchBooks(String keyword) {
         if(isOnline()) {
-
             Log.i(TAG, "entered keyword = " + keyword + "\n search start");
             addRecentKeyword.execute(keyword);
             Log.i(TAG, "addRecentKeyword = " + keyword);
