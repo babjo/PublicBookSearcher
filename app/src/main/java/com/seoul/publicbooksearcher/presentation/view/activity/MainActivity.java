@@ -1,9 +1,7 @@
 package com.seoul.publicbooksearcher.presentation.view.activity;
 
 import android.app.Activity;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,7 +11,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,7 +33,6 @@ import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewAdapte
 import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewItem;
 import com.seoul.publicbooksearcher.presentation.view.component.BookListView;
 import com.seoul.publicbooksearcher.presentation.view.component.BookTitleAutoCompleteTextView;
-import com.seoul.publicbooksearcher.presentation.view.component.ProgressBarView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,6 +81,11 @@ public class MainActivity extends AppCompatActivity{
         BookPresenter bookPresenter = new BookPresenter(isOnline, getRecentKeywords, addRecentKeyword, searchBooks, searchTitles, bookTitleAutoCompleteTextView, bookListView);
 
         bookTitleAutoCompleteTextView.setBookPresenter(bookPresenter);
+
+        AutoCompleteTextView autoedit = (AutoCompleteTextView) findViewById(R.id.auto_edit);
+        Drawable img = getResources().getDrawable(R.mipmap.searchbar_icon);
+        img.setBounds(0, 0, (int)(0.5*img.getIntrinsicWidth()), (int)(0.5*img.getIntrinsicHeight()) );
+        autoedit.setCompoundDrawables(img,null,null,null);
     }
 
     private Map createLibraries(){
