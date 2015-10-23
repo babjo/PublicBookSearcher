@@ -28,5 +28,4 @@ dependencies {
     compile 'com.google.code.gson:gson:2.4'
     compile 'com.bignerdranch.android:expandablerecyclerview:2.0.3'
     compile 'com.github.pavlospt:circleview:1.2'
-    complie 'com.googlecode.json-simple:1.1.1'
 }

@@ -86,7 +86,7 @@ public class BookPresenter {
                 }
 
                 private Object highlight(String title) {
-                    return Html.fromHtml(title.replaceAll(keyword, "<font color=\"red\">"+keyword+"</font>"));
+                    return Html.fromHtml(title.replaceAll("["+keyword+"]", "<font color=\"red\">"+keyword+"</font>"));
                 }
 
                 @Override
@@ -101,7 +101,7 @@ public class BookPresenter {
 
     public void searchBooks(String keyword) {
         if(isOnline()) {
-            Log.i(TAG, "entered keyword = " + keyword + "\n search start");
+            Log.i(TAG, "entered keyword = " + keyword + "search start");
             addRecentKeyword.execute(keyword);
             Log.i(TAG, "addRecentKeyword = " + keyword);
 

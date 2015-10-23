@@ -90,7 +90,7 @@ public class BookCache extends BaseBookRepository {
         Gson gson = new Gson();
         args.put(BOOKS_JSON_FIELD, gson.toJson(books));
 
-        if(db.update(getTableName(), args, ID_FIELD+"=?", new String[]{keyword}) == 0)
+        if(db.update(getTableName(), args, ID_FIELD+"=?", new String[]{makeId(keyword,library)}) == 0)
             db.insert(getTableName(), null, args);
     }
 

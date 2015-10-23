@@ -3,6 +3,7 @@ package com.seoul.publicbooksearcher.presentation.view.adapter;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -170,6 +171,7 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
     public void updateItem(String library, List<Book> books) {
         int position = getPosition(library);
         if(position != -1){
+            Log.i(TAG, "updateItem : "+library+"(library), "+position+"(position)" );
             bookListViewItemList.get(position).clearAndArrange(books);
             notifyParentItemChanged(position);
         }

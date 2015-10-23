@@ -1,31 +1,24 @@
 package com.seoul.publicbooksearcher.data.crawler;
 
-import android.text.Html;
 import android.util.Log;
 
-import com.google.gson.Gson;
+
 import com.seoul.publicbooksearcher.data.BaseBookRepository;
 import com.seoul.publicbooksearcher.domain.Book;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.simple.JSONValue;
+
 import org.jsoup.Jsoup;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import java.io.IOException;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 public class BandinlunisAutoCompleteCrawler extends BaseBookRepository {
 
@@ -33,12 +26,19 @@ public class BandinlunisAutoCompleteCrawler extends BaseBookRepository {
 
     @Override
     public List<Book> selectByKeyword(String keyword) {
-        String url = "http://222.122.120.242:7571/ksf/api/suggest?callback=&target=complete&domain_no=0&term="+keyword+"&mode=sc&max_count=10&_=1445520411641";
+        String url = null;
+        try {
+            url = "http://222.122.120.242:7571/ksf/api/suggest?callback=&target=complete&domain_no=0&term="+ URLEncoder.encode(keyword, "utf-8") + "&mode=sc&max_count=10&_=";
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+
         Log.i(TAG, "keyword : " + keyword + " and request Url : " + url);
 
         try {
-            String body = Jsoup.connect(url).get().body().toString();
-            String json = body.substring(1, body.length() - 2);
+            String text = Jsoup.connect(url).userAgent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.71 Safari/537.36").get().text();
+            String json = text.substring(1, text.length() - 2);
+            Log.i(TAG, "keyword json : "+json);
             JSONObject jsonObject = new JSONObject(json);
             JSONArray suggestionsArray = (JSONArray) jsonObject.getJSONArray("suggestions").get(0);
 
