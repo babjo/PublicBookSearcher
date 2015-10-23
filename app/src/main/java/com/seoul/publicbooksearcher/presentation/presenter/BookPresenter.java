@@ -86,7 +86,7 @@ public class BookPresenter {
                 }
 
                 private Object highlight(String title) {
-                    return Html.fromHtml(title.replaceAll("["+keyword+"]", "<font color=\"red\">"+keyword+"</font>"));
+                    return Html.fromHtml(title.replace(keyword, "<font color=\"red\">"+keyword+"</font>"));
                 }
 
                 @Override
