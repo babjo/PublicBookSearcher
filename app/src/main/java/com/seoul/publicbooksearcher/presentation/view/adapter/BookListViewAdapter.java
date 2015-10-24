@@ -22,7 +22,6 @@ import com.seoul.publicbooksearcher.domain.Book;
 import com.seoul.publicbooksearcher.domain.Location;
 import com.seoul.publicbooksearcher.presentation.view.component.CircleView;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -79,8 +78,8 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
         bookParentViewHolder.libraryIcon.setBackgroundColor(bookListViewItem.getLibraryIconColor());
         bookParentViewHolder.libraryIcon.setTitleText(bookListViewItem.getLibraryName().charAt(0)+"");
 
-        switch (bookListViewItem.getState()){
-            case BookListViewItem.PROGRESS_GONE:
+        switch (bookListViewItem.getSearchState()){
+            case BookListViewItem.SEARCH_COMPLETE:
                 bookParentViewHolder.arrowUpImageView.setImageResource(R.mipmap.ic_keyboard_arrow_down_black_18dp);
                 bookParentViewHolder.bookState.setText("대출가능 : "+bookListViewItem.getPossibleLendSize() + " / 대출불가능 : " + bookListViewItem.getImpossibleLendSize() + " / 예약가능 : "+bookListViewItem.getPossibleReserveSize());
                 //bookParentViewHolder.bookState1.setTitleText("" + bookListViewItem.getPossibleLendSize());
@@ -90,7 +89,7 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
                 bookParentViewHolder.errorLayout.setVisibility(View.GONE);
                 bookParentViewHolder.resultLayout.setVisibility(View.VISIBLE);
                 break;
-            case BookListViewItem.PROGRESS_VISIBLE:
+            case BookListViewItem.SEARCH_BEFORE:
                 bookParentViewHolder.resultLayout.setVisibility(View.GONE);
                 bookParentViewHolder.errorLayout.setVisibility(View.GONE);
                 bookParentViewHolder.progressBar.setVisibility(View.VISIBLE);
@@ -99,6 +98,12 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
                 bookParentViewHolder.resultLayout.setVisibility(View.GONE);
                 bookParentViewHolder.progressBar.setVisibility(View.GONE);
                 bookParentViewHolder.errorLayout.setVisibility(View.VISIBLE);
+                break;
+        }
+
+        switch (bookListViewItem.getSortState()){
+            case BookListViewItem.SORT_COMPLETE:
+                bookParentViewHolder.distance.setVisibility(View.VISIBLE);
                 break;
         }
     }
@@ -219,25 +224,27 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
 
     public void progressVisible(String library) {
         int position = getPosition(library);
-        bookListViewItemList.get(position).setState(BookListViewItem.PROGRESS_VISIBLE);
+        bookListViewItemList.get(position).setSearchState(BookListViewItem.SEARCH_BEFORE);
         notifyParentItemChangedByHandler(position);
     }
 
     public void progressGone(String library) {
         int position = getPosition(library);
-        bookListViewItemList.get(position).setState(BookListViewItem.PROGRESS_GONE);
+        bookListViewItemList.get(position).setSearchState(BookListViewItem.SEARCH_COMPLETE);
         notifyParentItemChangedByHandler(position);
     }
 
     public void showError(String library, String message) {
         int position = getPosition(library);
-        bookListViewItemList.get(position).setState(BookListViewItem.ERROR);
+        bookListViewItemList.get(position).setSearchState(BookListViewItem.ERROR);
         notifyParentItemChangedByHandler(position);
     }
 
     public void sort(Location currentLocation) {
-        for(BookListViewItem bookListViewItem : bookListViewItemList)
+        for(BookListViewItem bookListViewItem : bookListViewItemList) {
             bookListViewItem.calcDistance(currentLocation);
+            bookListViewItem.setSortState(BookListViewItem.SORT_COMPLETE);
+        }
 
         Collections.sort(bookListViewItemList, new Comparator<BookListViewItem>() {
             @Override

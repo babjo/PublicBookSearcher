@@ -14,47 +14,6 @@
     android:background="@android:color/white"
     >
 
-    <LinearLayout
-        android:id="@+id/forFocus"
-        android:orientation="horizontal"
-        android:focusable="true" android:focusableInTouchMode="true"
-        android:layout_width="0px" android:layout_height="0px" />
-
-    <com.seoul.publicbooksearcher.presentation.view.component.InstantAutoCompleteView
-        android:id="@+id/auto_edit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        android:paddingLeft="10dp"
-        android:paddingRight="9dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="13dp"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:gravity="center_vertical"
-
-        android:background="@drawable/searchbar_shadoweffect"
-        android:drawableLeft="@mipmap/searchbar_icon"
-        android:drawablePadding="5dp"
-
-        android:hint="@string/hint"
-
-        android:singleLine="true"
-        android:textAppearance="?android:textAppearanceMedium"
-        android:imeOptions="actionSearch"
-        android:nextFocusLeft="@id/auto_edit"
-        android:nextFocusUp="@id/auto_edit"
-        />
-
-    <Button
-        android:id="@+id/book_distance_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="위치"
-        />
-
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/book_list"
         android:layout_width="match_parent"

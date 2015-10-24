@@ -9,9 +9,53 @@
     <android.support.design.widget.AppBarLayout android:layout_height="wrap_content"
         android:layout_width="match_parent" android:theme="@style/AppTheme.AppBarOverlay">
 
-        <android.support.v7.widget.Toolbar android:id="@+id/toolbar"
-            android:layout_width="match_parent" android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary" app:popupTheme="@style/AppTheme.PopupOverlay" />
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            >
+        </android.support.v7.widget.Toolbar>
+        <LinearLayout
+            android:id="@+id/forFocus"
+            android:orientation="horizontal"
+            android:focusable="true" android:focusableInTouchMode="true"
+            android:layout_width="0px" android:layout_height="0px" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="10dp"
+            >
+            <com.seoul.publicbooksearcher.presentation.view.component.InstantAutoCompleteView
+                android:id="@+id/auto_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:textColor="@color/text_dark"
+                android:paddingLeft="10dp"
+                android:paddingRight="9dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="13dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:gravity="center_vertical"
+
+                android:background="@drawable/searchbar_shadoweffect"
+                android:drawableLeft="@mipmap/searchbar_icon"
+                android:drawablePadding="5dp"
+
+                android:hint="@string/hint"
+
+                android:singleLine="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:imeOptions="actionSearch"
+                android:nextFocusLeft="@id/auto_edit"
+                android:nextFocusUp="@id/auto_edit"
+                />
+        </RelativeLayout>
 
     </android.support.design.widget.AppBarLayout>
 

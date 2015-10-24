@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 
+import com.seoul.publicbooksearcher.R;
 import com.seoul.publicbooksearcher.presentation.presenter.BookPresenter;
 import com.seoul.publicbooksearcher.presentation.view.adapter.BookTitleAutoCompleteTextViewAdapter;
 
@@ -30,6 +31,7 @@ public class BookTitleAutoCompleteTextView {
     public BookTitleAutoCompleteTextView(Context context, final AutoCompleteTextView autoCompleteTextView) {
 
         this.autoCompleteTextView = autoCompleteTextView;
+        this.autoCompleteTextView.setDropDownBackgroundResource(R.color.white);
         this.bookTitleAutoCompleteTextViewAdapter = new BookTitleAutoCompleteTextViewAdapter(context, android.R.layout.simple_dropdown_item_1line, new ArrayList<String>());
 
         autoCompleteTextView.setAdapter(bookTitleAutoCompleteTextViewAdapter);

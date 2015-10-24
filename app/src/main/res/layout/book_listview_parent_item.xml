@@ -48,6 +48,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:gravity="end"
+                android:visibility="invisible"
                 android:text="거리"/>
         </LinearLayout>
 

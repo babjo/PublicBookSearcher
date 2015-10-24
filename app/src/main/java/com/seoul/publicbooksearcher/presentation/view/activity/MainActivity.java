@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity{
 
     private final static String TAG = MainActivity.class.getName();
     private RecyclerView listView;
+    private BookPresenter bookPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +95,7 @@ public class MainActivity extends AppCompatActivity{
 
         Log.i(TAG, "=================================== Create Presenter =====================================");
 
-        final BookPresenter bookPresenter = new BookPresenter(isOnline, getRecentKeywords, addRecentKeyword, searchBooks, searchTitles, sortLibraries,bookTitleAutoCompleteTextView, bookListView);
+        bookPresenter = new BookPresenter(isOnline, getRecentKeywords, addRecentKeyword, searchBooks, searchTitles, sortLibraries,bookTitleAutoCompleteTextView, bookListView);
 
         bookTitleAutoCompleteTextView.setBookPresenter(bookPresenter);
 
@@ -103,12 +104,6 @@ public class MainActivity extends AppCompatActivity{
         img.setBounds(0, 0, (int) (0.5 * img.getIntrinsicWidth()), (int) (0.5 * img.getIntrinsicHeight()));
         autoedit.setCompoundDrawables(img, null, null, null);
 
-        ((Button)findViewById(R.id.book_distance_btn)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bookPresenter.sortLibraries();
-            }
-        });
     }
 
     private Map createLibraries(){
@@ -164,7 +159,8 @@ public class MainActivity extends AppCompatActivity{
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_sort) {
+            bookPresenter.sortLibraries();
             return true;
         }
 

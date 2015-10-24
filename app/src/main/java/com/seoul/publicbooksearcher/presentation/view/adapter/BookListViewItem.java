@@ -5,7 +5,6 @@ import com.seoul.publicbooksearcher.domain.Book;
 import com.seoul.publicbooksearcher.domain.Library;
 import com.seoul.publicbooksearcher.domain.Location;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class BookListViewItem implements ParentListItem{
@@ -14,12 +13,15 @@ public class BookListViewItem implements ParentListItem{
     private int possibleLendSize;
     private int impossibleLendSize;
     private int possibleReserveSize;
-    private int state;
+    private int searchState;
+    private int sortState;
     private double distance;
 
-    public final static int PROGRESS_GONE = 1;
-    public final static int PROGRESS_VISIBLE = 2;
+    public final static int SEARCH_COMPLETE = 1;
+    public final static int SEARCH_BEFORE = 2;
     public final static int ERROR = 3;
+
+    public final static int SORT_COMPLETE = 4;
 
     public BookListViewItem(Library library){
         this.library = library;
@@ -70,11 +72,17 @@ public class BookListViewItem implements ParentListItem{
         this.possibleReserveSize=0;
     }
 
-    public int getState() {
-        return state;
+    public int getSearchState() {
+        return searchState;
     }
-    public void setState(int state) {
-        this.state = state;
+    public void setSearchState(int searchState) {
+        this.searchState = searchState;
+    }
+    public int getSortState() {
+        return sortState;
+    }
+    public void setSortState(int sortState) {
+        this.sortState = sortState;
     }
 
     public double getDistance() {
