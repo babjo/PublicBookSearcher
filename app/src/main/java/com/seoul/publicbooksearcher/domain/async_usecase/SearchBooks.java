@@ -9,6 +9,8 @@ import com.seoul.publicbooksearcher.domain.Library;
 import com.seoul.publicbooksearcher.domain.SearchResult;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class SearchBooks implements AsyncUseCase<String> {
@@ -17,6 +19,7 @@ public class SearchBooks implements AsyncUseCase<String> {
     private AsyncUseCaseListener asyncUseCaseListener;
 
     private Map<Library, BookRepository> bookRepositoryMap;
+    private List<LibraryAsyncTask> libraryAsyncTaskList = new ArrayList();
 
     public SearchBooks(Map<Library, BookRepository> bookRepositoryMap){
         this.bookRepositoryMap = bookRepositoryMap;
@@ -26,11 +29,17 @@ public class SearchBooks implements AsyncUseCase<String> {
     public void execute(String keyword, final AsyncUseCaseListener asyncUseCaseListener) {
         this.asyncUseCaseListener = asyncUseCaseListener;
 
+        for(LibraryAsyncTask libraryAsyncTask : libraryAsyncTaskList)
+            libraryAsyncTask.cancel(false);
+        libraryAsyncTaskList.clear();
+
         for(Library library : bookRepositoryMap.keySet()){
+            LibraryAsyncTask libraryAsyncTask = new LibraryAsyncTask(library.getName(), bookRepositoryMap.get(library));
+            libraryAsyncTaskList.add(libraryAsyncTask);
             if (Build.VERSION.SDK_INT >= 11)
-                new LibraryAsyncTask(library.getName(), bookRepositoryMap.get(library)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, keyword);
+                libraryAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, keyword);
             else
-                new LibraryAsyncTask(library.getName(), bookRepositoryMap.get(library)).execute(keyword);
+                libraryAsyncTask.execute(keyword);
         }
 
     }

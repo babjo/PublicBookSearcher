@@ -8,6 +8,7 @@ public class Library {
     private String name;
     private List<Book> books;
     private Location location;
+    private int color;
 
     public Library(String name, List<Book> books) {
         this.name = name;
@@ -19,10 +20,11 @@ public class Library {
         this.books = new ArrayList();
     }
 
-    public Library(String name, double latitude, double longitude) {
+    public Library(String name, double latitude, double longitude, int color) {
         this.name = name;
         this.location = new Location(latitude, longitude);
         this.books = new ArrayList();
+        this.color = color;
     }
 
     public String getName() {
@@ -47,5 +49,9 @@ public class Library {
 
     public double distance(Location location){
         return this.location.distance(location);
+    }
+
+    public int getColor() {
+        return color;
     }
 }

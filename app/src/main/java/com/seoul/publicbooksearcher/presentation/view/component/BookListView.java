@@ -56,4 +56,12 @@ public class BookListView {
     public void sort(Location location) {
         bookListViewAdapter.sort(location);
     }
+
+    public void collapseAllParents() {
+        bookListViewAdapter.collapseAllParents();
+    }
+
+    public void clearLibrary(String library) {
+        bookListViewAdapter.clearChildItems(library);
+    }
 }

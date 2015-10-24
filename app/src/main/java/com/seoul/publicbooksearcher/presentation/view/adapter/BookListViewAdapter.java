@@ -3,6 +3,7 @@ package com.seoul.publicbooksearcher.presentation.view.adapter;
 
 import android.content.Context;
 import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,13 +74,18 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
     public void onBindParentViewHolder(BookParentViewHolder bookParentViewHolder, int i, ParentListItem parentListItem) {
         BookListViewItem bookListViewItem = (BookListViewItem) parentListItem;
         bookParentViewHolder.library2.setText(bookListViewItem.getLibraryName());
+        bookParentViewHolder.distance.setText(String.format("%.2fkm", bookListViewItem.getDistance()));
+        Log.i(TAG, "========================" + bookListViewItem.getLibraryIconColor() + "==========================");
+        bookParentViewHolder.libraryIcon.setBackgroundColor(bookListViewItem.getLibraryIconColor());
+        bookParentViewHolder.libraryIcon.setTitleText(bookListViewItem.getLibraryName().charAt(0)+"");
 
         switch (bookListViewItem.getState()){
             case BookListViewItem.PROGRESS_GONE:
-                bookParentViewHolder.arrowUpImageView.setImageResource(R.mipmap.ic_keyboard_arrow_up_black_24dp);
-                bookParentViewHolder.bookState1.setTitleText("" + bookListViewItem.getPossibleLendSize());
-                bookParentViewHolder.bookState2.setTitleText("" + bookListViewItem.getImpossibleLendSize());
-                bookParentViewHolder.bookState3.setTitleText("" + bookListViewItem.getPossibleReserveSize());
+                bookParentViewHolder.arrowUpImageView.setImageResource(R.mipmap.ic_keyboard_arrow_down_black_18dp);
+                bookParentViewHolder.bookState.setText("대출가능 : "+bookListViewItem.getPossibleLendSize() + " / 대출불가능 : " + bookListViewItem.getImpossibleLendSize() + " / 예약가능 : "+bookListViewItem.getPossibleReserveSize());
+                //bookParentViewHolder.bookState1.setTitleText("" + bookListViewItem.getPossibleLendSize());
+                //bookParentViewHolder.bookState2.setTitleText("" + bookListViewItem.getImpossibleLendSize());
+                //bookParentViewHolder.bookState3.setTitleText("" + bookListViewItem.getPossibleReserveSize());
                 bookParentViewHolder.progressBar.setVisibility(View.GONE);
                 bookParentViewHolder.errorLayout.setVisibility(View.GONE);
                 bookParentViewHolder.resultLayout.setVisibility(View.VISIBLE);
@@ -122,9 +128,12 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
         public TextView library2;
         public RelativeLayout progressBar;
 
+        public CircleView libraryIcon;
+        public TextView distance;
         public LinearLayout resultLayout;
         public LinearLayout errorLayout;
 
+        public TextView bookState;
         public ImageView arrowUpImageView;
         /*
         public TextView bookState1;
@@ -139,13 +148,17 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
         public BookParentViewHolder(View v) {
             super(v);
             library2 = (TextView) v.findViewById(R.id.book_library2);
+            distance = (TextView) v.findViewById(R.id.library_distance);
+            libraryIcon = (CircleView) v.findViewById(R.id.library_icon);
             progressBar = (RelativeLayout) v.findViewById(R.id.progress_layout);
             resultLayout = (LinearLayout) v.findViewById(R.id.result_layout);
             errorLayout = (LinearLayout) v.findViewById(R.id.error_layout);
             arrowUpImageView = (ImageView) v.findViewById(R.id.arrow);
+            bookState = (TextView) v.findViewById(R.id.library_state);
+            /*
             bookState1 = (CircleView) v.findViewById(R.id.book_state_1);
             bookState2 = (CircleView) v.findViewById(R.id.book_state_2);
-            bookState3 = (CircleView) v.findViewById(R.id.book_state_3);
+            bookState3 = (CircleView) v.findViewById(R.id.book_state_3);*/
         }
 
         @Override
@@ -175,13 +188,28 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
         }
     }
 
+    public void clearChildItems(String library){
+        int position = getPosition(library);
+        if(position != -1){
+            int childSize = bookListViewItemList.get(position).childSize();
+            bookListViewItemList.get(position).clearBooks();
+            for(int i = 0; i < childSize; i++)
+                notifyChildItemRemoved(position, i);
+        }
+    }
+
 
     public void updateItem(String library, List<Book> books) {
         int position = getPosition(library);
-        if(position != -1){
-            Log.i(TAG, "updateItem : "+library+"(library), "+position+"(position)" );
-            bookListViewItemList.get(position).clearAndArrange(books);
-            notifyParentItemChanged(position);
+        if(position != -1) {
+            Log.i(TAG, "updateItem : " + library + "(library), " + position + "(position)");
+
+            bookListViewItemList.get(position).arrange(books);
+            int childSize = bookListViewItemList.get(position).childSize();
+            for(int j=0; j< childSize; j++)
+                notifyChildItemInserted(position, j);
+
+            notifyParentItemChangedByHandler(position);
         }
     }
 
@@ -192,24 +220,25 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
     public void progressVisible(String library) {
         int position = getPosition(library);
         bookListViewItemList.get(position).setState(BookListViewItem.PROGRESS_VISIBLE);
-        notifyParentItemChanged(position);
+        notifyParentItemChangedByHandler(position);
     }
 
     public void progressGone(String library) {
         int position = getPosition(library);
         bookListViewItemList.get(position).setState(BookListViewItem.PROGRESS_GONE);
-        notifyParentItemChanged(position);
+        notifyParentItemChangedByHandler(position);
     }
 
     public void showError(String library, String message) {
         int position = getPosition(library);
         bookListViewItemList.get(position).setState(BookListViewItem.ERROR);
-        notifyParentItemChanged(position);
+        notifyParentItemChangedByHandler(position);
     }
 
     public void sort(Location currentLocation) {
         for(BookListViewItem bookListViewItem : bookListViewItemList)
             bookListViewItem.calcDistance(currentLocation);
+
         Collections.sort(bookListViewItemList, new Comparator<BookListViewItem>() {
             @Override
             public int compare(BookListViewItem lhs, BookListViewItem rhs) {
@@ -218,8 +247,18 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
         });
 
         for(int i=0; i<bookListViewItemList.size(); i++)
-            notifyParentItemChanged(i);
+            notifyParentItemChangedByHandler(i);
         updateLibraryPosition();
+    }
+
+    private Handler handler = new Handler();
+    private void notifyParentItemChangedByHandler(final int position) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                notifyParentItemChanged(position);
+            }
+        });
     }
 
 }

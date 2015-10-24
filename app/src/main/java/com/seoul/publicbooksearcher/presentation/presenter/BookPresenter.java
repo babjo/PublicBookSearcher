@@ -106,9 +106,17 @@ public class BookPresenter {
 
             searchBooks.execute(keyword, new AsyncUseCaseListener<String, SearchResult, BookSearchException>() {
                 @Override
-                public void onBefore(String library) {
+                public void onBefore(final String library) {
                     bookTitleAutoCompleteTextView.dismissDropDown();
                     bookTitleAutoCompleteTextView.clearFocus();
+
+                    new Handler().post(new Runnable() { // new Handler and Runnable
+                        @Override
+                        public void run() {
+                            bookListView.collapseAllParents();
+                            bookListView.clearLibrary(library);
+                        }
+                    });
 
                     bookListView.progressVisible(library);
                     bookListView.hideKeyboard();
@@ -138,6 +146,7 @@ public class BookPresenter {
 
             @Override
             public void onAfter(Location location) {
+                Log.i(TAG, "=========== current location : "+location.latitude + ", " + location.longitude);
                 bookListView.sort(location);
             }
 

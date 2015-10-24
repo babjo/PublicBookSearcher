@@ -27,11 +27,15 @@ public class SortLibraries implements AsyncUseCase<Void>, LocationListener {
     @Override
     public void execute(Void arg, AsyncUseCaseListener asyncUseCaseListener) {
         this.asyncUseCaseListener = asyncUseCaseListener;
+        registerLocationUpdates();
+    }
+
+    private void registerLocationUpdates() {
         if (locationManager != null) {
             if (checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                     || checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                locationManager.requestLocationUpdates(
-                        LocationManager.GPS_PROVIDER, 5000, 10, this);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 10, this);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, this);
             }
         }
     }

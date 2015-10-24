@@ -10,7 +10,18 @@ public class Location {
         this.longitude = longitude;
     }
 
-    public double distance(Location other) {
+    public double distance(Location location) {
+        android.location.Location one = new android.location.Location("");
+        android.location.Location other = new android.location.Location("");
+
+        one.setLatitude(latitude);
+        one.setLongitude(longitude);
+
+        other.setLatitude(location.latitude);
+        other.setLongitude(location.longitude);
+
+        return one.distanceTo(other)/1000; // km
+        /*
         double toLat = other.latitude;
         double toLon = other.longitude;
         double radius = 6378137;   // approximate Earth radius, *in meters*
@@ -20,6 +31,6 @@ public class Location {
                 Math.pow(Math.sin(deltaLat/2), 2) +
                         Math.cos(latitude) * Math.cos(toLat) *
                                 Math.pow(Math.sin(deltaLon/2), 2) ) );
-        return radius * angle;
+        return radius * angle;*/
     }
 }

@@ -1,16 +1,22 @@
 package com.seoul.publicbooksearcher.presentation.view.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +38,7 @@ import com.seoul.publicbooksearcher.domain.usecase.GetRecentKeywords;
 import com.seoul.publicbooksearcher.domain.usecase.IsOnline;
 import com.seoul.publicbooksearcher.domain.usecase.UseCase;
 import com.seoul.publicbooksearcher.presentation.presenter.BookPresenter;
+import com.seoul.publicbooksearcher.presentation.view.DividerItemDecoration;
 import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewAdapter;
 import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewItem;
 import com.seoul.publicbooksearcher.presentation.view.component.BookListView;
@@ -73,61 +80,74 @@ public class MainActivity extends AppCompatActivity{
 
         listView = (RecyclerView) findViewById(R.id.book_list);
         listView.setHasFixedSize(true);
-        listView.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        listView.setLayoutManager(layoutManager);
+        listView.setItemAnimator(new DefaultItemAnimator());
+        //listView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
         BookListViewAdapter bookListViewAdapter = new BookListViewAdapter(this, bookListViewItems);
         if(savedInstanceState != null)
             bookListViewAdapter.onRestoreInstanceState(savedInstanceState);
         listView.setAdapter(bookListViewAdapter);
 
-        BookListView bookListView = new BookListView(this, listView, (TextView) findViewById(R.id.empty_txt));
+        final BookListView bookListView = new BookListView(this, listView, (TextView) findViewById(R.id.empty_txt));
 
         Log.i(TAG, "=================================== Create Presenter =====================================");
 
-        BookPresenter bookPresenter = new BookPresenter(isOnline, getRecentKeywords, addRecentKeyword, searchBooks, searchTitles, sortLibraries,bookTitleAutoCompleteTextView, bookListView);
+        final BookPresenter bookPresenter = new BookPresenter(isOnline, getRecentKeywords, addRecentKeyword, searchBooks, searchTitles, sortLibraries,bookTitleAutoCompleteTextView, bookListView);
 
         bookTitleAutoCompleteTextView.setBookPresenter(bookPresenter);
 
         AutoCompleteTextView autoedit = (AutoCompleteTextView) findViewById(R.id.auto_edit);
         Drawable img = getResources().getDrawable(R.mipmap.searchbar_icon);
-        img.setBounds(0, 0, (int)(0.5*img.getIntrinsicWidth()), (int)(0.5*img.getIntrinsicHeight()) );
-        autoedit.setCompoundDrawables(img,null,null,null);
+        img.setBounds(0, 0, (int) (0.5 * img.getIntrinsicWidth()), (int) (0.5 * img.getIntrinsicHeight()));
+        autoedit.setCompoundDrawables(img, null, null, null);
+
+        ((Button)findViewById(R.id.book_distance_btn)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bookPresenter.sortLibraries();
+            }
+        });
     }
 
     private Map createLibraries(){
         Map<Library, BookRepository> bookRepositoryMap = new HashMap<>();
-        bookRepositoryMap.put(new Library("서울도서관", 37.5662020, 126.9778190), new SeoulLibrary(new BookCache(this)));
+        bookRepositoryMap.put(new Library("서울도서관", 37.5662020, 126.9778190, getResources().getColor(R.color.서울도서관)), new SeoulLibrary(new BookCache(this)));
 
-        bookRepositoryMap.put(new Library("강남도서관", 37.5136910, 127.0470990), new BaseLibrary(new BookCache(this), "111003"));
-        bookRepositoryMap.put(new Library("강동도서관", 37.5385690, 127.1437600), new BaseLibrary(new BookCache(this), "111004"));
-        bookRepositoryMap.put(new Library("강서도서관", 37.5478818, 126.8599269), new BaseLibrary(new BookCache(this), "111005"));
-        bookRepositoryMap.put(new Library("고덕평생학습관", 37.5600000,127.1600000), new BaseLibrary(new BookCache(this), "111007"));
+        bookRepositoryMap.put(new Library("강남도서관", 37.5136910, 127.0470990, getResources().getColor(R.color.강남도서관)), new BaseLibrary(new BookCache(this), "111003"));
+        bookRepositoryMap.put(new Library("강동도서관", 37.5385690, 127.1437600, getResources().getColor(R.color.강동도서관)), new BaseLibrary(new BookCache(this), "111004"));
+        bookRepositoryMap.put(new Library("강서도서관", 37.5478818, 126.8599269, getResources().getColor(R.color.강서도서관)), new BaseLibrary(new BookCache(this), "111005"));
+        bookRepositoryMap.put(new Library("고덕평생학습관", 37.5600000,127.1600000, getResources().getColor(R.color.고덕평생학습관)), new BaseLibrary(new BookCache(this), "111007"));
 
 
-        bookRepositoryMap.put(new Library("고척도서관", 37.5100000,126.8500000), new BaseLibrary(new BookCache(this), "111008"));
-        bookRepositoryMap.put(new Library("구로도서관", 37.5000000,126.8900000), new BaseLibrary(new BookCache(this), "111009"));
-        bookRepositoryMap.put(new Library("개포도서관", 37.4800000,127.0600000), new BaseLibrary(new BookCache(this), "111006"));
-        bookRepositoryMap.put(new Library("남산도서관", 37.5500000,126.9800000), new BaseLibrary(new BookCache(this), "111010"));
+        bookRepositoryMap.put(new Library("고척도서관", 37.5100000,126.8500000, getResources().getColor(R.color.고척도서관)), new BaseLibrary(new BookCache(this), "111008"));
+        bookRepositoryMap.put(new Library("구로도서관", 37.5000000,126.8900000, getResources().getColor(R.color.구로도서관)), new BaseLibrary(new BookCache(this), "111009"));
+        bookRepositoryMap.put(new Library("개포도서관", 37.4800000,127.0600000, getResources().getColor(R.color.개포도서관)), new BaseLibrary(new BookCache(this), "111006"));
+        bookRepositoryMap.put(new Library("남산도서관", 37.5500000, 126.9800000, getResources().getColor(R.color.남산도서관)), new BaseLibrary(new BookCache(this), "111010"));
 
-        bookRepositoryMap.put(new Library("노원평생학습관", 37.6400000,127.0700000), new BaseLibrary(new BookCache(this), "111022"));
-        bookRepositoryMap.put(new Library("동대문도서관", 37.5700000,127.0200000), new BaseLibrary(new BookCache(this), "111012"));
-        bookRepositoryMap.put(new Library("도봉도서관", 37.6500000,127.0100000), new BaseLibrary(new BookCache(this), "111011"));
-        bookRepositoryMap.put(new Library("동작도서관", 37.5100000,126.9400000), new BaseLibrary(new BookCache(this), "111013"));
+        bookRepositoryMap.put(new Library("노원평생학습관", 37.6400000,127.0700000, getResources().getColor(R.color.노원평생학습관)), new BaseLibrary(new BookCache(this), "111022"));
+        bookRepositoryMap.put(new Library("동대문도서관", 37.5700000, 127.0200000, getResources().getColor(R.color.동대문도서관)), new BaseLibrary(new BookCache(this), "111012"));
+        bookRepositoryMap.put(new Library("도봉도서관", 37.6500000, 127.0100000, getResources().getColor(R.color.도봉도서관)), new BaseLibrary(new BookCache(this), "111011"));
+        bookRepositoryMap.put(new Library("동작도서관", 37.5100000, 126.9400000, getResources().getColor(R.color.동작도서관)), new BaseLibrary(new BookCache(this), "111013"));
 
-        bookRepositoryMap.put(new Library("마포평생학습관", 37.5500000,126.9200000), new BaseLibrary(new BookCache(this), "111014"));
-        bookRepositoryMap.put(new Library("마포평생아현분관", 37.5500000,126.9600000), new BaseLibrary(new BookCache(this), "111031"));
-        bookRepositoryMap.put(new Library("서대문도서관", 37.5800000,126.9400000), new BaseLibrary(new BookCache(this), "111016"));
-        bookRepositoryMap.put(new Library("송파도서관", 37.5000000,127.1300000), new BaseLibrary(new BookCache(this), "111030"));
+        bookRepositoryMap.put(new Library("마포평생학습관", 37.5500000, 126.9200000, getResources().getColor(R.color.마포평생학습관)), new BaseLibrary(new BookCache(this), "111014"));
+        bookRepositoryMap.put(new Library("마포평생아현분관", 37.5500000,126.9600000, getResources().getColor(R.color.마포평생아현분관)), new BaseLibrary(new BookCache(this), "111031"));
+        bookRepositoryMap.put(new Library("서대문도서관", 37.5800000,126.9400000, getResources().getColor(R.color.서대문도서관)), new BaseLibrary(new BookCache(this), "111016"));
+        bookRepositoryMap.put(new Library("송파도서관", 37.5000000, 127.1300000, getResources().getColor(R.color.송파도서관)), new BaseLibrary(new BookCache(this), "111030"));
 
-        bookRepositoryMap.put(new Library("양천도서관", 37.5300000,126.8800000), new BaseLibrary(new BookCache(this), "111015"));
-        bookRepositoryMap.put(new Library("서울시립어린이도서관", 37.5800000,126.9700000), new BaseLibrary(new BookCache(this), "111017"));
-        bookRepositoryMap.put(new Library("영등포평생학습관", 37.5260740, 126.9073520), new BaseLibrary(new BookCache(this), "111018"));
-        bookRepositoryMap.put(new Library("용산도서관", 37.5500000,126.9800000), new BaseLibrary(new BookCache(this), "111019"));
+        bookRepositoryMap.put(new Library("양천도서관", 37.5300000, 126.8800000, getResources().getColor(R.color.양천도서관)), new BaseLibrary(new BookCache(this), "111015"));
+        bookRepositoryMap.put(new Library("서울시립어린이도서관", 37.5800000, 126.9700000, getResources().getColor(R.color.서울시립어린이도서관)), new BaseLibrary(new BookCache(this), "111017"));
+        bookRepositoryMap.put(new Library("영등포평생학습관", 37.5260740, 126.9073520, getResources().getColor(R.color.영등포평생학습관)), new BaseLibrary(new BookCache(this), "111018"));
+        bookRepositoryMap.put(new Library("용산도서관", 37.5500000, 126.9800000, getResources().getColor(R.color.용산도서관)), new BaseLibrary(new BookCache(this), "111019"));
 
-        bookRepositoryMap.put(new Library("정독도서관", 37.5800000, 126.9800000), new BaseLibrary(new BookCache(this), "111020"));
-        bookRepositoryMap.put(new Library("종로도서관", 37.5800000,126.9700000), new BaseLibrary(new BookCache(this), "111021"));
+        bookRepositoryMap.put(new Library("정독도서관", 37.5800000, 126.9800000, getResources().getColor(R.color.정독도서관)), new BaseLibrary(new BookCache(this), "111020"));
+        bookRepositoryMap.put(new Library("종로도서관", 37.5800000, 126.9700000, getResources().getColor(R.color.종로도서관)), new BaseLibrary(new BookCache(this), "111021"));
 
         return bookRepositoryMap;
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

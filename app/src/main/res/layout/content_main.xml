@@ -11,7 +11,7 @@
     android:orientation="vertical"
     android:id="@+id/main_root_layout"
 
-
+    android:background="@android:color/white"
     >
 
     <LinearLayout
@@ -46,6 +46,14 @@
         android:nextFocusLeft="@id/auto_edit"
         android:nextFocusUp="@id/auto_edit"
         />
+
+    <Button
+        android:id="@+id/book_distance_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="위치"
+        />
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/book_list"

@@ -48,8 +48,7 @@ public class BookListViewItem implements ParentListItem{
         library.add(book);
     }
 
-    public void clearAndArrange(List<Book> books) {
-        clearBooks();
+    public void arrange(List<Book> books) {
         for(Book book : books)
             arrangeAndAdd(book);
     }
@@ -84,5 +83,13 @@ public class BookListViewItem implements ParentListItem{
 
     public void calcDistance(Location currentLocation) {
         distance = library.distance(currentLocation);
+    }
+
+    public int childSize() {
+        return library.getBooks().size();
+    }
+
+    public int getLibraryIconColor() {
+        return library.getColor();
     }
 }
