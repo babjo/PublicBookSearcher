@@ -18,8 +18,12 @@ import com.bignerdranch.expandablerecyclerview.ViewHolder.ChildViewHolder;
 import com.bignerdranch.expandablerecyclerview.ViewHolder.ParentViewHolder;
 import com.seoul.publicbooksearcher.R;
 import com.seoul.publicbooksearcher.domain.Book;
+import com.seoul.publicbooksearcher.domain.Location;
 import com.seoul.publicbooksearcher.presentation.view.component.CircleView;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,9 +44,13 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
         mInflater = LayoutInflater.from(context);
         this.bookListViewItemList = bookListViewItemList;
 
+        updateLibraryPosition();
+    }
+
+    private void updateLibraryPosition(){
         int position = 0;
         for(BookListViewItem bookListViewItem : bookListViewItemList) {
-            libraryPositionMap.put(bookListViewItem.getLibrary(), position);
+            libraryPositionMap.put(bookListViewItem.getLibraryName(), position);
             position++;
         }
     }
@@ -64,7 +72,7 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
     @Override
     public void onBindParentViewHolder(BookParentViewHolder bookParentViewHolder, int i, ParentListItem parentListItem) {
         BookListViewItem bookListViewItem = (BookListViewItem) parentListItem;
-        bookParentViewHolder.library2.setText(bookListViewItem.getLibrary());
+        bookParentViewHolder.library2.setText(bookListViewItem.getLibraryName());
 
         switch (bookListViewItem.getState()){
             case BookListViewItem.PROGRESS_GONE:
@@ -197,6 +205,21 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
         int position = getPosition(library);
         bookListViewItemList.get(position).setState(BookListViewItem.ERROR);
         notifyParentItemChanged(position);
+    }
+
+    public void sort(Location currentLocation) {
+        for(BookListViewItem bookListViewItem : bookListViewItemList)
+            bookListViewItem.calcDistance(currentLocation);
+        Collections.sort(bookListViewItemList, new Comparator<BookListViewItem>() {
+            @Override
+            public int compare(BookListViewItem lhs, BookListViewItem rhs) {
+                return (int) (lhs.getDistance() - rhs.getDistance());
+            }
+        });
+
+        for(int i=0; i<bookListViewItemList.size(); i++)
+            notifyParentItemChanged(i);
+        updateLibraryPosition();
     }
 
 }

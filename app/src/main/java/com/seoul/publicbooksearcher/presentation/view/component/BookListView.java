@@ -7,6 +7,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.seoul.publicbooksearcher.domain.Book;
+import com.seoul.publicbooksearcher.domain.Location;
 import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewAdapter;
 
 import java.util.List;
@@ -50,5 +51,9 @@ public class BookListView {
 
     public void showError(String library, String message) {
         bookListViewAdapter.showError(library, message);
+    }
+
+    public void sort(Location location) {
+        bookListViewAdapter.sort(location);
     }
 }

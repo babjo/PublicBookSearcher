@@ -22,9 +22,11 @@ import com.seoul.publicbooksearcher.data.crawler.BandinlunisAutoCompleteCrawler;
 import com.seoul.publicbooksearcher.data.crawler.BaseLibrary;
 import com.seoul.publicbooksearcher.data.crawler.SeoulLibrary;
 import com.seoul.publicbooksearcher.data.open_api.NaverBookOpenApi;
+import com.seoul.publicbooksearcher.domain.Library;
 import com.seoul.publicbooksearcher.domain.async_usecase.AsyncUseCase;
 import com.seoul.publicbooksearcher.domain.async_usecase.SearchBooks;
 import com.seoul.publicbooksearcher.domain.async_usecase.SearchTitles;
+import com.seoul.publicbooksearcher.domain.async_usecase.SortLibraries;
 import com.seoul.publicbooksearcher.domain.usecase.AddRecentKeyword;
 import com.seoul.publicbooksearcher.domain.usecase.GetRecentKeywords;
 import com.seoul.publicbooksearcher.domain.usecase.IsOnline;
@@ -56,14 +58,15 @@ public class MainActivity extends AppCompatActivity{
         UseCase isOnline = new IsOnline(this);
         UseCase getRecentKeywords = new GetRecentKeywords(new RecentSearchKeywordRepository(this));
         UseCase addRecentKeyword = new AddRecentKeyword(new RecentSearchKeywordRepository(this));
-        Map<String, BookRepository> libraries = createLibraries();
+        Map<Library, BookRepository> libraries = createLibraries();
         List<BookListViewItem> bookListViewItems = new ArrayList();
-        for(String libraryName : libraries.keySet()) {
-            Log.i(TAG, libraryName);
-            bookListViewItems.add(new BookListViewItem(libraryName));
+        for(Library library : libraries.keySet()) {
+            Log.i(TAG, library.getName());
+            bookListViewItems.add(new BookListViewItem(library));
         }
         AsyncUseCase searchBooks = new SearchBooks(libraries);
         AsyncUseCase searchTitles = new SearchTitles(new BandinlunisAutoCompleteCrawler());
+        AsyncUseCase sortLibraries = new SortLibraries(this);
 
         Log.i(TAG, "=================================== Create View ==========================================");
         BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView = new BookTitleAutoCompleteTextView(this, (AutoCompleteTextView) findViewById(R.id.auto_edit));
@@ -79,7 +82,8 @@ public class MainActivity extends AppCompatActivity{
         BookListView bookListView = new BookListView(this, listView, (TextView) findViewById(R.id.empty_txt));
 
         Log.i(TAG, "=================================== Create Presenter =====================================");
-        BookPresenter bookPresenter = new BookPresenter(isOnline, getRecentKeywords, addRecentKeyword, searchBooks, searchTitles, bookTitleAutoCompleteTextView, bookListView);
+
+        BookPresenter bookPresenter = new BookPresenter(isOnline, getRecentKeywords, addRecentKeyword, searchBooks, searchTitles, sortLibraries,bookTitleAutoCompleteTextView, bookListView);
 
         bookTitleAutoCompleteTextView.setBookPresenter(bookPresenter);
 
@@ -90,37 +94,37 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private Map createLibraries(){
-        Map<String, BookRepository> bookRepositoryMap = new HashMap<>();
-        bookRepositoryMap.put("서울도서관", new SeoulLibrary(new BookCache(this)));
+        Map<Library, BookRepository> bookRepositoryMap = new HashMap<>();
+        bookRepositoryMap.put(new Library("서울도서관", 37.5662020, 126.9778190), new SeoulLibrary(new BookCache(this)));
 
-        bookRepositoryMap.put("강남도서관", new BaseLibrary(new BookCache(this), "111003"));
-        bookRepositoryMap.put("강동도서관", new BaseLibrary(new BookCache(this), "111004"));
-        bookRepositoryMap.put("강서도서관", new BaseLibrary(new BookCache(this), "111005"));
-        bookRepositoryMap.put("고덕평생학습관", new BaseLibrary(new BookCache(this), "111007"));
+        bookRepositoryMap.put(new Library("강남도서관", 37.5136910, 127.0470990), new BaseLibrary(new BookCache(this), "111003"));
+        bookRepositoryMap.put(new Library("강동도서관", 37.5385690, 127.1437600), new BaseLibrary(new BookCache(this), "111004"));
+        bookRepositoryMap.put(new Library("강서도서관", 37.5478818, 126.8599269), new BaseLibrary(new BookCache(this), "111005"));
+        bookRepositoryMap.put(new Library("고덕평생학습관", 37.5600000,127.1600000), new BaseLibrary(new BookCache(this), "111007"));
 
 
-        bookRepositoryMap.put("고척도서관", new BaseLibrary(new BookCache(this), "111008"));
-        bookRepositoryMap.put("구로도서관", new BaseLibrary(new BookCache(this), "111009"));
-        bookRepositoryMap.put("개포도서관", new BaseLibrary(new BookCache(this), "111006"));
-        bookRepositoryMap.put("남산도서관", new BaseLibrary(new BookCache(this), "111010"));
+        bookRepositoryMap.put(new Library("고척도서관", 37.5100000,126.8500000), new BaseLibrary(new BookCache(this), "111008"));
+        bookRepositoryMap.put(new Library("구로도서관", 37.5000000,126.8900000), new BaseLibrary(new BookCache(this), "111009"));
+        bookRepositoryMap.put(new Library("개포도서관", 37.4800000,127.0600000), new BaseLibrary(new BookCache(this), "111006"));
+        bookRepositoryMap.put(new Library("남산도서관", 37.5500000,126.9800000), new BaseLibrary(new BookCache(this), "111010"));
 
-        bookRepositoryMap.put("노원평생학습관", new BaseLibrary(new BookCache(this), "111022"));
-        bookRepositoryMap.put("동대문도서관", new BaseLibrary(new BookCache(this), "111012"));
-        bookRepositoryMap.put("도봉도서관", new BaseLibrary(new BookCache(this), "111011"));
-        bookRepositoryMap.put("동작도서관", new BaseLibrary(new BookCache(this), "111013"));
+        bookRepositoryMap.put(new Library("노원평생학습관", 37.6400000,127.0700000), new BaseLibrary(new BookCache(this), "111022"));
+        bookRepositoryMap.put(new Library("동대문도서관", 37.5700000,127.0200000), new BaseLibrary(new BookCache(this), "111012"));
+        bookRepositoryMap.put(new Library("도봉도서관", 37.6500000,127.0100000), new BaseLibrary(new BookCache(this), "111011"));
+        bookRepositoryMap.put(new Library("동작도서관", 37.5100000,126.9400000), new BaseLibrary(new BookCache(this), "111013"));
 
-        bookRepositoryMap.put("마포평생학습관", new BaseLibrary(new BookCache(this), "111014"));
-        bookRepositoryMap.put("마포평생아현분관", new BaseLibrary(new BookCache(this), "111031"));
-        bookRepositoryMap.put("서대문도서관", new BaseLibrary(new BookCache(this), "111016"));
-        bookRepositoryMap.put("송파도서관", new BaseLibrary(new BookCache(this), "111030"));
+        bookRepositoryMap.put(new Library("마포평생학습관", 37.5500000,126.9200000), new BaseLibrary(new BookCache(this), "111014"));
+        bookRepositoryMap.put(new Library("마포평생아현분관", 37.5500000,126.9600000), new BaseLibrary(new BookCache(this), "111031"));
+        bookRepositoryMap.put(new Library("서대문도서관", 37.5800000,126.9400000), new BaseLibrary(new BookCache(this), "111016"));
+        bookRepositoryMap.put(new Library("송파도서관", 37.5000000,127.1300000), new BaseLibrary(new BookCache(this), "111030"));
 
-        bookRepositoryMap.put("양천도서관", new BaseLibrary(new BookCache(this), "111015"));
-        bookRepositoryMap.put("어린이도서관", new BaseLibrary(new BookCache(this), "111017"));
-        bookRepositoryMap.put("영등포평생학습관", new BaseLibrary(new BookCache(this), "111018"));
-        bookRepositoryMap.put("용산도서관", new BaseLibrary(new BookCache(this), "111019"));
+        bookRepositoryMap.put(new Library("양천도서관", 37.5300000,126.8800000), new BaseLibrary(new BookCache(this), "111015"));
+        bookRepositoryMap.put(new Library("서울시립어린이도서관", 37.5800000,126.9700000), new BaseLibrary(new BookCache(this), "111017"));
+        bookRepositoryMap.put(new Library("영등포평생학습관", 37.5260740, 126.9073520), new BaseLibrary(new BookCache(this), "111018"));
+        bookRepositoryMap.put(new Library("용산도서관", 37.5500000,126.9800000), new BaseLibrary(new BookCache(this), "111019"));
 
-        bookRepositoryMap.put("정독도서관", new BaseLibrary(new BookCache(this), "111020"));
-        bookRepositoryMap.put("종로도서관", new BaseLibrary(new BookCache(this), "111021"));
+        bookRepositoryMap.put(new Library("정독도서관", 37.5800000, 126.9800000), new BaseLibrary(new BookCache(this), "111020"));
+        bookRepositoryMap.put(new Library("종로도서관", 37.5800000,126.9700000), new BaseLibrary(new BookCache(this), "111021"));
 
         return bookRepositoryMap;
     }

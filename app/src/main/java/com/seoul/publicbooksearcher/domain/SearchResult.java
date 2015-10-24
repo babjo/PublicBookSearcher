@@ -4,28 +4,22 @@ import java.util.List;
 
 public class SearchResult {
 
-    private List<Book> books;
-    private String library;
+    private Library library;
 
-    public SearchResult(String library, List<Book> books) {
+    public SearchResult(Library library) {
         this.library = library;
-        this.books = books;
     }
 
     public List<Book> getBooks() {
-        return books;
+        return library.getBooks();
     }
 
     public void setBooks(List<Book> books) {
-        this.books = books;
+        this.library.setBooks(books);
     }
 
-    public String getLibrary() {
-        return library;
-    }
-
-    public void setLibrary(String library) {
-        this.library = library;
+    public String getLibraryName() {
+        return library.getName();
     }
 
 }

@@ -1,19 +1,17 @@
 package com.seoul.publicbooksearcher.presentation.presenter;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.os.Handler;
 import android.text.Html;
 import android.util.Log;
 
 import com.seoul.publicbooksearcher.domain.BookSearchException;
+import com.seoul.publicbooksearcher.domain.Location;
 import com.seoul.publicbooksearcher.domain.SearchResult;
 import com.seoul.publicbooksearcher.domain.async_usecase.AsyncUseCase;
 import com.seoul.publicbooksearcher.domain.usecase.UseCase;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
 import com.seoul.publicbooksearcher.presentation.view.component.BookListView;
 import com.seoul.publicbooksearcher.presentation.view.component.BookTitleAutoCompleteTextView;
-import com.seoul.publicbooksearcher.presentation.view.component.ProgressBarView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,18 +20,18 @@ public class BookPresenter {
 
     private final static String TAG = BookPresenter.class.getName();
     public static final String NOT_ONLINE_MSG = "인터넷 연결이 ㅜ ㅜ";
-    public static final String NO_RESULT_MSG = "검색 결과 없음";
 
     private final UseCase isOnline;
     private final UseCase getRecentKeywords;
     private final UseCase addRecentKeyword;
     private final AsyncUseCase searchBooks;
     private final AsyncUseCase searchTitles;
+    private final AsyncUseCase sortLibraries;
 
     private final BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView;
     private final BookListView bookListView;
 
-    public BookPresenter(UseCase isOnline, UseCase getRecentKeywords, UseCase addRecentKeyword, AsyncUseCase searchBooks, AsyncUseCase searchTitles,
+    public BookPresenter(UseCase isOnline, UseCase getRecentKeywords, UseCase addRecentKeyword, AsyncUseCase searchBooks, AsyncUseCase searchTitles, AsyncUseCase sortLibraries,
                          BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView, BookListView bookListView) {
 
         // use_case
@@ -42,6 +40,7 @@ public class BookPresenter {
         this.addRecentKeyword = addRecentKeyword;
         this.searchBooks = searchBooks;
         this.searchTitles = searchTitles;
+        this.sortLibraries = sortLibraries;
 
         // view
         this.bookTitleAutoCompleteTextView = bookTitleAutoCompleteTextView;
@@ -117,8 +116,8 @@ public class BookPresenter {
 
                 @Override
                 public void onAfter(SearchResult searchResult) {
-                    bookListView.updateLibrary(searchResult.getLibrary(), searchResult.getBooks());
-                    bookListView.progressGone(searchResult.getLibrary());
+                    bookListView.updateLibrary(searchResult.getLibraryName(), searchResult.getBooks());
+                    bookListView.progressGone(searchResult.getLibraryName());
                 }
 
                 @Override
@@ -130,6 +129,21 @@ public class BookPresenter {
         }else{
             bookListView.showStateMsg(NOT_ONLINE_MSG);
         }
+    }
+
+    public void sortLibraries(){
+        sortLibraries.execute(null, new AsyncUseCaseListener<Void, Location, RuntimeException>() {
+            @Override
+            public void onBefore(Void beforeArgs) {}
+
+            @Override
+            public void onAfter(Location location) {
+                bookListView.sort(location);
+            }
+
+            @Override
+            public void onError(RuntimeException e) {}
+        });
     }
 
     private boolean isOnline(){
