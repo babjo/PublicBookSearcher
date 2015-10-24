@@ -1,4 +1,4 @@
-package com.seoul.publicbooksearcher.data;
+package com.seoul.publicbooksearcher.data.recent_keyword;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -43,7 +43,7 @@ public class RecentSearchKeywordRepository implements KeywordRepository{
     public List<String> selectAll() {
         db = getSQLiteDatabaseInstance();
 
-        db.execSQL("DROP TABLE if EXISTS " + getTableName());
+        //db.execSQL("DROP TABLE if EXISTS " + getTableName());
         if(!isTableExists(db, getTableName())) {
             db.execSQL("CREATE TABLE " + getTableName() + " (_ID INTEGER PRIMARY KEY AUTOINCREMENT, KEYWORD text not null unique)");
         }

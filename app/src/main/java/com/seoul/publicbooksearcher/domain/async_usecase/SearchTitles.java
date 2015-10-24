@@ -15,7 +15,7 @@ public class SearchTitles implements AsyncUseCase<String> {
 
     private final BookRepository bookRepository;
     private AsyncUseCaseListener asyncUseCaseListener;
-    private NaverAsyncTask naverAsyncTask;
+    private BandiAsyncTask naverAsyncTask;
 
     public SearchTitles(BookRepository bookRepository){
         this.bookRepository = bookRepository;
@@ -27,14 +27,14 @@ public class SearchTitles implements AsyncUseCase<String> {
         try {
             if(naverAsyncTask != null)
                 naverAsyncTask.cancel(true);
-            naverAsyncTask = new NaverAsyncTask();
+            naverAsyncTask = new BandiAsyncTask();
             naverAsyncTask.execute(keyword);
         }catch (Exception e){
             asyncUseCaseListener.onError(e);
         }
     }
 
-    private class NaverAsyncTask extends AsyncTask<String, Void, List<Book>> {
+    private class BandiAsyncTask extends AsyncTask<String, Void, List<Book>> {
 
         @Override
         protected void onPreExecute() {
@@ -43,19 +43,26 @@ public class SearchTitles implements AsyncUseCase<String> {
 
         @Override
         protected List<Book> doInBackground(String... params) {
-            return SearchTitles.this.bookRepository.selectByKeyword(params[0]);
+            try {
+                return SearchTitles.this.bookRepository.selectByKeyword(params[0]);
+            }catch (Exception e){
+                asyncUseCaseListener.onError(e);
+                return null;
+            }
         }
 
         @Override
         protected void onPostExecute(List<Book> books) {
             super.onPostExecute(books);
 
-            List<String> titles = new ArrayList();
-            for (Book book : books) {
-                titles.add(book.getTitle());
-            }
+            if(books != null) {
+                List<String> titles = new ArrayList();
+                for (Book book : books) {
+                    titles.add(book.getTitle());
+                }
 
-            asyncUseCaseListener.onAfter(titles);
+                asyncUseCaseListener.onAfter(titles);
+            }
         }
     }
 }

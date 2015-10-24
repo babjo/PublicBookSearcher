@@ -1,11 +1,8 @@
 package com.seoul.publicbooksearcher.presentation.view.activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,20 +11,17 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.seoul.publicbooksearcher.R;
 import com.seoul.publicbooksearcher.data.BookRepository;
-import com.seoul.publicbooksearcher.data.RecentSearchKeywordRepository;
+import com.seoul.publicbooksearcher.data.recent_keyword.RecentSearchKeywordRepository;
 import com.seoul.publicbooksearcher.data.cache.book.BookCache;
 import com.seoul.publicbooksearcher.data.crawler.BandinlunisAutoCompleteCrawler;
 import com.seoul.publicbooksearcher.data.crawler.BaseLibrary;
 import com.seoul.publicbooksearcher.data.crawler.SeoulLibrary;
-import com.seoul.publicbooksearcher.data.open_api.NaverBookOpenApi;
 import com.seoul.publicbooksearcher.domain.Library;
 import com.seoul.publicbooksearcher.domain.async_usecase.AsyncUseCase;
 import com.seoul.publicbooksearcher.domain.async_usecase.SearchBooks;
@@ -38,7 +32,6 @@ import com.seoul.publicbooksearcher.domain.usecase.GetRecentKeywords;
 import com.seoul.publicbooksearcher.domain.usecase.IsOnline;
 import com.seoul.publicbooksearcher.domain.usecase.UseCase;
 import com.seoul.publicbooksearcher.presentation.presenter.BookPresenter;
-import com.seoul.publicbooksearcher.presentation.view.DividerItemDecoration;
 import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewAdapter;
 import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewItem;
 import com.seoul.publicbooksearcher.presentation.view.component.BookListView;
@@ -91,7 +84,7 @@ public class MainActivity extends AppCompatActivity{
             bookListViewAdapter.onRestoreInstanceState(savedInstanceState);
         listView.setAdapter(bookListViewAdapter);
 
-        final BookListView bookListView = new BookListView(this, listView, (TextView) findViewById(R.id.empty_txt));
+        final BookListView bookListView = new BookListView(this, listView);
 
         Log.i(TAG, "=================================== Create Presenter =====================================");
 
