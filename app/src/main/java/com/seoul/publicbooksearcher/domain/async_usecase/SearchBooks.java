@@ -4,7 +4,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 
 import com.seoul.publicbooksearcher.data.BookRepository;
-import com.seoul.publicbooksearcher.domain.BookSearchException;
+import com.seoul.publicbooksearcher.domain.exception.BookSearchException;
 import com.seoul.publicbooksearcher.domain.Library;
 import com.seoul.publicbooksearcher.domain.SearchResult;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;

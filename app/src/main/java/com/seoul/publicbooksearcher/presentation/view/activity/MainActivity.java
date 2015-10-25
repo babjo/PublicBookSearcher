@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity{
 
         Log.i(TAG, "=================================== Create Presenter =====================================");
 
-        bookPresenter = new BookPresenter(isOnline, getRecentKeywords, addRecentKeyword, searchBooks, searchTitles, sortLibraries,bookTitleAutoCompleteTextView, bookListView);
+        bookPresenter = new BookPresenter(this, isOnline, getRecentKeywords, addRecentKeyword, searchBooks, searchTitles, sortLibraries,bookTitleAutoCompleteTextView, bookListView);
 
         bookTitleAutoCompleteTextView.setBookPresenter(bookPresenter);
 

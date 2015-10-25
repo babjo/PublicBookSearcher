@@ -1,4 +1,4 @@
-package com.seoul.publicbooksearcher.domain;
+package com.seoul.publicbooksearcher.domain.exception;
 
 
 public class BookSearchException extends RuntimeException{

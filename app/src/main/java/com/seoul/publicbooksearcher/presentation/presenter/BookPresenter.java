@@ -1,13 +1,18 @@
 package com.seoul.publicbooksearcher.presentation.presenter;
 
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.util.Log;
 
-import com.seoul.publicbooksearcher.domain.BookSearchException;
+import com.seoul.publicbooksearcher.domain.exception.BookSearchException;
 import com.seoul.publicbooksearcher.domain.Location;
 import com.seoul.publicbooksearcher.domain.SearchResult;
 import com.seoul.publicbooksearcher.domain.async_usecase.AsyncUseCase;
+import com.seoul.publicbooksearcher.domain.exception.NotGpsSettingsException;
 import com.seoul.publicbooksearcher.domain.usecase.UseCase;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
 import com.seoul.publicbooksearcher.presentation.view.component.BookListView;
@@ -18,6 +23,7 @@ import java.util.List;
 
 public class BookPresenter {
 
+    private Context context;
     private final static String TAG = BookPresenter.class.getName();
 
     private final UseCase isOnline;
@@ -30,8 +36,10 @@ public class BookPresenter {
     private final BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView;
     private final BookListView bookListView;
 
-    public BookPresenter(UseCase isOnline, UseCase getRecentKeywords, UseCase addRecentKeyword, AsyncUseCase searchBooks, AsyncUseCase searchTitles, AsyncUseCase sortLibraries,
+    public BookPresenter(Context context, UseCase isOnline, UseCase getRecentKeywords, UseCase addRecentKeyword, AsyncUseCase searchBooks, AsyncUseCase searchTitles, AsyncUseCase sortLibraries,
                          BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView, BookListView bookListView) {
+
+        this.context = context;
 
         // use_case
         this.isOnline = isOnline;
@@ -130,23 +138,38 @@ public class BookPresenter {
 
     }
 
-    public void sortLibraries(){
+    public void sortLibraries() {
         sortLibraries.execute(null, new AsyncUseCaseListener<Void, Location, RuntimeException>() {
             @Override
-            public void onBefore(Void beforeArgs) {}
+            public void onBefore(Void beforeArgs) {
+            }
 
             @Override
             public void onAfter(Location location) {
-                Log.i(TAG, "=========== current location : "+location.latitude + ", " + location.longitude);
+                Log.i(TAG, "=========== current location : " + location.latitude + ", " + location.longitude);
                 bookListView.sort(location);
             }
 
             @Override
-            public void onError(RuntimeException e) {}
+            public void onError(RuntimeException e) {
+                if (e instanceof NotGpsSettingsException) {
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                            .setCancelable(false)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                                    context.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                    final AlertDialog alert = builder.create();
+                    alert.show();
+                }
+            }
         });
-    }
-
-    private boolean isOnline(){
-        return (boolean) isOnline.execute(null);
     }
 }
