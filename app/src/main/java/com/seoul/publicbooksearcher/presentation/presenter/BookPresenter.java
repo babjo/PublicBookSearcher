@@ -1,5 +1,6 @@
 package com.seoul.publicbooksearcher.presentation.presenter;
 
+import android.app.Notification;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import com.seoul.publicbooksearcher.domain.exception.CantNotKnowLocationExceptio
 import com.seoul.publicbooksearcher.domain.exception.NotGpsSettingsException;
 import com.seoul.publicbooksearcher.domain.usecase.UseCase;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
+import com.seoul.publicbooksearcher.presentation.view.component.ActionBarProgressBarView;
 import com.seoul.publicbooksearcher.presentation.view.component.BookListView;
 import com.seoul.publicbooksearcher.presentation.view.component.BookTitleAutoCompleteTextView;
 
@@ -37,6 +39,7 @@ public class BookPresenter {
 
     private final BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView;
     private final BookListView bookListView;
+    private ActionBarProgressBarView actionBarProgressBarView;
 
     public BookPresenter(Context context, UseCase isOnline, UseCase getRecentKeywords, UseCase addRecentKeyword, AsyncUseCase searchBooks, AsyncUseCase searchTitles, AsyncUseCase sortLibraries,
                          BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView, BookListView bookListView) {
@@ -54,6 +57,12 @@ public class BookPresenter {
         // view
         this.bookTitleAutoCompleteTextView = bookTitleAutoCompleteTextView;
         this.bookListView = bookListView;
+    }
+
+    // 의존성 주입
+
+    public void setActionBarProgressBarView(ActionBarProgressBarView actionBarProgressBarView) {
+        this.actionBarProgressBarView = actionBarProgressBarView;
     }
 
     public void getRecentKeywords() {
@@ -144,16 +153,34 @@ public class BookPresenter {
         sortLibraries.execute(null, new AsyncUseCaseListener<Void, Location, RuntimeException>() {
             @Override
             public void onBefore(Void beforeArgs) {
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        actionBarProgressBarView.setSortActionButtonState(true);
+                    }
+                });
             }
 
             @Override
             public void onAfter(Location location) {
                 Log.i(TAG, "=========== current location : " + location.latitude + ", " + location.longitude);
                 bookListView.sort(location);
+                hideActionBarProgressBar();
+
+            }
+
+            private void hideActionBarProgressBar() {
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        actionBarProgressBarView.setSortActionButtonState(false);
+                    }
+                });
             }
 
             @Override
             public void onError(RuntimeException e) {
+                hideActionBarProgressBar();
                 if (e instanceof NotGpsSettingsException) {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setMessage("위치 정보를 사용하려면, 단말기의 설정에서 '위치 서비스' 사용을 허용해주세요.")

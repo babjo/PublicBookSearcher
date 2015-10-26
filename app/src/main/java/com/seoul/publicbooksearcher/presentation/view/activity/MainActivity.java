@@ -34,6 +34,7 @@ import com.seoul.publicbooksearcher.domain.usecase.UseCase;
 import com.seoul.publicbooksearcher.presentation.presenter.BookPresenter;
 import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewAdapter;
 import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewItem;
+import com.seoul.publicbooksearcher.presentation.view.component.ActionBarProgressBarView;
 import com.seoul.publicbooksearcher.presentation.view.component.BookListView;
 import com.seoul.publicbooksearcher.presentation.view.component.BookTitleAutoCompleteTextView;
 
@@ -96,7 +97,6 @@ public class MainActivity extends AppCompatActivity{
         Drawable img = getResources().getDrawable(R.mipmap.searchbar_icon);
         img.setBounds(0, 0, (int) (0.5 * img.getIntrinsicWidth()), (int) (0.5 * img.getIntrinsicHeight()));
         autoedit.setCompoundDrawables(img, null, null, null);
-
     }
 
     private Map createLibraries(){
@@ -141,6 +141,7 @@ public class MainActivity extends AppCompatActivity{
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        bookPresenter.setActionBarProgressBarView(new ActionBarProgressBarView(menu));
         return true;
     }
 
