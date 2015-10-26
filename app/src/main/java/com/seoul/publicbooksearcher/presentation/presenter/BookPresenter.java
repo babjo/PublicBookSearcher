@@ -7,11 +7,13 @@ import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.seoul.publicbooksearcher.domain.exception.BookSearchException;
 import com.seoul.publicbooksearcher.domain.Location;
 import com.seoul.publicbooksearcher.domain.SearchResult;
 import com.seoul.publicbooksearcher.domain.async_usecase.AsyncUseCase;
+import com.seoul.publicbooksearcher.domain.exception.CantNotKnowLocationException;
 import com.seoul.publicbooksearcher.domain.exception.NotGpsSettingsException;
 import com.seoul.publicbooksearcher.domain.usecase.UseCase;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
@@ -154,20 +156,22 @@ public class BookPresenter {
             public void onError(RuntimeException e) {
                 if (e instanceof NotGpsSettingsException) {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                    builder.setMessage("위치 정보를 사용하려면, 단말기의 설정에서 '위치 서비스' 사용을 허용해주세요.")
                             .setCancelable(false)
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            .setPositiveButton("설정하기", new DialogInterface.OnClickListener() {
                                 public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                                     context.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                                 }
                             })
-                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            .setNegativeButton("취소", new DialogInterface.OnClickListener() {
                                 public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                                     dialog.cancel();
                                 }
                             });
                     final AlertDialog alert = builder.create();
                     alert.show();
+                }else if(e instanceof CantNotKnowLocationException){
+                    Toast.makeText(context, "일시적 에러로 사용자 위치를 알 수 없습니다.", Toast.LENGTH_SHORT);
                 }
             }
         });

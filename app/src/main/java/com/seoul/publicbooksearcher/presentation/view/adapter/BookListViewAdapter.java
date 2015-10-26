@@ -249,7 +249,8 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
         Collections.sort(bookListViewItemList, new Comparator<BookListViewItem>() {
             @Override
             public int compare(BookListViewItem lhs, BookListViewItem rhs) {
-                return (int) (lhs.getDistance() - rhs.getDistance());
+                if(lhs.getDistance() < rhs.getDistance()) return -1;
+                else return 1;
             }
         });
 
