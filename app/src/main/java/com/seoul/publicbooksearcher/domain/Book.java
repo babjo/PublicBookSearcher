@@ -34,10 +34,12 @@ public class Book {
         this.location = location;
     }
 
-    public Book(String title, String library, int statusCode, String bookId, String callNumber, String location, String locationCode) {
+    public Book(String title, String library, String publication, String writer, int statusCode, String bookId, String callNumber, String location, String locationCode) {
         this.bookId = bookId;
         this.title = title;
         this.library = library;
+        this.publication = publication;
+        this.writer = writer;
         this.statusCode = statusCode;
         this.callNumber = callNumber;
         this.location = location;
@@ -68,5 +70,13 @@ public class Book {
     public void setCallNumber(String callNumber) {this.callNumber = callNumber;}
     public String getLocation() {
         return location;
+    }
+
+    public String getPublication() {
+        return publication;
+    }
+
+    public String getWriter() {
+        return writer;
     }
 }

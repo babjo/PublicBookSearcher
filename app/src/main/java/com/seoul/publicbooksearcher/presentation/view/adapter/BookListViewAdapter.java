@@ -115,6 +115,8 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
         bookChildViewHolder.title.setText(book.getTitle());
         bookChildViewHolder.callNumber.setText(book.getCallNumber());
         bookChildViewHolder.location.setText(book.getLocation());
+        bookChildViewHolder.publication.setText(book.getPublication());
+        bookChildViewHolder.writer.setText(book.getWriter());
 
         switch (book.getStatusCode()){
             case 1:
@@ -183,6 +185,8 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
         public TextView status;
         public TextView location;
         public TextView callNumber;
+        public TextView publication;
+        public TextView writer;
 
         public BookChildViewHolder(View v) {
             super(v);
@@ -190,6 +194,8 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
             status = (TextView) v.findViewById(R.id.book_status);
             location = (TextView) v.findViewById(R.id.book_location);
             callNumber = (TextView) v.findViewById(R.id.book_callNumber);
+            publication = (TextView) v.findViewById(R.id.book_publication);
+            writer = (TextView) v.findViewById(R.id.book_writer);
         }
     }
 

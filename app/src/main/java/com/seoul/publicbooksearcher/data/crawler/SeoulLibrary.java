@@ -112,11 +112,19 @@ public class SeoulLibrary extends BaseBookRepository {
 
             Log.i(TAG, "title : " + title);
 
+            Elements briefDetailTag = element.select("dl.briefDetail");
+            String publicationAndWriter = briefDetailTag.get(0).child(3).text();
+            String publication = publicationAndWriter.split("/")[0];
+            Log.i(TAG, "publication : " + publication);
+
+            String writer = publicationAndWriter.split("/")[1];
+            Log.i(TAG, "writer : " + writer);
+
             Elements bookLocationTag = element.select("dd.locCursor");
             Element span = bookLocationTag.get(0).child(0);
 
             String location = span.text();
-            Log.i(TAG, "title : " +location);
+            Log.i(TAG, "location : " +location);
 
             String[] javascriptArgs = span.attr("onmousedown").replaceAll("'", "").replace("javascript:callLocation(", "").replace(")", "").split(",");
             String bookId = javascriptArgs[2];
@@ -139,10 +147,10 @@ public class SeoulLibrary extends BaseBookRepository {
                 Element bookState = bookStates.get(j);
 
                 if(bookState.html().equals("대출가능")) {
-                    books.add(new Book(title, library, 1, bookId, bookCallNumber.html(), location, locationCode));
+                    books.add(new Book(title, library, publication, writer, 1, bookId, bookCallNumber.html(), location, locationCode));
                 }
                 else {
-                    books.add(new Book(title, library, 2, bookId, bookCallNumber.html(), location, locationCode));
+                    books.add(new Book(title, library, publication, writer, 2, bookId, bookCallNumber.html(), location, locationCode));
                 }
             }
         }

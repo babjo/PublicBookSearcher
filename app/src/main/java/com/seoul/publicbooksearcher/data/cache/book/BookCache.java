@@ -29,7 +29,7 @@ public class BookCache extends BaseBookRepository {
         this.context = context;
         db = getSQLiteDatabaseInstance();
 
-        //db.execSQL("DROP TABLE if EXISTS " + getTableName());
+        db.execSQL("DROP TABLE if EXISTS " + getTableName());
         if(!isTableExists(db, getTableName())) {
             db.execSQL("CREATE TABLE " + getTableName() + " ("+ ID_FIELD +" text primary key not null, "+ BOOKS_JSON_FIELD +" text not null)");
         }
