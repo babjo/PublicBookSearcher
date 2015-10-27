@@ -39,9 +39,11 @@ import com.seoul.publicbooksearcher.presentation.view.component.BookListView;
 import com.seoul.publicbooksearcher.presentation.view.component.BookTitleAutoCompleteTextView;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -132,7 +134,31 @@ public class MainActivity extends AppCompatActivity{
         bookRepositoryMap.put(new Library("정독도서관", 37.5800000, 126.9800000, getResources().getColor(R.color.정독도서관)), new BaseLibrary(new BookCache(this), "111020"));
         bookRepositoryMap.put(new Library("종로도서관", 37.5800000, 126.9700000, getResources().getColor(R.color.종로도서관)), new BaseLibrary(new BookCache(this), "111021"));
 
-        return bookRepositoryMap;
+
+
+        ValueComparator valueComparator = new ValueComparator(bookRepositoryMap);
+        TreeMap sortedBookRepositoryMap = new TreeMap(valueComparator);
+
+        /*
+        System.out.println("unsorted map: " + map);
+        sortedBookRepositoryMap.putAll(map);
+        System.out.println("results: " + sortedBookRepositoryMap);*/
+        sortedBookRepositoryMap.putAll(bookRepositoryMap);
+
+        return sortedBookRepositoryMap;
+    }
+
+    class ValueComparator implements Comparator<Library> {
+        Map base;
+
+        public ValueComparator(Map base) {
+            this.base = base;
+        }
+
+        @Override
+        public int compare(Library lhs, Library rhs) {
+            return lhs.getName().compareTo(rhs.getName());
+        }
     }
 
 
