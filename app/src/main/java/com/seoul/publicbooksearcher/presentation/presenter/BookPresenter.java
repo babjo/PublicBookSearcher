@@ -60,7 +60,6 @@ public class BookPresenter {
     }
 
     // 의존성 주입
-
     public void setActionBarProgressBarView(ActionBarProgressBarView actionBarProgressBarView) {
         this.actionBarProgressBarView = actionBarProgressBarView;
     }

@@ -12,6 +12,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 
 import com.seoul.publicbooksearcher.R;
 import com.seoul.publicbooksearcher.presentation.presenter.BookPresenter;
@@ -24,13 +25,14 @@ public class BookTitleAutoCompleteTextView {
 
     private BookPresenter bookPresenter;
     private final AutoCompleteTextView autoCompleteTextView;
+    private final Button clearButton;
 
     private BookTitleAutoCompleteTextViewAdapter bookTitleAutoCompleteTextViewAdapter;
     private final static String TAG = BookTitleAutoCompleteTextView.class.getName();
 
-    public BookTitleAutoCompleteTextView(Context context, final AutoCompleteTextView autoCompleteTextView) {
-
+    public BookTitleAutoCompleteTextView(Context context, final AutoCompleteTextView autoCompleteTextView, final Button clearButton) {
         this.autoCompleteTextView = autoCompleteTextView;
+        this.clearButton = clearButton;
         this.autoCompleteTextView.setDropDownBackgroundResource(R.color.white);
         this.bookTitleAutoCompleteTextViewAdapter = new BookTitleAutoCompleteTextViewAdapter(context, android.R.layout.simple_dropdown_item_1line, new ArrayList<String>());
 
@@ -50,8 +52,18 @@ public class BookTitleAutoCompleteTextView {
                 if (s.toString().equals("")) {
                     Log.i(TAG, "===========afterTextChanged getRecentKeywords=============");
                     bookPresenter.getRecentKeywords();
-                } else
+                    clearButton.setVisibility(View.GONE);
+                } else {
                     bookPresenter.searchTitles(s.toString().trim());
+                    clearButton.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                autoCompleteTextView.setText("");
             }
         });
 

@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity{
         AsyncUseCase sortLibraries = new SortLibraries(this);
 
         Log.i(TAG, "=================================== Create View ==========================================");
-        BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView = new BookTitleAutoCompleteTextView(this, (AutoCompleteTextView) findViewById(R.id.auto_edit));
+        BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView = new BookTitleAutoCompleteTextView(this, (AutoCompleteTextView) findViewById(R.id.auto_edit), (Button) findViewById(R.id.calc_clear_txt_Prise));
 
         listView = (RecyclerView) findViewById(R.id.book_list);
         listView.setHasFixedSize(true);

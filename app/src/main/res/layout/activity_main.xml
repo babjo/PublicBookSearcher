@@ -23,7 +23,7 @@
             android:focusable="true" android:focusableInTouchMode="true"
             android:layout_width="0px" android:layout_height="0px" />
 
-        <RelativeLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingBottom="5dp"
@@ -55,7 +55,16 @@
                 android:nextFocusLeft="@id/auto_edit"
                 android:nextFocusUp="@id/auto_edit"
                 />
-        </RelativeLayout>
+
+            <Button
+                android:id="@+id/calc_clear_txt_Prise"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_marginRight="20dp"
+                android:layout_gravity="right|center_vertical"
+                android:visibility="gone"
+                android:background="@mipmap/ic_clear_black_24dp" />
+        </FrameLayout>
 
     </android.support.design.widget.AppBarLayout>
 
