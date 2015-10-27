@@ -2,6 +2,7 @@ package com.seoul.publicbooksearcher.domain.async_usecase;
 
 import android.os.AsyncTask;
 import android.os.Build;
+import android.support.annotation.NonNull;
 
 import com.seoul.publicbooksearcher.data.BookRepository;
 import com.seoul.publicbooksearcher.domain.exception.BookSearchException;
@@ -62,13 +63,20 @@ public class SearchBooks implements AsyncUseCase<String> {
 
         @Override
         protected SearchResult doInBackground(String... params) {
-            try {
-                return new SearchResult(new Library(libraryName, bookRepository.selectByKeyword(params[0])));
-            }catch (Exception e){
-                asyncUseCaseListener.onError(new BookSearchException(e.getMessage(), libraryName));
-                return null;
+            int count = 0;
+            int maxTries = 3;
+            while(true) {
+                try {
+                    return new SearchResult(new Library(libraryName, bookRepository.selectByKeyword(params[0])));
+                } catch (Exception e) {
+                    if (++count == maxTries){
+                        asyncUseCaseListener.onError(new BookSearchException(e.getMessage(), libraryName));
+                        return null;
+                    }
+                }
             }
         }
+
         @Override
         protected void onPostExecute(SearchResult searchResult) {
             super.onPostExecute(searchResult);

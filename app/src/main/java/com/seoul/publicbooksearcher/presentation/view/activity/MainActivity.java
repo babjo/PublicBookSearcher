@@ -139,10 +139,6 @@ public class MainActivity extends AppCompatActivity{
         ValueComparator valueComparator = new ValueComparator(bookRepositoryMap);
         TreeMap sortedBookRepositoryMap = new TreeMap(valueComparator);
 
-        /*
-        System.out.println("unsorted map: " + map);
-        sortedBookRepositoryMap.putAll(map);
-        System.out.println("results: " + sortedBookRepositoryMap);*/
         sortedBookRepositoryMap.putAll(bookRepositoryMap);
 
         return sortedBookRepositoryMap;
