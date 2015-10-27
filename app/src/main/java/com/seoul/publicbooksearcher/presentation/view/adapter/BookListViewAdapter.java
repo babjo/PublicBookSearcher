@@ -30,6 +30,7 @@ import java.util.Map;
 
 public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewAdapter.BookParentViewHolder, BookListViewAdapter.BookChildViewHolder> {
 
+    private final Context context;
     private LayoutInflater mInflater;
     private final static String TAG = BookListViewAdapter.class.getName();
     private static final boolean HONEYCOMB_AND_ABOVE = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
@@ -41,6 +42,7 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
 
     public BookListViewAdapter(Context context, List<BookListViewItem> bookListViewItemList) {
         super(bookListViewItemList);
+        this.context = context;
         mInflater = LayoutInflater.from(context);
         this.bookListViewItemList = bookListViewItemList;
 
@@ -82,9 +84,6 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
             case BookListViewItem.SEARCH_COMPLETE:
                 bookParentViewHolder.arrowUpImageView.setImageResource(R.mipmap.ic_keyboard_arrow_down_black_18dp);
                 bookParentViewHolder.bookState.setText("대출가능 : "+bookListViewItem.getPossibleLendSize() + " / 대출불가능 : " + bookListViewItem.getImpossibleLendSize() + " / 예약가능 : "+bookListViewItem.getPossibleReserveSize());
-                //bookParentViewHolder.bookState1.setTitleText("" + bookListViewItem.getPossibleLendSize());
-                //bookParentViewHolder.bookState2.setTitleText("" + bookListViewItem.getImpossibleLendSize());
-                //bookParentViewHolder.bookState3.setTitleText("" + bookListViewItem.getPossibleReserveSize());
                 bookParentViewHolder.progressBar.setVisibility(View.GONE);
                 bookParentViewHolder.errorLayout.setVisibility(View.GONE);
                 bookParentViewHolder.resultLayout.setVisibility(View.VISIBLE);
@@ -109,27 +108,29 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
     }
 
     @Override
-    public void onBindChildViewHolder(BookChildViewHolder bookChildViewHolder, int position, Object o) {
+    public void onBindChildViewHolder(BookChildViewHolder bookChildViewHolder, int i, Object o) {
         Book book = (Book)o;
 
         bookChildViewHolder.title.setText(book.getTitle());
-        bookChildViewHolder.callNumber.setText(book.getCallNumber());
-        bookChildViewHolder.location.setText(book.getLocation());
-        bookChildViewHolder.publication.setText(book.getPublication());
-        bookChildViewHolder.writer.setText(book.getWriter());
+        bookChildViewHolder.writerAndPublication.setText(book.getWriter() + " | " + book.getPublication());
+        bookChildViewHolder.locationAndCallNumber.setText(book.getLocation() + " | " + book.getCallNumber());
 
         switch (book.getStatusCode()){
             case 1:
-                bookChildViewHolder.status.setBackgroundResource(R.color.flatGreen);
+                bookChildViewHolder.state.setText("대출가능");
+                bookChildViewHolder.state.setTextColor(context.getResources().getColor(R.color.flatGreen));
                 break;
             case 2:
-                bookChildViewHolder.status.setBackgroundResource(R.color.flatRed);
+                bookChildViewHolder.state.setText("대출불가");
+                bookChildViewHolder.state.setTextColor(context.getResources().getColor(R.color.flatRed));
                 break;
             case 3:
-                bookChildViewHolder.status.setBackgroundResource(R.color.flatYellow);
+                bookChildViewHolder.state.setText("예약가능");
+                bookChildViewHolder.state.setTextColor(context.getResources().getColor(R.color.flatYellow));
                 break;
         }
     }
+
 
     public class BookParentViewHolder extends ParentViewHolder {
         public TextView library2;
@@ -142,15 +143,6 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
 
         public TextView bookState;
         public ImageView arrowUpImageView;
-        /*
-        public TextView bookState1;
-        public TextView bookState2;
-        public TextView bookState3;
-        */
-        public CircleView bookState1;
-        public CircleView bookState2;
-        public CircleView bookState3;
-
 
         public BookParentViewHolder(View v) {
             super(v);
@@ -162,10 +154,6 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
             errorLayout = (LinearLayout) v.findViewById(R.id.error_layout);
             arrowUpImageView = (ImageView) v.findViewById(R.id.arrow);
             bookState = (TextView) v.findViewById(R.id.library_state);
-            /*
-            bookState1 = (CircleView) v.findViewById(R.id.book_state_1);
-            bookState2 = (CircleView) v.findViewById(R.id.book_state_2);
-            bookState3 = (CircleView) v.findViewById(R.id.book_state_3);*/
         }
 
         @Override
@@ -182,20 +170,16 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
 
     public class BookChildViewHolder extends ChildViewHolder {
         public TextView title;
-        public TextView status;
-        public TextView location;
-        public TextView callNumber;
-        public TextView publication;
-        public TextView writer;
+        public TextView writerAndPublication;
+        public TextView locationAndCallNumber;
+        public TextView state;
 
         public BookChildViewHolder(View v) {
             super(v);
-            title = (TextView) v.findViewById(R.id.book_title);
-            status = (TextView) v.findViewById(R.id.book_status);
-            location = (TextView) v.findViewById(R.id.book_location);
-            callNumber = (TextView) v.findViewById(R.id.book_callNumber);
-            publication = (TextView) v.findViewById(R.id.book_publication);
-            writer = (TextView) v.findViewById(R.id.book_writer);
+            title = (TextView) v.findViewById(R.id.book_title2);
+            writerAndPublication = (TextView) v.findViewById(R.id.book_writer_publication);
+            locationAndCallNumber = (TextView) v.findViewById(R.id.book_location_callNumber);
+            state = (TextView) v.findViewById(R.id.book_state);
         }
     }
 

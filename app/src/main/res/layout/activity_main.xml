@@ -26,7 +26,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingBottom="10dp"
+            android:paddingBottom="5dp"
             >
             <com.seoul.publicbooksearcher.presentation.view.component.InstantAutoCompleteView
                 android:id="@+id/auto_edit"
