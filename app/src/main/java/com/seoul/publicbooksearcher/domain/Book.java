@@ -25,10 +25,12 @@ public class Book {
         this.statusCode = statusCode;
     }
 
-    public Book(String title, String library, int statusCode, String bookId, String callNumber, String location) {
+    public Book(String title, String library, String publication, String writer, int statusCode, String bookId, String callNumber, String location) {
         this.bookId = bookId;
         this.title = title;
         this.library = library;
+        this.publication = publication;
+        this.writer = writer;
         this.statusCode = statusCode;
         this.callNumber = callNumber;
         this.location = location;
