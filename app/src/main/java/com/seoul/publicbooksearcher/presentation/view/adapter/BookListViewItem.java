@@ -101,6 +101,6 @@ public class BookListViewItem implements ParentListItem{
     }
 
     public boolean noChild(){
-        return childSize() == 0 && searchState == SEARCH_COMPLETE;
+        return childSize() == 0;
     }
 }
