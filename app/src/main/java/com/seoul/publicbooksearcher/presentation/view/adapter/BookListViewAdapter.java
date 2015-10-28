@@ -2,6 +2,8 @@ package com.seoul.publicbooksearcher.presentation.view.adapter;
 
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
@@ -40,7 +42,7 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
     private Map<String, Integer> libraryPositionMap = new HashMap();
 
 
-    public BookListViewAdapter(Context context, List<BookListViewItem> bookListViewItemList) {
+    public BookListViewAdapter(Context context, final List<BookListViewItem> bookListViewItemList) {
         super(bookListViewItemList);
         this.context = context;
         mInflater = LayoutInflater.from(context);
@@ -74,6 +76,10 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
     @Override
     public void onBindParentViewHolder(BookParentViewHolder bookParentViewHolder, int i, ParentListItem parentListItem) {
         BookListViewItem bookListViewItem = (BookListViewItem) parentListItem;
+
+        if(bookListViewItem.noChild()) {
+        }
+
         bookParentViewHolder.library2.setText(bookListViewItem.getLibraryName());
         bookParentViewHolder.distance.setText(String.format("%.2fkm", bookListViewItem.getDistance()));
         Log.i(TAG, "========================" + bookListViewItem.getLibraryIconColor() + "==========================");

@@ -96,8 +96,11 @@ public class BookListViewItem implements ParentListItem{
     public int childSize() {
         return library.getBooks().size();
     }
-
     public int getLibraryIconColor() {
         return library.getColor();
+    }
+
+    public boolean noChild(){
+        return childSize() == 0 && searchState == SEARCH_COMPLETE;
     }
 }
