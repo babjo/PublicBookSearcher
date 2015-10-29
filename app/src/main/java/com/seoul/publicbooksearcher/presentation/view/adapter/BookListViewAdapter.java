@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -40,7 +41,7 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
     private Map<String, Integer> libraryPositionMap = new HashMap();
 
 
-    public BookListViewAdapter(Context context, List<BookListViewItem> bookListViewItemList) {
+    public BookListViewAdapter(Context context, final List<BookListViewItem> bookListViewItemList) {
         super(bookListViewItemList);
         this.context = context;
         mInflater = LayoutInflater.from(context);
@@ -74,6 +75,7 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
     @Override
     public void onBindParentViewHolder(BookParentViewHolder bookParentViewHolder, int i, ParentListItem parentListItem) {
         BookListViewItem bookListViewItem = (BookListViewItem) parentListItem;
+
         bookParentViewHolder.library2.setText(bookListViewItem.getLibraryName());
         bookParentViewHolder.distance.setText(String.format("%.2fkm", bookListViewItem.getDistance()));
         Log.i(TAG, "========================" + bookListViewItem.getLibraryIconColor() + "==========================");
@@ -83,15 +85,23 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
         switch (bookListViewItem.getSearchState()){
             case BookListViewItem.SEARCH_COMPLETE:
                 bookParentViewHolder.arrowUpImageView.setImageResource(R.mipmap.ic_keyboard_arrow_down_black_18dp);
-                bookParentViewHolder.bookState.setText("대출가능 : "+bookListViewItem.getPossibleLendSize() + " / 대출불가능 : " + bookListViewItem.getImpossibleLendSize() + " / 예약가능 : "+bookListViewItem.getPossibleReserveSize());
+                bookParentViewHolder.bookState.setText("대출가능 : " + bookListViewItem.getPossibleLendSize() + " / 대출불가 : " + bookListViewItem.getImpossibleLendSize() + " / 예약가능 : " + bookListViewItem.getPossibleReserveSize());
                 bookParentViewHolder.progressBar.setVisibility(View.GONE);
                 bookParentViewHolder.errorLayout.setVisibility(View.GONE);
                 bookParentViewHolder.resultLayout.setVisibility(View.VISIBLE);
+                if(bookListViewItem.noChild()) {
+                    bookParentViewHolder.whiteLayerLayout.setVisibility(View.VISIBLE);
+                    bookParentViewHolder.arrowUpImageView.setVisibility(View.GONE);
+                }else{
+                    bookParentViewHolder.whiteLayerLayout.setVisibility(View.INVISIBLE);
+                    bookParentViewHolder.arrowUpImageView.setVisibility(View.VISIBLE);
+                }
                 break;
             case BookListViewItem.SEARCH_BEFORE:
                 bookParentViewHolder.resultLayout.setVisibility(View.GONE);
                 bookParentViewHolder.errorLayout.setVisibility(View.GONE);
                 bookParentViewHolder.progressBar.setVisibility(View.VISIBLE);
+                bookParentViewHolder.whiteLayerLayout.setVisibility(View.INVISIBLE);
                 break;
             case BookListViewItem.ERROR:
                 bookParentViewHolder.resultLayout.setVisibility(View.GONE);
@@ -133,6 +143,8 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
 
 
     public class BookParentViewHolder extends ParentViewHolder {
+        public FrameLayout whiteLayerLayout;
+
         public TextView library2;
         public RelativeLayout progressBar;
 
@@ -146,6 +158,7 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
 
         public BookParentViewHolder(View v) {
             super(v);
+            whiteLayerLayout = (FrameLayout) v.findViewById(R.id.white_layer_layout);
             library2 = (TextView) v.findViewById(R.id.book_library2);
             distance = (TextView) v.findViewById(R.id.library_distance);
             libraryIcon = (CircleView) v.findViewById(R.id.library_icon);
