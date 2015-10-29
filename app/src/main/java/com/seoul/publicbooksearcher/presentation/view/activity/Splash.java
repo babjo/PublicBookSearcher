@@ -1,12 +1,12 @@
 package com.seoul.publicbooksearcher.presentation.view.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import com.seoul.publicbooksearcher.R;
 
-public class Splash extends Activity {
+public class Splash extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

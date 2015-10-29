@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">도서검색대장</string>
+    <string name="app_name">서시</string>
     <string name="action_settings">설정</string>
     <string name="action_sort">정렬</string>
     <string name="hint">도서 제목</string>
