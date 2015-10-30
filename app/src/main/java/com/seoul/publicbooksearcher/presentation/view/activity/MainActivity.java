@@ -1,5 +1,6 @@
 package com.seoul.publicbooksearcher.presentation.view.activity;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -11,8 +12,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.seoul.publicbooksearcher.R;
@@ -57,6 +60,7 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         Log.i(TAG, "=================================== Create UseCase ======================================");
         UseCase isOnline = new IsOnline(this);
