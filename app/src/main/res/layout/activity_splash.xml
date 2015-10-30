@@ -12,7 +12,11 @@
     <ImageView
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:src="@drawable/title" />
+        android:src="@drawable/title"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/imageView4" />
 
     <ImageView
         android:layout_height="wrap_content"
@@ -20,16 +24,15 @@
         android:src="@drawable/splashicon"
         android:id="@+id/imageView3"
         android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <ImageView
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:src="@drawable/phrase"
+        android:id="@+id/imageView2"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="56dp" />
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
