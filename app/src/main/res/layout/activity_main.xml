@@ -16,6 +16,11 @@
             android:minHeight="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             >
+            <ImageView
+                android:layout_width="160dp"
+                android:layout_height="70dp"
+                android:src = "@drawable/title2"
+                />
         </android.support.v7.widget.Toolbar>
         <LinearLayout
             android:id="@+id/forFocus"

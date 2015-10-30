@@ -133,13 +133,13 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
                 bookChildViewHolder.state.setText(context.getText(R.string.loan_available));
                 bookChildViewHolder.state.setTextColor(context.getResources().getColor(R.color.flatGreen));
                 break;
-            case Book.BOOK_STATE_LOAN_IMPOSSIBLE:
-                bookChildViewHolder.state.setText(context.getText(R.string.loan_unavailable));
-                bookChildViewHolder.state.setTextColor(context.getResources().getColor(R.color.flatRed));
-                break;
             case Book.BOOK_STATE_LOAN_ING:
                 bookChildViewHolder.state.setText(context.getText(R.string.loan_ing));
                 bookChildViewHolder.state.setTextColor(context.getResources().getColor(R.color.flatYellow));
+                break;
+            case Book.BOOK_STATE_LOAN_IMPOSSIBLE:
+                bookChildViewHolder.state.setText(context.getText(R.string.loan_unavailable));
+                bookChildViewHolder.state.setTextColor(context.getResources().getColor(R.color.flatRed));
                 break;
         }
     }
