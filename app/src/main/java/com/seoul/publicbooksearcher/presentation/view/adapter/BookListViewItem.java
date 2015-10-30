@@ -10,9 +10,9 @@ import java.util.List;
 public class BookListViewItem implements ParentListItem{
 
     private Library library;
-    private int possibleLendSize;
-    private int impossibleLendSize;
-    private int possibleReserveSize;
+    private int loanPossibleSize;
+    private int loanImpossibleSize;
+    private int loaningSize;
     private int searchState;
     private int sortState;
     private double distance;
@@ -41,11 +41,11 @@ public class BookListViewItem implements ParentListItem{
 
     private void arrangeAndAdd(Book book){
         if(book.getStatusCode() == 1){
-            possibleLendSize++;
+            loanPossibleSize++;
         }else if(book.getStatusCode() == 2){
-            impossibleLendSize++;
+            loanImpossibleSize++;
         }else{
-            possibleReserveSize++;
+            loaningSize++;
         }
         library.add(book);
     }
@@ -55,21 +55,21 @@ public class BookListViewItem implements ParentListItem{
             arrangeAndAdd(book);
     }
 
-    public int getPossibleLendSize() {
-        return possibleLendSize;
+    public int getLoanPossibleSize() {
+        return loanPossibleSize;
     }
-    public int getImpossibleLendSize() {
-        return impossibleLendSize;
+    public int getLoanImpossibleSize() {
+        return loanImpossibleSize;
     }
-    public int getPossibleReserveSize() {
-        return possibleReserveSize;
+    public int getLoaningSize() {
+        return loaningSize;
     }
 
     public void clearBooks() {
         this.library.clear();
-        this.possibleLendSize=0;
-        this.impossibleLendSize=0;
-        this.possibleReserveSize=0;
+        this.loanPossibleSize =0;
+        this.loanImpossibleSize =0;
+        this.loaningSize =0;
     }
 
     public int getSearchState() {

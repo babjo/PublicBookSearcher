@@ -11,6 +11,10 @@ public class Book {
     private String publication;
     private String writer;
 
+    public final static int BOOK_STATE_LOAN_POSSIBLE = 1;
+    public final static int BOOK_STATE_LOAN_IMPOSSIBLE = 2;
+    public final static int BOOK_STATE_LOAN_ING = 3;
+
     // 서울시용
     private String locationCode;
 

@@ -6,4 +6,9 @@
     <string name="title_activity_splash">Splash</string>
 
     <string name="hello_world">Hello world!</string>
+
+
+    <string name="loan_available">대출가능</string>
+    <string name="loan_ing">대출중</string>
+    <string name="loan_unavailable">대출불가</string>
 </resources>

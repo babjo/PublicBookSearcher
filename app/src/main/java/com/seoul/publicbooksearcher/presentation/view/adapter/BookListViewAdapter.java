@@ -85,7 +85,10 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
         switch (bookListViewItem.getSearchState()){
             case BookListViewItem.SEARCH_COMPLETE:
                 bookParentViewHolder.arrowUpImageView.setImageResource(R.mipmap.ic_keyboard_arrow_down_black_18dp);
-                bookParentViewHolder.bookState.setText("대출가능 : " + bookListViewItem.getPossibleLendSize() + " / 대출불가 : " + bookListViewItem.getImpossibleLendSize() + " / 예약가능 : " + bookListViewItem.getPossibleReserveSize());
+                bookParentViewHolder.bookState.setText(
+                        context.getText(R.string.loan_available)+" : " + bookListViewItem.getLoanPossibleSize() +
+                                " / "+context.getText(R.string.loan_ing)+": " + bookListViewItem.getLoaningSize() +
+                                " / "+context.getText(R.string.loan_unavailable)+" : " + bookListViewItem.getLoanImpossibleSize());
                 bookParentViewHolder.progressBar.setVisibility(View.GONE);
                 bookParentViewHolder.errorLayout.setVisibility(View.GONE);
                 bookParentViewHolder.resultLayout.setVisibility(View.VISIBLE);
@@ -126,16 +129,16 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
         bookChildViewHolder.locationAndCallNumber.setText(book.getLocation() + " | " + book.getCallNumber());
 
         switch (book.getStatusCode()){
-            case 1:
-                bookChildViewHolder.state.setText("대출가능");
+            case Book.BOOK_STATE_LOAN_POSSIBLE:
+                bookChildViewHolder.state.setText(context.getText(R.string.loan_available));
                 bookChildViewHolder.state.setTextColor(context.getResources().getColor(R.color.flatGreen));
                 break;
-            case 2:
-                bookChildViewHolder.state.setText("대출불가");
+            case Book.BOOK_STATE_LOAN_IMPOSSIBLE:
+                bookChildViewHolder.state.setText(context.getText(R.string.loan_unavailable));
                 bookChildViewHolder.state.setTextColor(context.getResources().getColor(R.color.flatRed));
                 break;
-            case 3:
-                bookChildViewHolder.state.setText("예약가능");
+            case Book.BOOK_STATE_LOAN_ING:
+                bookChildViewHolder.state.setText(context.getText(R.string.loan_ing));
                 bookChildViewHolder.state.setTextColor(context.getResources().getColor(R.color.flatYellow));
                 break;
         }

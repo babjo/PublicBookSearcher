@@ -144,14 +144,11 @@ public class SeoulLibrary extends BaseBookRepository {
 
             for(int j=0; j<bookStates.size(); j++){
                 Element bookCallNumber = bookCallNumbers.get(j);
-                Element bookState = bookStates.get(j);
+                Element bookStateTag = bookStates.get(j);
 
-                if(bookState.html().equals("대출가능")) {
-                    books.add(new Book(title, library, publication, writer, 1, bookId, bookCallNumber.html(), location, locationCode));
-                }
-                else {
-                    books.add(new Book(title, library, publication, writer, 2, bookId, bookCallNumber.html(), location, locationCode));
-                }
+                int bookState = decideBookState(bookStateTag.html());
+
+                books.add(new Book(title, library, publication, writer, bookState, bookId, bookCallNumber.html(), location, locationCode));
             }
         }
 
@@ -176,17 +173,23 @@ public class SeoulLibrary extends BaseBookRepository {
             Element bookState = bookStates.get(j);
 
             if(bookCallNumber.html().equals(callNumber)) {
-                if(bookState.html().equals("대출가능")) {
-                    stateCode = 1;
-                }
-                else {
-                    stateCode = 0;
-                }
+                stateCode = decideBookState(bookState.html());
             }
         }
 
         Log.i(TAG, "getBookState result : "+stateCode);
         return stateCode;
+    }
+
+    private int decideBookState(String bookStateStr){
+        if(bookStateStr.equals("대출가능")) {
+            return Book.BOOK_STATE_LOAN_POSSIBLE;
+        }
+        else if(bookStateStr.equals("대출중")){
+            return Book.BOOK_STATE_LOAN_ING;
+        }else{
+            return Book.BOOK_STATE_LOAN_IMPOSSIBLE;
+        }
     }
 
     public static String replaceSpecial(String str){
