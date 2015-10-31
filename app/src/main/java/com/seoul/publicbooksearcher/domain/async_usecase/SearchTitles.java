@@ -58,7 +58,9 @@ public class SearchTitles implements AsyncUseCase<String> {
             if(books != null) {
                 List<String> titles = new ArrayList();
                 for (Book book : books) {
-                    titles.add(book.getTitle());
+                    // 중복제거
+                    if(!titles.contains(book.getTitle()))
+                        titles.add(book.getTitle());
                 }
 
                 asyncUseCaseListener.onAfter(titles);
