@@ -182,7 +182,8 @@ public class BookPresenter {
                 hideActionBarProgressBar();
                 if (e instanceof NotGpsSettingsException) {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setMessage("위치 정보를 사용하려면, 단말기의 설정에서 '위치 서비스' 사용을 허용해주세요.")
+                    builder.setTitle("위치 서비스 사용")
+                            .setMessage("위치 정보를 사용하려면, 단말기의 설정에서 '위치 서비스' 사용을 허용해주세요.")
                             .setCancelable(false)
                             .setPositiveButton("설정하기", new DialogInterface.OnClickListener() {
                                 public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
