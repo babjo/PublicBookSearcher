@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.util.Log;
@@ -149,10 +150,11 @@ public class BookPresenter {
     }
 
     public void sortLibraries() {
+        final Handler handler = new Handler(Looper.getMainLooper());
         sortLibraries.execute(null, new AsyncUseCaseListener<Void, Location, RuntimeException>() {
             @Override
             public void onBefore(Void beforeArgs) {
-                new Handler().post(new Runnable() {
+                handler.post(new Runnable() {
                     @Override
                     public void run() {
                         actionBarProgressBarView.setSortActionButtonState(true);
@@ -169,7 +171,7 @@ public class BookPresenter {
             }
 
             private void hideActionBarProgressBar() {
-                new Handler().post(new Runnable() {
+                handler.post(new Runnable() {
                     @Override
                     public void run() {
                         actionBarProgressBarView.setSortActionButtonState(false);
@@ -178,7 +180,16 @@ public class BookPresenter {
             }
 
             @Override
-            public void onError(RuntimeException e) {
+            public void onError(final RuntimeException e) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        _onError(e);
+                    }
+                });
+            }
+
+            private void _onError(RuntimeException e) {
                 hideActionBarProgressBar();
                 if (e instanceof NotGpsSettingsException) {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -197,8 +208,9 @@ public class BookPresenter {
                             });
                     final AlertDialog alert = builder.create();
                     alert.show();
-                }else if(e instanceof CantNotKnowLocationException){
-                    Toast.makeText(context, "일시적 에러로 사용자 위치를 알 수 없습니다.", Toast.LENGTH_SHORT);
+                } else if (e instanceof CantNotKnowLocationException) {
+                    Log.i(TAG, "일시적 에러로 사용자 위치를 알 수 없습니다.");
+                    Toast.makeText(context, "일시적 에러로 사용자 위치를 알 수 없습니다.", Toast.LENGTH_SHORT).show();
                 }
             }
         });

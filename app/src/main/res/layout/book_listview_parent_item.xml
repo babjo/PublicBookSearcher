@@ -107,7 +107,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="검색 중 문제발생"/>
+                        android:text="해당 도서관이 일시적으로 다운되었거나 네트워크 장애일 수 있습니다.\n잠시 후 다시 시도해 주십시오."/>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
