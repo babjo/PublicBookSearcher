@@ -22,4 +22,6 @@ public class SearchResult {
         return library.getName();
     }
 
+    public Long getLibraryId() {return library.getId();}
+
 }

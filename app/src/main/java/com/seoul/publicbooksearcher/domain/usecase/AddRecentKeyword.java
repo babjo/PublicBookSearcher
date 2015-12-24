@@ -2,14 +2,16 @@ package com.seoul.publicbooksearcher.domain.usecase;
 
 
 import com.seoul.publicbooksearcher.data.KeywordRepository;
+import com.seoul.publicbooksearcher.data.RecentSearchKeywordRepository;
 
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.EBean;
+
+@EBean
 public class AddRecentKeyword implements UseCase<Void, String> {
 
-    private final KeywordRepository keywordRepository;
-
-    public AddRecentKeyword(KeywordRepository keywordRepository){
-        this.keywordRepository = keywordRepository;
-    }
+    @Bean(RecentSearchKeywordRepository.class)
+    KeywordRepository keywordRepository;
 
     @Override
     public Void execute(String keyword) {

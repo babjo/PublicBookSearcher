@@ -14,12 +14,14 @@ import com.seoul.publicbooksearcher.domain.exception.CantNotKnowLocationExceptio
 import com.seoul.publicbooksearcher.domain.exception.NotGpsSettingsException;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
 
+import org.androidannotations.annotations.EBean;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
 import static android.support.v4.content.ContextCompat.checkSelfPermission;
 
-
+@EBean
 public class SortLibraries implements AsyncUseCase<Void>{
 
     private LocationManager locationManager;

@@ -1,4 +1,4 @@
-package com.seoul.publicbooksearcher.data.cache.book;
+package com.seoul.publicbooksearcher.data;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,15 +7,16 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.seoul.publicbooksearcher.data.BaseBookRepository;
-import com.seoul.publicbooksearcher.data.BookRepository;
 import com.seoul.publicbooksearcher.domain.Book;
+
+import org.androidannotations.annotations.EBean;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BookCache extends BaseBookRepository {
+@EBean
+public class BookCache implements BookRepository {
 
     private final static String DB_NAME = "book_cache_db";
     private final static String TABLE_NAME = "books";

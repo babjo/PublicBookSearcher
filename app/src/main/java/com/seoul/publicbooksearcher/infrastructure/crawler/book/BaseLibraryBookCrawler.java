@@ -1,11 +1,13 @@
-package com.seoul.publicbooksearcher.data.crawler;
+package com.seoul.publicbooksearcher.infrastructure.crawler.book;
 
 import android.util.Log;
 
-import com.seoul.publicbooksearcher.data.BaseBookRepository;
+import com.seoul.publicbooksearcher.data.BookCache;
 import com.seoul.publicbooksearcher.data.BookRepository;
 import com.seoul.publicbooksearcher.domain.Book;
 
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.EBean;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,28 +17,27 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BaseLibrary extends BaseBookRepository {
+@EBean
+public class BaseLibraryBookCrawler implements BookCrawler {
 
-    private static final String TAG = BaseLibrary.class.getName();
-    protected BookRepository cache;
-    private String libraryId;
+    private static final String TAG = BaseLibraryBookCrawler.class.getName();
 
-    public BaseLibrary(BookRepository cache, String libraryId){
-        this.cache = cache;
-        this.libraryId = libraryId;
-    }
+    @Bean(BookCache.class)
+    BookRepository cache;
 
-    public String getLibraryId(){
+    protected Long libraryId;
+
+    public Long getLibraryId(){
         return libraryId;
     }
 
     @Override
-    public List<Book> selectByKeyword(String keyword) {
-        List<Book> books = cache.selectByKeywordAndLibrary(keyword, libraryId);
+    public List<Book> crawling(String keyword) {
+        List<Book> books = cache.selectByKeywordAndLibrary(keyword, libraryId.toString());
         try {
             if(books == null) {
                 books = getBooks(keyword);
-                cache.insertOrUpdateBooks(keyword, getLibraryId(), books);
+                cache.insertOrUpdateBooks(keyword, libraryId.toString(), books);
             }
             else {
                 for (Book book : books)
@@ -58,7 +59,7 @@ public class BaseLibrary extends BaseBookRepository {
                 .data("collection", "sen_library")
                 .data("range", "A")
                 .data("searchField", "ALL")
-                .data("locExquery", getLibraryId())
+                .data("locExquery", getLibraryId().toString())
                 .data("exquery_field", "MAT_CODE_NUM")
                 .data("realQuery", keyword + "|" + keyword)
                 .data("detailView", "0")

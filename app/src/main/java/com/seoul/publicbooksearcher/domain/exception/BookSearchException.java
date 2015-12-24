@@ -3,15 +3,14 @@ package com.seoul.publicbooksearcher.domain.exception;
 
 public class BookSearchException extends RuntimeException{
 
-    private String library;
+    private Long libraryId;
 
-    public BookSearchException(String detailMessage, String library) {
+    public BookSearchException(String detailMessage, Long libraryId) {
         super(detailMessage);
-        this.library = library;
+        this.libraryId = libraryId;
     }
 
-
-    public String getLibrary() {
-        return library;
+    public Long getLibraryId() {
+        return libraryId;
     }
 }

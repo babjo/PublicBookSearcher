@@ -20,17 +20,6 @@ public class Location {
         other.setLatitude(location.latitude);
         other.setLongitude(location.longitude);
 
-        return one.distanceTo(other)/1000; // km
-        /*
-        double toLat = other.latitude;
-        double toLon = other.longitude;
-        double radius = 6378137;   // approximate Earth radius, *in meters*
-        double deltaLat = toLat - latitude;
-        double deltaLon = toLon - longitude;
-        double angle = 2 * Math.asin( Math.sqrt(
-                Math.pow(Math.sin(deltaLat/2), 2) +
-                        Math.cos(latitude) * Math.cos(toLat) *
-                                Math.pow(Math.sin(deltaLon/2), 2) ) );
-        return radius * angle;*/
+        return one.distanceTo(other)/1000;
     }
 }

@@ -38,8 +38,7 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
     private static final float INITIAL_POSITION = 0.0f;
     private static final float ROTATED_POSITION = 180f;
     private List<BookListViewItem> bookListViewItemList;
-    private Map<String, Integer> libraryPositionMap = new HashMap();
-
+    private Map<Long, Integer> libraryPositionMap = new HashMap();
 
     public BookListViewAdapter(Context context, final List<BookListViewItem> bookListViewItemList) {
         super(bookListViewItemList);
@@ -53,7 +52,7 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
     private void updateLibraryPosition(){
         int position = 0;
         for(BookListViewItem bookListViewItem : bookListViewItemList) {
-            libraryPositionMap.put(bookListViewItem.getLibraryName(), position);
+            libraryPositionMap.put(bookListViewItem.getLibraryId(), position);
             position++;
         }
     }
@@ -199,8 +198,8 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
         }
     }
 
-    public void clearChildItems(String library){
-        int position = getPosition(library);
+    public void clearChildItems(Long libraryId){
+        int position = getPosition(libraryId);
         if(position != -1){
             int childSize = bookListViewItemList.get(position).childSize();
             bookListViewItemList.get(position).clearBooks();
@@ -210,10 +209,10 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
     }
 
 
-    public void updateItem(String library, List<Book> books) {
-        int position = getPosition(library);
+    public void updateItem(Long libraryId, List<Book> books) {
+        int position = getPosition(libraryId);
         if(position != -1) {
-            Log.i(TAG, "updateItem : " + library + "(library), " + position + "(position)");
+            Log.i(TAG, "updateItem : " + libraryId + "(library), " + position + "(position)");
 
             bookListViewItemList.get(position).arrange(books);
             int childSize = bookListViewItemList.get(position).childSize();
@@ -221,27 +220,25 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
                 notifyChildItemInserted(position, j);
 
             notifyParentItemChangedByHandler(position);
+
+            // progressGone
+            bookListViewItemList.get(position).setSearchState(BookListViewItem.SEARCH_COMPLETE);
+            notifyParentItemChangedByHandler(position);
         }
     }
 
-    private int getPosition(String library){
-        return libraryPositionMap.get(library);
+    private int getPosition(Long libraryId){
+        return libraryPositionMap.get(libraryId);
     }
 
-    public void progressVisible(String library) {
-        int position = getPosition(library);
+    public void progressVisible(Long libraryId) {
+        int position = getPosition(libraryId);
         bookListViewItemList.get(position).setSearchState(BookListViewItem.SEARCH_BEFORE);
         notifyParentItemChangedByHandler(position);
     }
 
-    public void progressGone(String library) {
-        int position = getPosition(library);
-        bookListViewItemList.get(position).setSearchState(BookListViewItem.SEARCH_COMPLETE);
-        notifyParentItemChangedByHandler(position);
-    }
-
-    public void showError(String library, String message) {
-        int position = getPosition(library);
+    public void showError(Long libraryId, String message) {
+        int position = getPosition(libraryId);
         bookListViewItemList.get(position).setSearchState(BookListViewItem.ERROR);
         notifyParentItemChangedByHandler(position);
     }

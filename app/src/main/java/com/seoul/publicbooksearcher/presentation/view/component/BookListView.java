@@ -1,39 +1,71 @@
 package com.seoul.publicbooksearcher.presentation.view.component;
 
 import android.content.Context;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
 
+import com.seoul.publicbooksearcher.R;
+import com.seoul.publicbooksearcher.data.LibraryRepository;
 import com.seoul.publicbooksearcher.domain.Book;
+import com.seoul.publicbooksearcher.domain.Library;
 import com.seoul.publicbooksearcher.domain.Location;
 import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewAdapter;
+import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewItem;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.ViewById;
+
+import java.util.ArrayList;
 import java.util.List;
 
+@EBean
 public class BookListView {
 
-    private RecyclerView bookListView = null;
+    @ViewById(R.id.book_list)
+    RecyclerView bookListView = null;
+
+    @Bean(LibraryRepository.class)
+    LibraryRepository libraryRepository;
+
     private Context context;
+
     private BookListViewAdapter bookListViewAdapter;
 
-    public BookListView(Context context, RecyclerView listView){
+    public BookListView(Context context){
         this.context = context;
-        this.bookListView = listView;
-        this.bookListViewAdapter = (BookListViewAdapter) listView.getAdapter();
     }
 
-    public void updateLibrary(String library, List<Book> books){
-        bookListViewAdapter.updateItem(library, books);
+    @AfterViews
+    public void init(){
+        bookListView.setHasFixedSize(true);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        bookListView.setLayoutManager(layoutManager);
+        bookListView.setItemAnimator(new DefaultItemAnimator());
+        //listView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
+
+        List<Library> libraries = libraryRepository.selectAll();
+        List<BookListViewItem> bookListViewItems = new ArrayList();
+
+        for (Library library : libraries) {
+            bookListViewItems.add(new BookListViewItem(library));
+        }
+        BookListViewAdapter bookListViewAdapter = new BookListViewAdapter(context, bookListViewItems);
+        bookListView.setAdapter(bookListViewAdapter);
+
+        this.bookListViewAdapter = (BookListViewAdapter) bookListView.getAdapter();
     }
 
-    public void progressVisible(String library) {
-        bookListViewAdapter.progressVisible(library);
+    public void updateLibrary(Long libraryId, List<Book> books){
+        bookListViewAdapter.updateItem(libraryId, books);
     }
 
-    public void progressGone(String library) {
-        bookListViewAdapter.progressGone(library);
+    public void progressVisible(Long libraryId) {
+        bookListViewAdapter.progressVisible(libraryId);
     }
 
     public void hideKeyboard() {
@@ -41,8 +73,8 @@ public class BookListView {
         mgr.hideSoftInputFromWindow(bookListView.getWindowToken(), 0);
     }
 
-    public void showError(String library, String message) {
-        bookListViewAdapter.showError(library, message);
+    public void showError(Long libraryId, String message) {
+        bookListViewAdapter.showError(libraryId, message);
     }
 
     public void sort(Location location) {
@@ -53,7 +85,7 @@ public class BookListView {
         bookListViewAdapter.collapseAllParents();
     }
 
-    public void clearLibrary(String library) {
-        bookListViewAdapter.clearChildItems(library);
+    public void clearLibrary(Long libraryId) {
+        bookListViewAdapter.clearChildItems(libraryId);
     }
 }

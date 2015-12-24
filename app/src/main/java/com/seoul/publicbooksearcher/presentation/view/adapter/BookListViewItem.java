@@ -22,6 +22,7 @@ public class BookListViewItem implements ParentListItem{
     public final static int ERROR = 3;
 
     public final static int SORT_COMPLETE = 4;
+    private Long libraryId;
 
     public BookListViewItem(Library library){
         this.library = library;
@@ -102,5 +103,9 @@ public class BookListViewItem implements ParentListItem{
 
     public boolean noChild(){
         return childSize() == 0;
+    }
+
+    public Long getLibraryId() {
+        return library.getId();
     }
 }

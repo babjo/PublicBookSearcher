@@ -1,19 +1,16 @@
-package com.seoul.publicbooksearcher.data.recent_keyword;
+package com.seoul.publicbooksearcher.data;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.seoul.publicbooksearcher.data.KeywordRepository;
-import com.seoul.publicbooksearcher.domain.Book;
+import org.androidannotations.annotations.EBean;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+@EBean
 public class RecentSearchKeywordRepository implements KeywordRepository{
 
     private final static String DB_NAME = "book_cache_db";

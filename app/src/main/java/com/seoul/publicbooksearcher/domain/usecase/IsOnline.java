@@ -4,6 +4,9 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import org.androidannotations.annotations.EBean;
+
+@EBean
 public class IsOnline implements UseCase<Boolean, Void> {
 
     private Context context;

@@ -69,11 +69,8 @@ public class Book {
         this.statusCode = statusCode;
     }
     public String getBookId() {return bookId;}
-    public void setBookId(String bookId) {this.bookId = bookId;}
     public String getLocationCode() {return locationCode;}
-    public void setLocationCode(String locationCode) {this.locationCode = locationCode;}
     public String getCallNumber() {return callNumber;}
-    public void setCallNumber(String callNumber) {this.callNumber = callNumber;}
     public String getLocation() {
         return location;
     }

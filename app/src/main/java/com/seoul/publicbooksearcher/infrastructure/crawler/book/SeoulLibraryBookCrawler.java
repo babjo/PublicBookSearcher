@@ -1,11 +1,14 @@
-package com.seoul.publicbooksearcher.data.crawler;
+package com.seoul.publicbooksearcher.infrastructure.crawler.book;
 
 import android.util.Log;
 
-import com.seoul.publicbooksearcher.data.BaseBookRepository;
+import com.seoul.publicbooksearcher.data.BookCache;
 import com.seoul.publicbooksearcher.data.BookRepository;
 import com.seoul.publicbooksearcher.domain.Book;
+import com.seoul.publicbooksearcher.domain.Library;
 
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.EBean;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,27 +18,30 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SeoulLibrary extends BaseBookRepository {
+@EBean
+public class SeoulLibraryBookCrawler implements BookCrawler {
 
-    private static final String TAG = SeoulLibrary.class.getName();
-    private final BookRepository cache;
-    private String libraryId;
+    private static final String TAG = SeoulLibraryBookCrawler.class.getName();
 
-    public SeoulLibrary(BookRepository cache) {
-        this.cache = cache;
-        libraryId = "000000";
+    @Bean(BookCache.class)
+    BookRepository cache;
+
+    private Long libraryId;
+
+    public SeoulLibraryBookCrawler() {
+        libraryId = Library.SEOUL_LIB_ID;
     }
 
     @Override
-    public List<Book> selectByKeyword(String keyword) {
+    public List<Book> crawling(String keyword) {
         keyword = replaceSpecial(keyword);
         keyword = keyword.replaceAll(" ", "+");
 
-        List<Book> books = cache.selectByKeywordAndLibrary(keyword, libraryId);
+        List<Book> books = cache.selectByKeywordAndLibrary(keyword, libraryId.toString());
         try {
             if(books == null) {
                 books = getBooks(keyword);
-                cache.insertOrUpdateBooks(keyword, libraryId, books);
+                cache.insertOrUpdateBooks(keyword, libraryId.toString(), books);
             }
             else {
                 for (Book book : books)
@@ -47,6 +53,11 @@ public class SeoulLibrary extends BaseBookRepository {
         }
 
         return books;
+    }
+
+    @Override
+    public Long getLibraryId() {
+        return libraryId;
     }
 
     private List<Book> getBooks(String keyword) throws IOException {

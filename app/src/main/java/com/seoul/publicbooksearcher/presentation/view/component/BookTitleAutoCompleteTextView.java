@@ -2,10 +2,9 @@ package com.seoul.publicbooksearcher.presentation.view.component;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.Editable;
-import android.text.Html;
-import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -18,22 +17,40 @@ import com.seoul.publicbooksearcher.R;
 import com.seoul.publicbooksearcher.presentation.presenter.BookPresenter;
 import com.seoul.publicbooksearcher.presentation.view.adapter.BookTitleAutoCompleteTextViewAdapter;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.ViewById;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@EBean
 public class BookTitleAutoCompleteTextView {
 
+    private final Context context;
+
     private BookPresenter bookPresenter;
-    private final AutoCompleteTextView autoCompleteTextView;
-    private final Button clearButton;
+
+    @ViewById(R.id.auto_edit)
+    AutoCompleteTextView autoCompleteTextView;
+
+    @ViewById(R.id.calc_clear_txt_Prise)
+    Button clearButton;
 
     private BookTitleAutoCompleteTextViewAdapter bookTitleAutoCompleteTextViewAdapter;
     private final static String TAG = BookTitleAutoCompleteTextView.class.getName();
 
-    public BookTitleAutoCompleteTextView(Context context, final AutoCompleteTextView autoCompleteTextView, final Button clearButton) {
-        this.autoCompleteTextView = autoCompleteTextView;
-        this.clearButton = clearButton;
+    public BookTitleAutoCompleteTextView(Context context) {
+        this.context = context;
+    }
+
+    @AfterViews
+    void init() {
         this.autoCompleteTextView.setDropDownBackgroundResource(R.color.white);
+        Drawable img = context.getResources().getDrawable(R.mipmap.searchbar_icon);
+        img.setBounds(0, 0, (int) (0.5 * img.getIntrinsicWidth()), (int) (0.5 * img.getIntrinsicHeight()));
+        this.autoCompleteTextView.setCompoundDrawables(img, null, null, null);
+
         this.bookTitleAutoCompleteTextViewAdapter = new BookTitleAutoCompleteTextViewAdapter(context, android.R.layout.simple_dropdown_item_1line, new ArrayList<String>());
 
         autoCompleteTextView.setAdapter(bookTitleAutoCompleteTextViewAdapter);

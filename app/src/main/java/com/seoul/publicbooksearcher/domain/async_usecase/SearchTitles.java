@@ -2,24 +2,26 @@ package com.seoul.publicbooksearcher.domain.async_usecase;
 
 import android.os.AsyncTask;
 
-import com.seoul.publicbooksearcher.data.BookRepository;
-import com.seoul.publicbooksearcher.domain.Book;
+import com.seoul.publicbooksearcher.infrastructure.crawler.title.BandinlunisAutoCompleteCrawler;
+import com.seoul.publicbooksearcher.infrastructure.crawler.title.TitleCrawler;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
 
-import java.util.ArrayList;
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.EBean;
+
 import java.util.List;
 
+@EBean
 public class SearchTitles implements AsyncUseCase<String> {
 
     private final static String TAG = SearchTitles.class.getName();
 
-    private final BookRepository bookRepository;
+    @Bean(BandinlunisAutoCompleteCrawler.class)
+    TitleCrawler autoCompleteCrawler;
+
     private AsyncUseCaseListener asyncUseCaseListener;
     private BandiAsyncTask naverAsyncTask;
 
-    public SearchTitles(BookRepository bookRepository){
-        this.bookRepository = bookRepository;
-    }
 
     @Override
     public void execute(String keyword, AsyncUseCaseListener asyncUseCaseListener) {
@@ -34,7 +36,7 @@ public class SearchTitles implements AsyncUseCase<String> {
         }
     }
 
-    private class BandiAsyncTask extends AsyncTask<String, Void, List<Book>> {
+    private class BandiAsyncTask extends AsyncTask<String, Void, List<String>> {
 
         @Override
         protected void onPreExecute() {
@@ -42,9 +44,9 @@ public class SearchTitles implements AsyncUseCase<String> {
         }
 
         @Override
-        protected List<Book> doInBackground(String... params) {
+        protected List<String> doInBackground(String... params) {
             try {
-                return SearchTitles.this.bookRepository.selectByKeyword(params[0]);
+                return autoCompleteCrawler.crawling(params[0]);
             }catch (Exception e){
                 asyncUseCaseListener.onError(e);
                 return null;
@@ -52,17 +54,10 @@ public class SearchTitles implements AsyncUseCase<String> {
         }
 
         @Override
-        protected void onPostExecute(List<Book> books) {
-            super.onPostExecute(books);
+        protected void onPostExecute(List<String> titles) {
+            super.onPostExecute(titles);
 
-            if(books != null) {
-                List<String> titles = new ArrayList();
-                for (Book book : books) {
-                    // 중복제거
-                    if(!titles.contains(book.getTitle()))
-                        titles.add(book.getTitle());
-                }
-
+            if(titles != null) {
                 asyncUseCaseListener.onAfter(titles);
             }
         }

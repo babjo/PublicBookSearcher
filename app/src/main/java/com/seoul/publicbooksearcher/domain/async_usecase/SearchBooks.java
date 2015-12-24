@@ -2,29 +2,30 @@ package com.seoul.publicbooksearcher.domain.async_usecase;
 
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.annotation.NonNull;
 
-import com.seoul.publicbooksearcher.data.BookRepository;
-import com.seoul.publicbooksearcher.domain.exception.BookSearchException;
 import com.seoul.publicbooksearcher.domain.Library;
 import com.seoul.publicbooksearcher.domain.SearchResult;
+import com.seoul.publicbooksearcher.domain.exception.BookSearchException;
+import com.seoul.publicbooksearcher.infrastructure.crawler.book.BookCrawler;
+import com.seoul.publicbooksearcher.infrastructure.crawler.book.BookCrawlerCollection;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
+
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+@EBean
 public class SearchBooks implements AsyncUseCase<String> {
+
+    @Bean(BookCrawlerCollection.class)
+    BookCrawlerCollection bookCrawlerCollection;
 
     private static final String TAG = SearchBooks.class.getName();
     private AsyncUseCaseListener asyncUseCaseListener;
 
-    private Map<Library, BookRepository> bookRepositoryMap;
     private List<LibraryAsyncTask> libraryAsyncTaskList = new ArrayList();
-
-    public SearchBooks(Map<Library, BookRepository> bookRepositoryMap){
-        this.bookRepositoryMap = bookRepositoryMap;
-    }
 
     @Override
     public void execute(String keyword, final AsyncUseCaseListener asyncUseCaseListener) {
@@ -34,8 +35,9 @@ public class SearchBooks implements AsyncUseCase<String> {
             libraryAsyncTask.cancel(false);
         libraryAsyncTaskList.clear();
 
-        for(Library library : bookRepositoryMap.keySet()){
-            LibraryAsyncTask libraryAsyncTask = new LibraryAsyncTask(library.getName(), bookRepositoryMap.get(library));
+
+        for(BookCrawler bookCrawler : bookCrawlerCollection.get()){
+            LibraryAsyncTask libraryAsyncTask = new LibraryAsyncTask(bookCrawler);
             libraryAsyncTaskList.add(libraryAsyncTask);
             if (Build.VERSION.SDK_INT >= 11)
                 libraryAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, keyword);
@@ -47,18 +49,16 @@ public class SearchBooks implements AsyncUseCase<String> {
 
     private class LibraryAsyncTask extends AsyncTask<String, Void, SearchResult> {
 
-        private BookRepository bookRepository;
-        private String libraryName;
+        private BookCrawler bookCrawler;
 
-        public LibraryAsyncTask(String libraryName, BookRepository bookRepository){
-            this.bookRepository = bookRepository;
-            this.libraryName = libraryName;
+        public LibraryAsyncTask(BookCrawler bookCrawler){
+            this.bookCrawler = bookCrawler;
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            asyncUseCaseListener.onBefore(libraryName);
+            asyncUseCaseListener.onBefore(bookCrawler.getLibraryId());
         }
 
         @Override
@@ -67,10 +67,10 @@ public class SearchBooks implements AsyncUseCase<String> {
             int maxTries = 3;
             while(true) {
                 try {
-                    return new SearchResult(new Library(libraryName, bookRepository.selectByKeyword(params[0])));
+                    return new SearchResult(new Library(bookCrawler.getLibraryId(), bookCrawler.crawling(params[0])));
                 } catch (Exception e) {
                     if (++count == maxTries){
-                        asyncUseCaseListener.onError(new BookSearchException(e.getMessage(), libraryName));
+                        asyncUseCaseListener.onError(new BookSearchException(e.getMessage(), bookCrawler.getLibraryId()));
                         return null;
                     }
                 }

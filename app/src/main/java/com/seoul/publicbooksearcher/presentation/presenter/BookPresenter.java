@@ -1,6 +1,5 @@
 package com.seoul.publicbooksearcher.presentation.presenter;
 
-import android.app.Notification;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,53 +10,70 @@ import android.text.Html;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.seoul.publicbooksearcher.domain.exception.BookSearchException;
 import com.seoul.publicbooksearcher.domain.Location;
 import com.seoul.publicbooksearcher.domain.SearchResult;
 import com.seoul.publicbooksearcher.domain.async_usecase.AsyncUseCase;
+import com.seoul.publicbooksearcher.domain.async_usecase.SearchBooks;
+import com.seoul.publicbooksearcher.domain.async_usecase.SearchTitles;
+import com.seoul.publicbooksearcher.domain.async_usecase.SortLibraries;
+import com.seoul.publicbooksearcher.domain.exception.BookSearchException;
 import com.seoul.publicbooksearcher.domain.exception.CantNotKnowLocationException;
 import com.seoul.publicbooksearcher.domain.exception.NotGpsSettingsException;
+import com.seoul.publicbooksearcher.domain.usecase.AddRecentKeyword;
+import com.seoul.publicbooksearcher.domain.usecase.GetRecentKeywords;
+import com.seoul.publicbooksearcher.domain.usecase.IsOnline;
 import com.seoul.publicbooksearcher.domain.usecase.UseCase;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
 import com.seoul.publicbooksearcher.presentation.view.component.ActionBarProgressBarView;
 import com.seoul.publicbooksearcher.presentation.view.component.BookListView;
 import com.seoul.publicbooksearcher.presentation.view.component.BookTitleAutoCompleteTextView;
 
+import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.EBean;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@EBean
 public class BookPresenter {
 
     private Context context;
     private final static String TAG = BookPresenter.class.getName();
 
-    private final UseCase isOnline;
-    private final UseCase getRecentKeywords;
-    private final UseCase addRecentKeyword;
-    private final AsyncUseCase searchBooks;
-    private final AsyncUseCase searchTitles;
-    private final AsyncUseCase sortLibraries;
+    @Bean(IsOnline.class)
+    UseCase isOnline;
 
-    private final BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView;
-    private final BookListView bookListView;
+    @Bean(GetRecentKeywords.class)
+    UseCase getRecentKeywords;
+
+    @Bean(AddRecentKeyword.class)
+    UseCase addRecentKeyword;
+
+    @Bean(SearchBooks.class)
+    AsyncUseCase searchBooks;
+
+    @Bean(SearchTitles.class)
+    AsyncUseCase searchTitles;
+
+    @Bean(SortLibraries.class)
+    AsyncUseCase sortLibraries;
+
+    @Bean(BookTitleAutoCompleteTextView.class)
+    BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView;
+
+    @Bean(BookListView.class)
+    BookListView bookListView;
+
     private ActionBarProgressBarView actionBarProgressBarView;
 
-    public BookPresenter(Context context, UseCase isOnline, UseCase getRecentKeywords, UseCase addRecentKeyword, AsyncUseCase searchBooks, AsyncUseCase searchTitles, AsyncUseCase sortLibraries,
-                         BookTitleAutoCompleteTextView bookTitleAutoCompleteTextView, BookListView bookListView) {
-
+    public BookPresenter(Context context) {
         this.context = context;
+    }
 
-        // use_case
-        this.isOnline = isOnline;
-        this.getRecentKeywords = getRecentKeywords;
-        this.addRecentKeyword = addRecentKeyword;
-        this.searchBooks = searchBooks;
-        this.searchTitles = searchTitles;
-        this.sortLibraries = sortLibraries;
-
-        // view
-        this.bookTitleAutoCompleteTextView = bookTitleAutoCompleteTextView;
-        this.bookListView = bookListView;
+    @AfterInject
+    public void init(){
+        bookTitleAutoCompleteTextView.setBookPresenter(this);
     }
 
     // 의존성 주입
@@ -116,9 +132,9 @@ public class BookPresenter {
             addRecentKeyword.execute(keyword);
             Log.i(TAG, "addRecentKeyword = " + keyword);
 
-            searchBooks.execute(keyword, new AsyncUseCaseListener<String, SearchResult, BookSearchException>() {
+            searchBooks.execute(keyword, new AsyncUseCaseListener<Long, SearchResult, BookSearchException>() {
                 @Override
-                public void onBefore(final String library) {
+                public void onBefore(final Long libraryId) {
                     bookTitleAutoCompleteTextView.dismissDropDown();
                     bookTitleAutoCompleteTextView.clearFocus();
 
@@ -126,24 +142,22 @@ public class BookPresenter {
                         @Override
                         public void run() {
                             bookListView.collapseAllParents();
-                            bookListView.clearLibrary(library);
+                            bookListView.clearLibrary(libraryId);
                         }
                     });
 
-                    bookListView.progressVisible(library);
+                    bookListView.progressVisible(libraryId);
                     bookListView.hideKeyboard();
                 }
 
                 @Override
                 public void onAfter(SearchResult searchResult) {
-                    bookListView.updateLibrary(searchResult.getLibraryName(), searchResult.getBooks());
-                    bookListView.progressGone(searchResult.getLibraryName());
+                    bookListView.updateLibrary(searchResult.getLibraryId(), searchResult.getBooks());
                 }
 
                 @Override
                 public void onError(BookSearchException e) {
-                    bookListView.showError(e.getLibrary(), e.getMessage());
-                    //bookListView.progressGone(e.getLibrary());
+                    bookListView.showError(e.getLibraryId(), e.getMessage());
                 }
             });
 
