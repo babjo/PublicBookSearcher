@@ -1,10 +1,13 @@
 package com.seoul.publicbooksearcher.data;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.seoul.publicbooksearcher.infrastructure.sqlite.SqliteHelper;
+
+import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
@@ -13,40 +16,30 @@ import java.util.List;
 @EBean
 public class RecentSearchKeywordRepository implements KeywordRepository{
 
-    private final static String DB_NAME = "book_cache_db";
     private final static String TABLE_NAME = "keyword_table";
 
-    private static SQLiteDatabase db = null;
-    private static Context context;
-
-    public RecentSearchKeywordRepository(Context context){
-        this.context = context;
-    }
+    @Bean(SqliteHelper.class)
+    SqliteHelper sqliteHelper;
 
     @Override
     public void insertKeyword(String keyword) {
         ContentValues args = new ContentValues();
         args.put("KEYWORD", keyword);
-        db.insert(getTableName(), null, args);
+        getDB().insert(TABLE_NAME, null, args);
     }
 
-    public static SQLiteDatabase getSQLiteDatabaseInstance(){
-        if(db == null)
-            db = context.openOrCreateDatabase(DB_NAME, SQLiteDatabase.CREATE_IF_NECESSARY, null);
-        return db;
+    @AfterInject
+    public void init(){
+        //db.execSQL("DROP TABLE if EXISTS " + getTableName());
+        if(!sqliteHelper.isTableExists(TABLE_NAME)) {
+            getDB().execSQL("CREATE TABLE " + TABLE_NAME + " (_ID INTEGER PRIMARY KEY AUTOINCREMENT, KEYWORD text not null unique)");
+        }
     }
 
     @Override
     public List<String> selectAll() {
-        db = getSQLiteDatabaseInstance();
-
-        //db.execSQL("DROP TABLE if EXISTS " + getTableName());
-        if(!isTableExists(db, getTableName())) {
-            db.execSQL("CREATE TABLE " + getTableName() + " (_ID INTEGER PRIMARY KEY AUTOINCREMENT, KEYWORD text not null unique)");
-        }
-
-        Cursor c = db.query(getTableName(),
-                new String[] {"_ID","KEYWORD"}, //colum 명세
+        Cursor c = getDB().query(TABLE_NAME,
+                new String[]{"_ID", "KEYWORD"}, //colum 명세
                 null,
                 null, //where 절에 전달할 데이터
                 null, //group by
@@ -61,23 +54,8 @@ public class RecentSearchKeywordRepository implements KeywordRepository{
         return keywords;
     }
 
-    public String getTableName(){
-        return TABLE_NAME;
-    }
 
-    boolean isTableExists(SQLiteDatabase db, String tableName)
-    {
-        if (tableName == null || db == null || !db.isOpen())
-        {
-            return false;
-        }
-        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM sqlite_master WHERE type = ? AND name = ?", new String[]{"table", tableName});
-        if (!cursor.moveToFirst())
-        {
-            return false;
-        }
-        int count = cursor.getInt(0);
-        cursor.close();
-        return count > 0;
+    private SQLiteDatabase getDB(){
+        return sqliteHelper.getDBInstance();
     }
 }

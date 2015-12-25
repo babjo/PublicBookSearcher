@@ -37,11 +37,11 @@ public class SeoulLibraryBookCrawler implements BookCrawler {
         keyword = replaceSpecial(keyword);
         keyword = keyword.replaceAll(" ", "+");
 
-        List<Book> books = cache.selectByKeywordAndLibrary(keyword, libraryId.toString());
+        List<Book> books = cache.selectByKeywordAndLibraryId(keyword, libraryId);
         try {
             if(books == null) {
                 books = getBooks(keyword);
-                cache.insertOrUpdateBooks(keyword, libraryId.toString(), books);
+                cache.insertOrUpdateBooks(keyword, libraryId, books);
             }
             else {
                 for (Book book : books)

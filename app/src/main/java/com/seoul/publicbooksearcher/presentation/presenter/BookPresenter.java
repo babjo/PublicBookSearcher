@@ -21,7 +21,6 @@ import com.seoul.publicbooksearcher.domain.exception.CantNotKnowLocationExceptio
 import com.seoul.publicbooksearcher.domain.exception.NotGpsSettingsException;
 import com.seoul.publicbooksearcher.domain.usecase.AddRecentKeyword;
 import com.seoul.publicbooksearcher.domain.usecase.GetRecentKeywords;
-import com.seoul.publicbooksearcher.domain.usecase.IsOnline;
 import com.seoul.publicbooksearcher.domain.usecase.UseCase;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
 import com.seoul.publicbooksearcher.presentation.view.component.ActionBarProgressBarView;
@@ -40,9 +39,6 @@ public class BookPresenter {
 
     private Context context;
     private final static String TAG = BookPresenter.class.getName();
-
-    @Bean(IsOnline.class)
-    UseCase isOnline;
 
     @Bean(GetRecentKeywords.class)
     UseCase getRecentKeywords;
@@ -209,7 +205,6 @@ public class BookPresenter {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setTitle("위치 서비스 사용")
                             .setMessage("위치 정보를 사용하려면, 단말기의 설정에서 '위치 서비스' 사용을 허용해주세요.")
-                            .setCancelable(false)
                             .setPositiveButton("설정하기", new DialogInterface.OnClickListener() {
                                 public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                                     context.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));

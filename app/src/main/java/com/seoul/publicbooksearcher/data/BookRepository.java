@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface BookRepository {
 
-    List<Book> selectByKeywordAndLibrary(String keyword, String library);
-    void insertOrUpdateBooks(String keyword, String library, List<Book> books);
+    List<Book> selectByKeywordAndLibraryId(String keyword, Long libraryId);
+    void insertOrUpdateBooks(String keyword, Long libraryId, List<Book> books);
 
 }

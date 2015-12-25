@@ -33,11 +33,11 @@ public class BaseLibraryBookCrawler implements BookCrawler {
 
     @Override
     public List<Book> crawling(String keyword) {
-        List<Book> books = cache.selectByKeywordAndLibrary(keyword, libraryId.toString());
+        List<Book> books = cache.selectByKeywordAndLibraryId(keyword, libraryId);
         try {
             if(books == null) {
                 books = getBooks(keyword);
-                cache.insertOrUpdateBooks(keyword, libraryId.toString(), books);
+                cache.insertOrUpdateBooks(keyword, libraryId, books);
             }
             else {
                 for (Book book : books)
