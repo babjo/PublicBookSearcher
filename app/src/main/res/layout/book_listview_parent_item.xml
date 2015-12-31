@@ -24,7 +24,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 app:titleColor="#FFFFFF"
-                app:titleSize="20dp"
+                app:titleSize="25dp"
                 app:titleText="고"
                 app:backgroundColorValue="@color/flatYellow"
                 />
@@ -43,7 +43,7 @@
                         android:id="@+id/book_library2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/text_dark"
                         android:text="도서관 이름"
                         />
