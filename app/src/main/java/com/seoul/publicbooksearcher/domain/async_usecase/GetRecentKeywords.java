@@ -2,8 +2,8 @@ package com.seoul.publicbooksearcher.domain.async_usecase;
 
 import android.os.AsyncTask;
 
-import com.seoul.publicbooksearcher.infrastructure.crawler.title.BandinlunisAutoCompleteCrawler;
-import com.seoul.publicbooksearcher.infrastructure.crawler.title.TitleCrawler;
+import com.seoul.publicbooksearcher.data.KeywordRepository;
+import com.seoul.publicbooksearcher.data.RecentSearchKeywordRepository;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
 
 import org.androidannotations.annotations.Bean;
@@ -12,27 +12,16 @@ import org.androidannotations.annotations.EBean;
 import java.util.List;
 
 @EBean
-public class SearchTitles implements AsyncUseCase<String> {
+public class GetRecentKeywords implements AsyncUseCase<Void> {
 
-    private final static String TAG = SearchTitles.class.getName();
-
-    @Bean(BandinlunisAutoCompleteCrawler.class)
-    TitleCrawler autoCompleteCrawler;
-
+    @Bean(RecentSearchKeywordRepository.class)
+    KeywordRepository keywordRepository;
     private AsyncUseCaseListener asyncUseCaseListener;
-    private Task task;
 
     @Override
-    public void execute(String keyword, AsyncUseCaseListener asyncUseCaseListener) {
+    public void execute(Void arg, AsyncUseCaseListener asyncUseCaseListener) {
         this.asyncUseCaseListener = asyncUseCaseListener;
-        try {
-            if(task != null)
-                task.cancel(true);
-            task = new Task();
-            task.execute(keyword);
-        }catch (Exception e){
-            asyncUseCaseListener.onError(e);
-        }
+        new Task().execute();
     }
 
     private class Task extends AsyncTask<String, Void, List<String>> {
@@ -45,7 +34,7 @@ public class SearchTitles implements AsyncUseCase<String> {
         @Override
         protected List<String> doInBackground(String... params) {
             try {
-                return autoCompleteCrawler.crawling(params[0]);
+                return keywordRepository.selectAll();
             }catch (Exception e){
                 asyncUseCaseListener.onError(e);
                 return null;

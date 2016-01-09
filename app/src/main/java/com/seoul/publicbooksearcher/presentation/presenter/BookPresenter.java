@@ -20,7 +20,7 @@ import com.seoul.publicbooksearcher.domain.exception.BookSearchException;
 import com.seoul.publicbooksearcher.domain.exception.CantNotKnowLocationException;
 import com.seoul.publicbooksearcher.domain.exception.NotGpsSettingsException;
 import com.seoul.publicbooksearcher.domain.usecase.AddRecentKeyword;
-import com.seoul.publicbooksearcher.domain.usecase.GetRecentKeywords;
+import com.seoul.publicbooksearcher.domain.async_usecase.GetRecentKeywords;
 import com.seoul.publicbooksearcher.domain.usecase.UseCase;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
 import com.seoul.publicbooksearcher.presentation.view.component.ActionBarProgressBarView;
@@ -41,7 +41,7 @@ public class BookPresenter {
     private final static String TAG = BookPresenter.class.getName();
 
     @Bean(GetRecentKeywords.class)
-    UseCase getRecentKeywords;
+    AsyncUseCase getRecentKeywords;
 
     @Bean(AddRecentKeyword.class)
     UseCase addRecentKeyword;
@@ -61,6 +61,8 @@ public class BookPresenter {
     @Bean(BookListView.class)
     BookListView bookListView;
 
+    private Handler handler = new Handler();
+
     private ActionBarProgressBarView actionBarProgressBarView;
 
     public BookPresenter(Context context) {
@@ -78,19 +80,23 @@ public class BookPresenter {
     }
 
     public void getRecentKeywords() {
-        final List<String> keywords = (List) getRecentKeywords.execute(null);
-
-        String keywordContents = "";
-        for (String keyword : keywords)
-            keywordContents += keyword + ", ";
-        Log.i(TAG, "Recent Keyword : " + keywordContents);
-
-        new Handler().postDelayed(new Runnable() { // new Handler and Runnable
+        getRecentKeywords.execute(null, new AsyncUseCaseListener<Void, List<String>, Exception>() {
             @Override
-            public void run() {
+            public void onBefore(Void beforeArgs) {
+            }
+            @Override
+            public void onAfter(List<String> keywords) {
+                String keywordContents = "";
+                for (String keyword : keywords)
+                    keywordContents += keyword + ", ";
+                Log.i(TAG, "Recent Keyword : " + keywordContents);
                 BookPresenter.this.bookTitleAutoCompleteTextView.setTitles(keywords);
             }
-        }, 700);
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
     }
 
     public void searchTitles(final String keyword){

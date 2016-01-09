@@ -65,12 +65,13 @@ public class BookTitleAutoCompleteTextView {
 
             @Override
             public void afterTextChanged(Editable s) {
-                Log.i(TAG, "================================== afterTextChanged ======================================");
-                if (s.toString().equals("")) {
+                Log.i(TAG, "================================== afterTextChanged : " + s.toString() + " ======================================");
+                if (s.toString().isEmpty()) {
                     Log.i(TAG, "===========afterTextChanged getRecentKeywords=============");
                     bookPresenter.getRecentKeywords();
                     clearButton.setVisibility(View.GONE);
-                } else {
+                } else if (s.toString().length() > 1){
+                    Log.i(TAG, "===========afterTextChanged searchTitles=============");
                     bookPresenter.searchTitles(s.toString().trim());
                     clearButton.setVisibility(View.VISIBLE);
                 }
@@ -91,8 +92,8 @@ public class BookTitleAutoCompleteTextView {
                 String selection = parent.getItemAtPosition(position).toString();
                 bookPresenter.searchBooks(selection);
             }
-
         });
+
 
         autoCompleteTextView.setOnKeyListener(new View.OnKeyListener() {
             @Override
