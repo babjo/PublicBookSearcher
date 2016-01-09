@@ -5,6 +5,8 @@ import com.seoul.publicbooksearcher.domain.Book;
 import com.seoul.publicbooksearcher.domain.Library;
 import com.seoul.publicbooksearcher.domain.Location;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class BookListViewItem implements ParentListItem{
@@ -30,8 +32,19 @@ public class BookListViewItem implements ParentListItem{
 
     @Override
     public List<?> getChildItemList() {
+        Collections.sort(library.getBooks(), new StateCompare());
         return library.getBooks();
     }
+
+    private class StateCompare implements Comparator<Book>{
+        @Override
+        public int compare(Book lhs, Book rhs) {
+            return lhs.getStatusCode() < rhs.getStatusCode() ? -1 : lhs.getStatusCode() > rhs.getStatusCode() ? 1:0;
+        }
+    }
+
+
+
     @Override
     public boolean isInitiallyExpanded() {
         return false;
@@ -41,9 +54,9 @@ public class BookListViewItem implements ParentListItem{
     }
 
     private void arrangeAndAdd(Book book){
-        if(book.getStatusCode() == 1){
+        if(book.getStatusCode() == Book.BOOK_STATE_LOAN_POSSIBLE){
             loanPossibleSize++;
-        }else if(book.getStatusCode() == 2){
+        }else if(book.getStatusCode() == Book.BOOK_STATE_LOAN_IMPOSSIBLE){
             loanImpossibleSize++;
         }else{
             loaningSize++;

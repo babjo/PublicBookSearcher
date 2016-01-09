@@ -66,7 +66,7 @@ public class SeoulLibraryBookCrawler implements BookCrawler {
                 "st=KWRD" +
                 "&gubunFlag=" +
                 "&nation_id=" +
-                "&si=1" +
+                "&si=TOTAL" +
                 "&q=" + keyword +
                 "&b0=and" +
                 "&weight0=0.5" +

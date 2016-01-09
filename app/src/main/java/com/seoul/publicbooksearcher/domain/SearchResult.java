@@ -14,14 +14,6 @@ public class SearchResult {
         return library.getBooks();
     }
 
-    public void setBooks(List<Book> books) {
-        this.library.setBooks(books);
-    }
-
-    public String getLibraryName() {
-        return library.getName();
-    }
-
     public Long getLibraryId() {return library.getId();}
 
 }

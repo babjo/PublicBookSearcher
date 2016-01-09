@@ -56,10 +56,6 @@ public class Library {
         return books;
     }
 
-    public void setBooks(List<Book> books) {
-        this.books = books;
-    }
-
     public void add(Book book) {
         this.books.add(book);
     }
