@@ -9,6 +9,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -70,7 +71,7 @@ public class BookTitleAutoCompleteTextView {
                     Log.i(TAG, "===========afterTextChanged getRecentKeywords=============");
                     bookPresenter.getRecentKeywords();
                     clearButton.setVisibility(View.GONE);
-                } else if (s.toString().length() > 1){
+                } else if (s.toString().length() > 1) {
                     Log.i(TAG, "===========afterTextChanged searchTitles=============");
                     bookPresenter.searchTitles(s.toString().trim());
                     clearButton.setVisibility(View.VISIBLE);
@@ -116,6 +117,23 @@ public class BookTitleAutoCompleteTextView {
                 }
             }
         });
+
+        autoCompleteTextView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Log.i(TAG, "=====================onLongClick=====================");
+                showSoftKeyboard(v);
+                return false;
+            }
+        });
+    }
+
+    public void showSoftKeyboard(View view) {
+        if (view.requestFocus()) {
+            InputMethodManager imm = (InputMethodManager)
+                    context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+        }
     }
 
     public void setTitles(List titles){ this.bookTitleAutoCompleteTextViewAdapter.setTitles(titles); }
