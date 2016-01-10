@@ -25,6 +25,7 @@ def AAVersion = '4.0-SNAPSHOT'
 dependencies {
     apt "org.androidannotations:androidannotations:$AAVersion"
     compile "org.androidannotations:androidannotations-api:$AAVersion"
+    compile files('src/main/libs/CaulySDK-3.4.6.jar')
 }
 
 apt {

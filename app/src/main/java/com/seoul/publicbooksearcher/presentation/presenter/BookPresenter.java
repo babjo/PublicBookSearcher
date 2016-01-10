@@ -1,5 +1,6 @@
 package com.seoul.publicbooksearcher.presentation.presenter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,9 +11,14 @@ import android.text.Html;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.fsn.cauly.CaulyAdInfo;
+import com.fsn.cauly.CaulyAdInfoBuilder;
+import com.fsn.cauly.CaulyInterstitialAd;
+import com.fsn.cauly.CaulyInterstitialAdListener;
 import com.seoul.publicbooksearcher.domain.Location;
 import com.seoul.publicbooksearcher.domain.SearchResult;
 import com.seoul.publicbooksearcher.domain.async_usecase.AsyncUseCase;
+import com.seoul.publicbooksearcher.domain.async_usecase.GetRecentKeywords;
 import com.seoul.publicbooksearcher.domain.async_usecase.SearchBooks;
 import com.seoul.publicbooksearcher.domain.async_usecase.SearchTitles;
 import com.seoul.publicbooksearcher.domain.async_usecase.SortLibraries;
@@ -20,7 +26,6 @@ import com.seoul.publicbooksearcher.domain.exception.BookSearchException;
 import com.seoul.publicbooksearcher.domain.exception.CantNotKnowLocationException;
 import com.seoul.publicbooksearcher.domain.exception.NotGpsSettingsException;
 import com.seoul.publicbooksearcher.domain.usecase.AddRecentKeyword;
-import com.seoul.publicbooksearcher.domain.async_usecase.GetRecentKeywords;
 import com.seoul.publicbooksearcher.domain.usecase.UseCase;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
 import com.seoul.publicbooksearcher.presentation.view.component.ActionBarProgressBarView;
@@ -61,9 +66,8 @@ public class BookPresenter {
     @Bean(BookListView.class)
     BookListView bookListView;
 
-    private Handler handler = new Handler();
-
     private ActionBarProgressBarView actionBarProgressBarView;
+    private Activity activity;
 
     public BookPresenter(Context context) {
         this.context = context;
@@ -77,6 +81,50 @@ public class BookPresenter {
     // 의존성 주입
     public void setActionBarProgressBarView(ActionBarProgressBarView actionBarProgressBarView) {
         this.actionBarProgressBarView = actionBarProgressBarView;
+    }
+    public void setActivityToAd(Activity activity) {
+        this.activity = activity;
+    }
+
+    private static final String APP_CODE = "gclbRPXF";
+    public void showAd() {
+        // CaulyAdInfo 생성
+        CaulyAdInfo adInfo = new CaulyAdInfoBuilder(APP_CODE).effect("BottomSlide").build();
+        // 전면 광고 생성
+        CaulyInterstitialAd interstial = new CaulyInterstitialAd();
+        interstial.setAdInfo(adInfo);
+        interstial.setInterstialAdListener(new CaulyInterstitialAdListener() {
+            @Override
+            public void onReceiveInterstitialAd(CaulyInterstitialAd ad, boolean isChargeableAd) {
+                // 광고 수신 성공한 경우 호출됨.
+                // 수신된 광고가 무료 광고인 경우 isChargeableAd 값이 false 임.
+                if (isChargeableAd == false) {
+                    Log.d("CaulyExample", "free interstitial AD received.");
+                }
+                else {
+                    Log.d("CaulyExample", "normal interstitial AD received.");
+                }
+
+                ad.show();
+            }
+
+            @Override
+            public void onFailedToReceiveInterstitialAd(CaulyInterstitialAd caulyInterstitialAd, int i, String s) {
+            }
+
+            @Override
+            public void onClosedInterstitialAd(CaulyInterstitialAd caulyInterstitialAd) {
+            }
+
+            @Override
+            public void onLeaveInterstitialAd(CaulyInterstitialAd caulyInterstitialAd) {
+            }
+        });
+        // 전면광고 노출 후 back 버튼 사용을 막기 원할 경우 disableBackKey();을 추가한다
+        // 단, requestInterstitialAd 위에서 추가되어야 합니다.
+        // interstitialAd.disableBackKey();
+        // 광고 요청. 광고 노출은 CaulyInterstitialAdListener의 onReceiveInterstitialAd에서 처리한다.
+        interstial.requestInterstitialAd(activity);
     }
 
     public void getRecentKeywords() {
@@ -130,38 +178,39 @@ public class BookPresenter {
 
     public void searchBooks(String keyword) {
 
-            Log.i(TAG, "entered keyword = " + keyword + "search start");
-            addRecentKeyword.execute(keyword);
-            Log.i(TAG, "addRecentKeyword = " + keyword);
+        showAd();
+        Log.i(TAG, "entered keyword = " + keyword + "search start");
+        addRecentKeyword.execute(keyword);
+        Log.i(TAG, "addRecentKeyword = " + keyword);
 
-            searchBooks.execute(keyword, new AsyncUseCaseListener<Long, SearchResult, BookSearchException>() {
-                @Override
-                public void onBefore(final Long libraryId) {
-                    bookTitleAutoCompleteTextView.dismissDropDown();
-                    bookTitleAutoCompleteTextView.clearFocus();
+        searchBooks.execute(keyword, new AsyncUseCaseListener<Long, SearchResult, BookSearchException>() {
+            @Override
+            public void onBefore(final Long libraryId) {
+                bookTitleAutoCompleteTextView.dismissDropDown();
+                bookTitleAutoCompleteTextView.clearFocus();
 
-                    new Handler().post(new Runnable() { // new Handler and Runnable
-                        @Override
-                        public void run() {
-                            bookListView.collapseAllParents();
-                            bookListView.clearLibrary(libraryId);
-                        }
-                    });
+                new Handler().post(new Runnable() { // new Handler and Runnable
+                    @Override
+                    public void run() {
+                        bookListView.collapseAllParents();
+                        bookListView.clearLibrary(libraryId);
+                    }
+                });
 
-                    bookListView.progressVisible(libraryId);
-                    bookListView.hideKeyboard();
-                }
+                bookListView.progressVisible(libraryId);
+                bookListView.hideKeyboard();
+            }
 
-                @Override
-                public void onAfter(SearchResult searchResult) {
-                    bookListView.updateLibrary(searchResult.getLibraryId(), searchResult.getBooks());
-                }
+            @Override
+            public void onAfter(SearchResult searchResult) {
+                bookListView.updateLibrary(searchResult.getLibraryId(), searchResult.getBooks());
+            }
 
-                @Override
-                public void onError(BookSearchException e) {
-                    bookListView.showError(e.getLibraryId(), e.getMessage());
-                }
-            });
+            @Override
+            public void onError(BookSearchException e) {
+                bookListView.showError(e.getLibraryId(), e.getMessage());
+            }
+        });
 
     }
 

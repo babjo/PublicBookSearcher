@@ -92,6 +92,7 @@
     <orderEntry type="library" exported="" name="appcompat-v7-23.0.1" level="project" />
     <orderEntry type="library" exported="" name="androidannotations-api-4.0-SNAPSHOT" level="project" />
     <orderEntry type="library" exported="" name="expandablerecyclerview-2.0.3" level="project" />
+    <orderEntry type="library" exported="" name="CaulySDK-3.4.6" level="project" />
     <orderEntry type="library" exported="" name="circleview-1.2" level="project" />
     <orderEntry type="library" exported="" name="jsoup-1.7.2" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-23.0.1" level="project" />

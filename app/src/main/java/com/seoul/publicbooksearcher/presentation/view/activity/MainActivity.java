@@ -12,6 +12,7 @@ import com.seoul.publicbooksearcher.R;
 import com.seoul.publicbooksearcher.presentation.presenter.BookPresenter;
 import com.seoul.publicbooksearcher.presentation.view.component.ActionBarProgressBarView;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 
@@ -22,6 +23,11 @@ public class MainActivity extends AppCompatActivity{
 
     @Bean(BookPresenter.class)
     BookPresenter bookPresenter;
+
+    @AfterInject
+    public void init(){
+        bookPresenter.setActivityToAd(this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
