@@ -34,8 +34,13 @@ public class SeoulLibraryBookCrawler implements BookCrawler {
 
     @Override
     public List<Book> crawling(String keyword) {
-        keyword = replaceSpecial(keyword);
-        keyword = keyword.replaceAll(" ", "+");
+        //keyword = replaceSpecial(keyword);
+        /*
+        try {
+            keyword = URLEncoder.encode(keyword, "utf-8");//keyword.replaceAll(" ", "%20");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }*/
 
         List<Book> books = cache.selectByKeywordAndLibraryId(keyword, libraryId);
         try {
@@ -48,8 +53,7 @@ public class SeoulLibraryBookCrawler implements BookCrawler {
                     book.setStatusCode(getBookState(book.getBookId(), book.getLocationCode(), book.getCallNumber()));
             }
         } catch (IOException e) {
-            throw new RuntimeException(TAG+" : IOException");
-            //e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         return books;
@@ -62,6 +66,7 @@ public class SeoulLibraryBookCrawler implements BookCrawler {
 
     private List<Book> getBooks(String keyword) throws IOException {
         List<Book> books = new ArrayList();
+        /*
         Document doc = Jsoup.connect("http://lib.seoul.go.kr/search/laz/result?" +
                 "st=KWRD" +
                 "&gubunFlag=" +
@@ -101,10 +106,20 @@ public class SeoulLibraryBookCrawler implements BookCrawler {
                 "&rt=" +
                 "&range=000000000021" +
                 "&cpp=10" +
-                "&msc=500")
+                "&msc=500")*/
+        Document doc = Jsoup.connect("http://lib.seoul.go.kr/search/laz/result")
+                .data("st", "KWRD")
+                .data("si", "TOTAL")
+                .data("q", keyword)
+                .header("Host", "lib.seoul.go.kr")
+                .header("Connection", "keep-alive")
+                .header("Pragma", "no-cache")
+                .header("Cache-Control", "no-cache")
                 .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\n")
-                .header("User-Agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36")
                 .header("Upgrade-Insecure-Requests", "1")
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36")
+                .header("Accept-Encoding", "gzip, deflate, sdch")
+                .header("Accept-Language", "ko,th;q=0.8,en;q=0.6,en-US;q=0.4")
                 .get();
 
         Elements elements = doc.select("div.briefData");
@@ -140,7 +155,7 @@ public class SeoulLibraryBookCrawler implements BookCrawler {
             String[] javascriptArgs = span.attr("onmousedown").replaceAll("'", "").replace("javascript:callLocation(", "").replace(")", "").split(",");
             String bookId = javascriptArgs[2];
             String locationCode = javascriptArgs[3];
-            Document d = Jsoup.connect("http://lib.seoul.go.kr/search/prevLoc/" + bookId)
+            Document d = Jsoup.connect("http://lib.seoul.go.kr/search/prevLoc/" + bookId).timeout(10*1000)
                     .data("loc", locationCode)
                     .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\n")
                     .header("User-Agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36")

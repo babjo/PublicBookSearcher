@@ -64,7 +64,7 @@ public class SearchBooks implements AsyncUseCase<String> {
         @Override
         protected SearchResult doInBackground(String... params) {
             int count = 0;
-            int maxTries = 3;
+            int maxTries = 2;
             while(true) {
                 try {
                     return new SearchResult(new Library(bookCrawler.getLibraryId(), bookCrawler.crawling(params[0])));

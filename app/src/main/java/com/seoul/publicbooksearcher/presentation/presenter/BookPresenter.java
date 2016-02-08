@@ -85,7 +85,6 @@ public class BookPresenter {
     public void setActivityToAd(Activity activity) {
         this.activity = activity;
     }
-
     private static final String APP_CODE = "gclbRPXF";
     public void showAd() {
         // CaulyAdInfo 생성
@@ -178,7 +177,7 @@ public class BookPresenter {
 
     public void searchBooks(String keyword) {
 
-        showAd();
+        //showAd();
         Log.i(TAG, "entered keyword = " + keyword + "search start");
         addRecentKeyword.execute(keyword);
         Log.i(TAG, "addRecentKeyword = " + keyword);
