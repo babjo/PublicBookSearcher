@@ -80,15 +80,15 @@
 
     </android.support.design.widget.AppBarLayout>
 
-
     <com.fsn.cauly.CaulyAdView
         xmlns:app="http://schemas.android.com/apk/res/com.seoul.publicbooksearcher"
         android:id="@+id/xmladview"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_alignParentBottom="true"
+        app:enableDefaultBannerAd="true"
         app:appcode="7areqLt9"
-        app:effect="RightSlide"
+        app:effect="FadeIn"
         app:dynamicReloadInterval="true"
         app:reloadInterval="20"
         app:bannerHeight="Fixed"/>

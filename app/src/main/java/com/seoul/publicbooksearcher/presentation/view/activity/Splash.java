@@ -6,6 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.seoul.publicbooksearcher.R;
 
+import org.androidannotations.annotations.EActivity;
+
+@EActivity
 public class Splash extends AppCompatActivity {
 
     @Override

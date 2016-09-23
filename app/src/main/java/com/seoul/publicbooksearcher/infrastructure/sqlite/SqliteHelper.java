@@ -21,7 +21,6 @@ public class SqliteHelper {
         db = context.openOrCreateDatabase(DB_NAME, SQLiteDatabase.CREATE_IF_NECESSARY, null);
     }
 
-
     public boolean isTableExists(String tableName)
     {
         if (tableName == null || db == null || !db.isOpen())

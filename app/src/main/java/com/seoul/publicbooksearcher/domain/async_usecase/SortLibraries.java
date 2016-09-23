@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
 
-import com.seoul.publicbooksearcher.domain.exception.CantNotKnowLocationException;
+import com.seoul.publicbooksearcher.domain.exception.CanNotKnowLocationException;
 import com.seoul.publicbooksearcher.domain.exception.NotGpsSettingsException;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
 
@@ -57,9 +57,9 @@ public class SortLibraries implements AsyncUseCase<Void>{
                             Log.i(TAG, "request location with Network !!");
                         }
                         else
-                            asyncUseCaseListener.onError(new CantNotKnowLocationException());
+                            asyncUseCaseListener.onError(new CanNotKnowLocationException());
                     } catch (Exception e) {
-                        asyncUseCaseListener.onError(new CantNotKnowLocationException());
+                        asyncUseCaseListener.onError(new CanNotKnowLocationException());
                     }
                 }
             },3000);

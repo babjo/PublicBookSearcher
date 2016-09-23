@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "662385588681",
+    "firebase_url": "https://public-book-searcher.firebaseio.com",
+    "project_id": "public-book-searcher",
+    "storage_bucket": "public-book-searcher.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662385588681:android:092ce5fa7004b43c",
+        "android_client_info": {
+          "package_name": "com.seoul.publicbooksearcher"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "662385588681-gsbf1h5f52n6c6qgbl19inp23tarsvvo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.seoul.publicbooksearcher",
+            "certificate_hash": "973D7AB789245EF780BEDC2722DF09DF61DACDA1"
+          }
+        },
+        {
+          "client_id": "662385588681-uhtdcrtqo815u27beh77ii3pb60iae9b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDulomDv1aSMNa1qFR6FAlK6SecSuQuvY0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "662385588681-uhtdcrtqo815u27beh77ii3pb60iae9b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
