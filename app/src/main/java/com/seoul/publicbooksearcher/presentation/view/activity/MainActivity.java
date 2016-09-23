@@ -1,8 +1,10 @@
 package com.seoul.publicbooksearcher.presentation.view.activity;
 
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,6 +18,7 @@ import com.fsn.cauly.CaulyInterstitialAd;
 import com.fsn.cauly.CaulyInterstitialAdListener;
 import com.seoul.publicbooksearcher.Const;
 import com.seoul.publicbooksearcher.R;
+import com.seoul.publicbooksearcher.Utils;
 import com.seoul.publicbooksearcher.domain.Book;
 import com.seoul.publicbooksearcher.domain.Location;
 import com.seoul.publicbooksearcher.presentation.presenter.BookPresenter;
@@ -33,6 +36,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements MainView{
 
     private final static String TAG = MainActivity.class.getName();
+    public static final int REQUEST_CODE = 1;
 
     @Bean(BookPresenter.class)
     BookPresenter mBookPresenter;
@@ -75,11 +79,35 @@ public class MainActivity extends AppCompatActivity implements MainView{
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_sort) {
-            mBookPresenter.sortLibrariesByDistance();
+            Utils.checkLocationsPermission(this, REQUEST_CODE, ()->mBookPresenter.sortLibrariesByDistance());
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case REQUEST_CODE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mBookPresenter.sortLibrariesByDistance();
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                } else {
+                    Toast.makeText(this, "GPS 권한을 획득하지 못했습니다. 가까운 도서관을 확인하을 위해 GPS 권한을 설정해주세요.", Toast.LENGTH_LONG).show();
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 
     @Override
