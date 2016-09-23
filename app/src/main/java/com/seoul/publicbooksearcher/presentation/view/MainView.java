@@ -19,4 +19,5 @@ public interface MainView {
     void onPreSortLibrariesByDistance();
     void onPostSortLibrariesByDistance(Location location);
     void onErrorSortLibrariesByDistance();
+
 }

@@ -10,18 +10,23 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.seoul.publicbooksearcher.Const;
+import com.seoul.publicbooksearcher.domain.AddRecentKeywordUseCase;
 import com.seoul.publicbooksearcher.domain.Location;
-import com.seoul.publicbooksearcher.domain.SearchResult;
+import com.seoul.publicbooksearcher.domain.NullSubscriber;
+import com.seoul.publicbooksearcher.domain.SearchBooksUseCase;
+import com.seoul.publicbooksearcher.domain.UseCase;
 import com.seoul.publicbooksearcher.domain.async_usecase.AsyncUseCase;
 import com.seoul.publicbooksearcher.domain.async_usecase.GetRecentKeywords;
-import com.seoul.publicbooksearcher.domain.async_usecase.SearchBooks;
 import com.seoul.publicbooksearcher.domain.async_usecase.SearchTitles;
 import com.seoul.publicbooksearcher.domain.async_usecase.SortLibraries;
+import com.seoul.publicbooksearcher.domain.dto.AddRecentKeywordRequestDTO;
+import com.seoul.publicbooksearcher.domain.dto.SearchBooksRequestDTO;
+import com.seoul.publicbooksearcher.domain.dto.SearchBooksResponseDTO;
 import com.seoul.publicbooksearcher.domain.exception.BookSearchException;
 import com.seoul.publicbooksearcher.domain.exception.CanNotKnowLocationException;
 import com.seoul.publicbooksearcher.domain.exception.NotGpsSettingsException;
-import com.seoul.publicbooksearcher.domain.usecase.AddRecentKeyword;
-import com.seoul.publicbooksearcher.domain.usecase.UseCase;
+import com.seoul.publicbooksearcher.infrastructure.crawler.book.BookCrawler;
+import com.seoul.publicbooksearcher.infrastructure.crawler.book.BookCrawlerCollection;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
 import com.seoul.publicbooksearcher.presentation.view.activity.MainActivity;
 
@@ -31,20 +36,25 @@ import org.androidannotations.annotations.EBean;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Subscriber;
+
 @EBean
 public class BookPresenter implements Presenter{
 
     private Context context;
     private final static String TAG = BookPresenter.class.getName();
 
+    @Bean(BookCrawlerCollection.class)
+    BookCrawlerCollection bookCrawlerCollection;
+
     @Bean(GetRecentKeywords.class)
     AsyncUseCase getRecentKeywords;
 
-    @Bean(AddRecentKeyword.class)
-    UseCase addRecentKeyword;
+    @Bean(AddRecentKeywordUseCase.class)
+    UseCase<AddRecentKeywordRequestDTO> addRecentKeyword;
 
-    @Bean(SearchBooks.class)
-    AsyncUseCase searchBooks;
+    @Bean(SearchBooksUseCase.class)
+    UseCase<SearchBooksRequestDTO> mSearchBooksUseCase;
 
     @Bean(SearchTitles.class)
     AsyncUseCase searchTitles;
@@ -109,27 +119,27 @@ public class BookPresenter implements Presenter{
     }
 
     public void searchBooks(String keyword) {
-        //showAd();
         Log.i(TAG, "entered keyword = " + keyword + "search start");
-        addRecentKeyword.execute(keyword);
+        addRecentKeyword.execute(new AddRecentKeywordRequestDTO(keyword), new NullSubscriber());
         Log.i(TAG, "addRecentKeyword = " + keyword);
 
-        searchBooks.execute(keyword, new AsyncUseCaseListener<Long, SearchResult, BookSearchException>() {
-            @Override
-            public void onBefore(final Long libraryId) {
-                mMainView.onPreSearchBooks(libraryId);
-            }
-
-            @Override
-            public void onAfter(SearchResult searchResult) {
-                mMainView.onPostSearchBooks(searchResult.getLibraryId(), searchResult.getBooks());
-            }
-
-            @Override
-            public void onError(BookSearchException e) {
-                mMainView.onErrorSearchBooks(e.getLibraryId(), e.getMessage());
-            }
-        });
+        for (BookCrawler bookCrawler : bookCrawlerCollection.get()){
+            mMainView.onPreSearchBooks(bookCrawler.getLibraryId());
+            mSearchBooksUseCase.execute(new SearchBooksRequestDTO(keyword, bookCrawler), new Subscriber<SearchBooksResponseDTO>() {
+                @Override
+                public void onCompleted() {
+                }
+                @Override
+                public void onError(Throwable e) {
+                    if(e instanceof BookSearchException)
+                        mMainView.onErrorSearchBooks(((BookSearchException) e).getLibraryId(), e.getMessage());
+                }
+                @Override
+                public void onNext(SearchBooksResponseDTO searchBooksResponseDTO) {
+                    mMainView.onPostSearchBooks(searchBooksResponseDTO.getSearchResult().getLibraryId(), searchBooksResponseDTO.getSearchResult().getBooks());
+                }
+            });
+        }
     }
 
     public void sortLibrariesByDistance() {

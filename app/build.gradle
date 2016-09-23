@@ -44,7 +44,12 @@ dependencies {
     // firebase
     compile 'com.google.firebase:firebase-core:9.4.0'
     compile 'com.google.firebase:firebase-crash:9.4.0'
+    compile 'com.google.firebase:firebase-messaging:9.4.0'
+    compile 'com.google.firebase:firebase-ads:9.4.0'
+    compile 'com.google.android.gms:play-services-appindexing:9.4.0'
 
+    // rxjava
+    compile 'io.reactivex:rxandroid:1.1.0'
 }
 
 
