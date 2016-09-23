@@ -10,23 +10,25 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.seoul.publicbooksearcher.Const;
-import com.seoul.publicbooksearcher.domain.usecase.AddRecentKeywordUseCase;
-import com.seoul.publicbooksearcher.domain.usecase.GetRecentKeywordsUseCase;
 import com.seoul.publicbooksearcher.domain.Location;
 import com.seoul.publicbooksearcher.domain.NullSubscriber;
-import com.seoul.publicbooksearcher.domain.usecase.SearchBooksUseCase;
-import com.seoul.publicbooksearcher.domain.usecase.UseCase;
 import com.seoul.publicbooksearcher.domain.async_usecase.AsyncUseCase;
-import com.seoul.publicbooksearcher.domain.async_usecase.SearchTitles;
 import com.seoul.publicbooksearcher.domain.async_usecase.SortLibraries;
 import com.seoul.publicbooksearcher.domain.dto.AddRecentKeywordRequestDTO;
 import com.seoul.publicbooksearcher.domain.dto.GetRecentKeywordsRequestDTO;
 import com.seoul.publicbooksearcher.domain.dto.GetRecentKeywordsResponseDTO;
 import com.seoul.publicbooksearcher.domain.dto.SearchBooksRequestDTO;
 import com.seoul.publicbooksearcher.domain.dto.SearchBooksResponseDTO;
+import com.seoul.publicbooksearcher.domain.dto.SearchTitlesRequestDTO;
 import com.seoul.publicbooksearcher.domain.exception.BookSearchException;
 import com.seoul.publicbooksearcher.domain.exception.CanNotKnowLocationException;
 import com.seoul.publicbooksearcher.domain.exception.NotGpsSettingsException;
+import com.seoul.publicbooksearcher.domain.usecase.AddRecentKeywordUseCase;
+import com.seoul.publicbooksearcher.domain.usecase.GetRecentKeywordsUseCase;
+import com.seoul.publicbooksearcher.domain.usecase.SearchBooksUseCase;
+import com.seoul.publicbooksearcher.domain.dto.SearchTitlesResponseDTO;
+import com.seoul.publicbooksearcher.domain.usecase.SearchTitlesUseCase;
+import com.seoul.publicbooksearcher.domain.usecase.UseCase;
 import com.seoul.publicbooksearcher.infrastructure.crawler.book.BookCrawler;
 import com.seoul.publicbooksearcher.infrastructure.crawler.book.BookCrawlerCollection;
 import com.seoul.publicbooksearcher.presentation.AsyncUseCaseListener;
@@ -58,8 +60,8 @@ public class BookPresenter implements Presenter{
     @Bean(SearchBooksUseCase.class)
     UseCase<SearchBooksRequestDTO> mSearchBooksUseCase;
 
-    @Bean(SearchTitles.class)
-    AsyncUseCase searchTitles;
+    @Bean(SearchTitlesUseCase.class)
+    UseCase<SearchTitlesRequestDTO> mSearchTitlesUseCase;
 
     @Bean(SortLibraries.class)
     AsyncUseCase sortLibraries;
@@ -94,27 +96,24 @@ public class BookPresenter implements Presenter{
     }
 
     public void searchTitles(final String keyword){
-        searchTitles.execute(keyword, new AsyncUseCaseListener<Void, List<String>, Exception>() {
+        mSearchTitlesUseCase.execute(new SearchTitlesRequestDTO(keyword), new Subscriber<SearchTitlesResponseDTO>() {
             @Override
-            public void onBefore(Void beforeArgs) {
+            public void onCompleted() {
             }
-
             @Override
-            public void onAfter(List<String> afterArg) {
+            public void onError(Throwable e) {
+            }
+            @Override
+            public void onNext(SearchTitlesResponseDTO searchTitlesResponseDTO) {
                 Log.i("UPDATE", "3");
 
                 List highlighted = new ArrayList();
-                for(String title : afterArg)
+                for(String title : searchTitlesResponseDTO.getTitles())
                     highlighted.add(highlight(title));
                 mMainView.onLoadRecentKeywords(highlighted);
             }
-
             private Object highlight(String title) {
                 return Html.fromHtml(title.replace(keyword, "<font color=\"red\">"+keyword+"</font>"));
-            }
-
-            @Override
-            public void onError(Exception e) {
             }
         });
     }
