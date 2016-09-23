@@ -1,7 +1,5 @@
-전체 레이어 리팩토링
 gps 검색
 rxjava 적용
-Const 빼자
 
 
 해당 다시 클릭하면 재검색하도록
@@ -42,3 +40,5 @@ naver api 검색 결과 중복제거
 autoCompleteTextView.clearFocus(); 코드 중복 삭제
 검색결과 없음 보여주기
 savedInstanceState에 데이터 저장
+Const 빼자
+전체 레이어 리팩토링

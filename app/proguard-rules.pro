@@ -22,3 +22,4 @@
       public protected *;
 }
 -dontwarn android.webkit.**
+-dontwarn java.lang.invoke.*
