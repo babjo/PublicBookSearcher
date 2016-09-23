@@ -1,5 +1,7 @@
-package com.seoul.publicbooksearcher.domain;
+package com.seoul.publicbooksearcher.domain.usecase;
 
+import com.seoul.publicbooksearcher.domain.Library;
+import com.seoul.publicbooksearcher.domain.SearchResult;
 import com.seoul.publicbooksearcher.domain.dto.SearchBooksRequestDTO;
 import com.seoul.publicbooksearcher.domain.dto.SearchBooksResponseDTO;
 import com.seoul.publicbooksearcher.domain.exception.BookSearchException;

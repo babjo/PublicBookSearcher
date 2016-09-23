@@ -1,4 +1,4 @@
-package com.seoul.publicbooksearcher.domain;
+package com.seoul.publicbooksearcher.domain.usecase;
 
 
 import com.seoul.publicbooksearcher.data.KeywordRepository;
@@ -12,7 +12,7 @@ import org.androidannotations.annotations.EBean;
 import rx.Observable;
 
 @EBean
-public class AddRecentKeywordUseCase extends com.seoul.publicbooksearcher.domain.UseCase<AddRecentKeywordRequestDTO> {
+public class AddRecentKeywordUseCase extends UseCase<AddRecentKeywordRequestDTO> {
 
     @Bean(RecentSearchKeywordRepository.class)
     KeywordRepository keywordRepository;

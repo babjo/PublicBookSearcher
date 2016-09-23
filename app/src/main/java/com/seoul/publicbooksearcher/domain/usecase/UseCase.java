@@ -1,4 +1,4 @@
-package com.seoul.publicbooksearcher.domain;
+package com.seoul.publicbooksearcher.domain.usecase;
 
 import rx.Observable;
 import rx.Subscriber;

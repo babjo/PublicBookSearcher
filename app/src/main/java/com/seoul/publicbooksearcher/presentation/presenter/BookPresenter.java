@@ -10,16 +10,18 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.seoul.publicbooksearcher.Const;
-import com.seoul.publicbooksearcher.domain.AddRecentKeywordUseCase;
+import com.seoul.publicbooksearcher.domain.usecase.AddRecentKeywordUseCase;
+import com.seoul.publicbooksearcher.domain.usecase.GetRecentKeywordsUseCase;
 import com.seoul.publicbooksearcher.domain.Location;
 import com.seoul.publicbooksearcher.domain.NullSubscriber;
-import com.seoul.publicbooksearcher.domain.SearchBooksUseCase;
-import com.seoul.publicbooksearcher.domain.UseCase;
+import com.seoul.publicbooksearcher.domain.usecase.SearchBooksUseCase;
+import com.seoul.publicbooksearcher.domain.usecase.UseCase;
 import com.seoul.publicbooksearcher.domain.async_usecase.AsyncUseCase;
-import com.seoul.publicbooksearcher.domain.async_usecase.GetRecentKeywords;
 import com.seoul.publicbooksearcher.domain.async_usecase.SearchTitles;
 import com.seoul.publicbooksearcher.domain.async_usecase.SortLibraries;
 import com.seoul.publicbooksearcher.domain.dto.AddRecentKeywordRequestDTO;
+import com.seoul.publicbooksearcher.domain.dto.GetRecentKeywordsRequestDTO;
+import com.seoul.publicbooksearcher.domain.dto.GetRecentKeywordsResponseDTO;
 import com.seoul.publicbooksearcher.domain.dto.SearchBooksRequestDTO;
 import com.seoul.publicbooksearcher.domain.dto.SearchBooksResponseDTO;
 import com.seoul.publicbooksearcher.domain.exception.BookSearchException;
@@ -47,8 +49,8 @@ public class BookPresenter implements Presenter{
     @Bean(BookCrawlerCollection.class)
     BookCrawlerCollection bookCrawlerCollection;
 
-    @Bean(GetRecentKeywords.class)
-    AsyncUseCase getRecentKeywords;
+    @Bean(GetRecentKeywordsUseCase.class)
+    UseCase<GetRecentKeywordsRequestDTO> mGetRecentKeywordsUseCase;
 
     @Bean(AddRecentKeywordUseCase.class)
     UseCase<AddRecentKeywordRequestDTO> addRecentKeyword;
@@ -73,21 +75,20 @@ public class BookPresenter implements Presenter{
     }
 
     public void getRecentKeywords() {
-        getRecentKeywords.execute(null, new AsyncUseCaseListener<Void, List<String>, Exception>() {
+        mGetRecentKeywordsUseCase.execute(new GetRecentKeywordsRequestDTO(), new Subscriber<GetRecentKeywordsResponseDTO>() {
             @Override
-            public void onBefore(Void beforeArgs) {
+            public void onCompleted() {
             }
             @Override
-            public void onAfter(List<String> keywords) {
+            public void onError(Throwable e) {
+            }
+            @Override
+            public void onNext(GetRecentKeywordsResponseDTO getRecentKeywordsResponseDTO) {
                 String keywordContents = "";
-                for (String keyword : keywords)
+                for (String keyword : getRecentKeywordsResponseDTO.getRecentKeywords())
                     keywordContents += keyword + ", ";
                 Log.i(TAG, "Recent Keyword : " + keywordContents);
-                mMainView.onLoadRecentKeywords(keywords);
-            }
-            @Override
-            public void onError(Exception e) {
-
+                mMainView.onLoadRecentKeywords(getRecentKeywordsResponseDTO.getRecentKeywords());
             }
         });
     }
@@ -192,5 +193,6 @@ public class BookPresenter implements Presenter{
 
     @Override
     public void destroy() {
+        mMainView = null;
     }
 }
