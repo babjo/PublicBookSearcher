@@ -1,7 +1,6 @@
 package com.seoul.publicbooksearcher.presentation.view;
 
 import com.seoul.publicbooksearcher.domain.Book;
-import com.seoul.publicbooksearcher.domain.Location;
 
 import java.util.List;
 
@@ -15,9 +14,5 @@ public interface MainView {
     void onPreSearchBooks(long libraryId);
     void onPostSearchBooks(Long libraryId, List<Book> books);
     void onErrorSearchBooks(Long libraryId, String message);
-
-    void onPreSortLibrariesByDistance();
-    void onPostSortLibrariesByDistance(Location location);
-    void onErrorSortLibrariesByDistance();
 
 }
