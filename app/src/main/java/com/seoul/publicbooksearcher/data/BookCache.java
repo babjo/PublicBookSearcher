@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.seoul.publicbooksearcher.domain.Book;
+import com.seoul.publicbooksearcher.domain.models.Book;
 import com.seoul.publicbooksearcher.infrastructure.sqlite.SqliteHelper;
 
 import org.androidannotations.annotations.AfterInject;

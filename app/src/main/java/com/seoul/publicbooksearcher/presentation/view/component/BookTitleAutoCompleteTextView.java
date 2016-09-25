@@ -79,12 +79,7 @@ public class BookTitleAutoCompleteTextView {
             }
         });
 
-        clearButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                autoCompleteTextView.setText("");
-            }
-        });
+        clearButton.setOnClickListener(v -> autoCompleteTextView.setText(""));
 
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -109,22 +104,16 @@ public class BookTitleAutoCompleteTextView {
             }
         });
 
-        autoCompleteTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    bookPresenter.getRecentKeywords();
-                }
+        autoCompleteTextView.setOnFocusChangeListener((v, hasFocus) ->{
+            if (hasFocus) {
+                bookPresenter.getRecentKeywords();
             }
         });
 
-        autoCompleteTextView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Log.i(TAG, "=====================onLongClick=====================");
-                showSoftKeyboard(v);
-                return false;
-            }
+        autoCompleteTextView.setOnLongClickListener(v->{
+            Log.i(TAG, "=====================onLongClick=====================");
+            showSoftKeyboard(v);
+            return false;
         });
     }
 

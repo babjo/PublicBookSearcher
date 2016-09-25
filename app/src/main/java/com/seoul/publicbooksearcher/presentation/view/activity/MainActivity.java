@@ -8,7 +8,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +17,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.annimon.stream.Collectors;
+import com.annimon.stream.Stream;
 import com.fsn.cauly.CaulyAdInfo;
 import com.fsn.cauly.CaulyAdInfoBuilder;
 import com.fsn.cauly.CaulyInterstitialAd;
@@ -25,7 +26,8 @@ import com.fsn.cauly.CaulyInterstitialAdListener;
 import com.seoul.publicbooksearcher.Const;
 import com.seoul.publicbooksearcher.R;
 import com.seoul.publicbooksearcher.Utils;
-import com.seoul.publicbooksearcher.domain.Book;
+import com.seoul.publicbooksearcher.domain.models.Book;
+import com.seoul.publicbooksearcher.domain.models.KeywordEntity;
 import com.seoul.publicbooksearcher.presentation.presenter.BookPresenter;
 import com.seoul.publicbooksearcher.presentation.view.MainView;
 import com.seoul.publicbooksearcher.presentation.view.component.ActionBarProgressBarView;
@@ -155,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements MainView, Locatio
 
     private void onPostSortLibraries(Location location) {
         mActionBarProgressBarView.setSortActionButtonState(false);
-        mBookListView.sort(new com.seoul.publicbooksearcher.domain.Location(location.getLatitude(), location.getLongitude()));
+        mBookListView.sort(new com.seoul.publicbooksearcher.domain.models.Location(location.getLatitude(), location.getLongitude()));
         mIsFound = true;
         removeGPSUpdates();
     }

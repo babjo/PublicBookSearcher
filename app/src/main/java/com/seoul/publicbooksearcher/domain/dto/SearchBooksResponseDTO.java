@@ -1,6 +1,6 @@
 package com.seoul.publicbooksearcher.domain.dto;
 
-import com.seoul.publicbooksearcher.domain.SearchResult;
+import com.seoul.publicbooksearcher.domain.models.SearchResult;
 
 /**
  * Created by LCH on 2016. 9. 23..

@@ -4,8 +4,8 @@ import android.util.Log;
 
 import com.seoul.publicbooksearcher.data.BookCache;
 import com.seoul.publicbooksearcher.data.BookRepository;
-import com.seoul.publicbooksearcher.domain.Book;
-import com.seoul.publicbooksearcher.domain.Library;
+import com.seoul.publicbooksearcher.domain.models.Book;
+import com.seoul.publicbooksearcher.domain.models.Library;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;

@@ -1,4 +1,4 @@
-package com.seoul.publicbooksearcher.domain;
+package com.seoul.publicbooksearcher.domain.models;
 
 import java.util.ArrayList;
 import java.util.List;

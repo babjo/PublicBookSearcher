@@ -1,6 +1,6 @@
 package com.seoul.publicbooksearcher.infrastructure.crawler.book;
 
-import com.seoul.publicbooksearcher.domain.Library;
+import com.seoul.publicbooksearcher.domain.models.Library;
 
 import org.androidannotations.annotations.EBean;
 

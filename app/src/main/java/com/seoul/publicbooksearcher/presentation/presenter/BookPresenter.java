@@ -3,7 +3,8 @@ package com.seoul.publicbooksearcher.presentation.presenter;
 import android.text.Html;
 import android.util.Log;
 
-import com.seoul.publicbooksearcher.domain.NullSubscriber;
+import com.seoul.publicbooksearcher.domain.models.Keyword;
+import com.seoul.publicbooksearcher.domain.models.NullSubscriber;
 import com.seoul.publicbooksearcher.domain.dto.AddRecentKeywordRequestDTO;
 import com.seoul.publicbooksearcher.domain.dto.GetRecentKeywordsRequestDTO;
 import com.seoul.publicbooksearcher.domain.dto.GetRecentKeywordsResponseDTO;
@@ -67,7 +68,7 @@ public class BookPresenter implements Presenter{
             public void onNext(GetRecentKeywordsResponseDTO getRecentKeywordsResponseDTO) {
                 String keywordContents = "";
                 for (String keyword : getRecentKeywordsResponseDTO.getRecentKeywords())
-                    keywordContents += keyword + ", ";
+                    keywordContents += keyword+ ", ";
                 Log.i(TAG, "Recent Keyword : " + keywordContents);
                 mMainView.onLoadRecentKeywords(getRecentKeywordsResponseDTO.getRecentKeywords());
             }

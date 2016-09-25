@@ -8,9 +8,9 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.seoul.publicbooksearcher.R;
 import com.seoul.publicbooksearcher.data.LibraryRepository;
-import com.seoul.publicbooksearcher.domain.Book;
-import com.seoul.publicbooksearcher.domain.Library;
-import com.seoul.publicbooksearcher.domain.Location;
+import com.seoul.publicbooksearcher.domain.models.Book;
+import com.seoul.publicbooksearcher.domain.models.Library;
+import com.seoul.publicbooksearcher.domain.models.Location;
 import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewAdapter;
 import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewItem;
 

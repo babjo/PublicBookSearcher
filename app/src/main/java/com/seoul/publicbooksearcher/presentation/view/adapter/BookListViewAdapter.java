@@ -19,8 +19,8 @@ import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
 import com.bignerdranch.expandablerecyclerview.ViewHolder.ChildViewHolder;
 import com.bignerdranch.expandablerecyclerview.ViewHolder.ParentViewHolder;
 import com.seoul.publicbooksearcher.R;
-import com.seoul.publicbooksearcher.domain.Book;
-import com.seoul.publicbooksearcher.domain.Location;
+import com.seoul.publicbooksearcher.domain.models.Book;
+import com.seoul.publicbooksearcher.domain.models.Location;
 import com.seoul.publicbooksearcher.presentation.view.component.CircleView;
 
 import java.util.Collections;

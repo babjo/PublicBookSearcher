@@ -1,9 +1,9 @@
 package com.seoul.publicbooksearcher.presentation.view.adapter;
 
 import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
-import com.seoul.publicbooksearcher.domain.Book;
-import com.seoul.publicbooksearcher.domain.Library;
-import com.seoul.publicbooksearcher.domain.Location;
+import com.seoul.publicbooksearcher.domain.models.Book;
+import com.seoul.publicbooksearcher.domain.models.Library;
+import com.seoul.publicbooksearcher.domain.models.Location;
 
 import java.util.Collections;
 import java.util.Comparator;

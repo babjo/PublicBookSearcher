@@ -1,6 +1,3 @@
-rxjava 적용
-Requery 적용
-
 해당 다시 클릭하면 재검색하도록
 부모 뷰 레이아웃 변경
 
@@ -42,3 +39,5 @@ savedInstanceState에 데이터 저장
 Const 빼자
 전체 레이어 리팩토링
 gps 검색
+rxjava 적용
+Requery 적용
