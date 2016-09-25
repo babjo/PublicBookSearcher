@@ -20,18 +20,14 @@ public class SearchBooksUseCase extends UseCase<SearchBooksRequestDTO> {
     protected Observable buildUseCaseObservable(SearchBooksRequestDTO searchBooksRequestDTO) {
         return Observable.create(subscriber -> {
             BookCrawler bookCrawler = searchBooksRequestDTO.getBookCrawler();
-            int count = 0;
-            int maxTries = 2;
-            while(true) {
                 try {
                     subscriber.onNext(new SearchBooksResponseDTO(new SearchResult(new Library(bookCrawler.getLibraryId(), bookCrawler.crawling(searchBooksRequestDTO.getKeyword())))));
+                } catch (Exception e){
+                    subscriber.onError(new BookSearchException(e.getMessage(), bookCrawler.getLibraryId()));
+                } finally {
                     subscriber.onCompleted();
-                } catch (Exception e) {
-                    if (++count == maxTries)
-                        subscriber.onError(new BookSearchException(e.getMessage(), bookCrawler.getLibraryId()));
                 }
-            }
-        });
+        }).retry(2);
     }
 }
 

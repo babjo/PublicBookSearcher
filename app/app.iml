@@ -158,7 +158,6 @@
     <orderEntry type="library" exported="" name="gson-2.4" level="project" />
     <orderEntry type="library" exported="" name="support-core-ui-24.2.1" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-24.2.1" level="project" />
-    <orderEntry type="library" exported="" name="stream-1.1.2" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-24.2.1" level="project" />
     <orderEntry type="library" exported="" name="support-vector-drawable-24.2.1" level="project" />
     <orderEntry type="library" exported="" name="support-core-utils-24.2.1" level="project" />

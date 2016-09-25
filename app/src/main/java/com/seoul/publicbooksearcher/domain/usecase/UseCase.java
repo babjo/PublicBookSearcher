@@ -33,7 +33,7 @@ public abstract class UseCase<T>{
   @SuppressWarnings("unchecked")
   public void execute(T t, Subscriber useCaseSubscriber) {
     this.subscription = this.buildUseCaseObservable(t)
-        .subscribeOn(Schedulers.newThread())
+        .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(useCaseSubscriber);
   }

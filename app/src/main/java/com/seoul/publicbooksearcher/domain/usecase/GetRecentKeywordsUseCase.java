@@ -1,7 +1,5 @@
 package com.seoul.publicbooksearcher.domain.usecase;
 
-import com.annimon.stream.Collectors;
-import com.annimon.stream.Stream;
 import com.seoul.publicbooksearcher.domain.dto.GetRecentKeywordsRequestDTO;
 import com.seoul.publicbooksearcher.domain.dto.GetRecentKeywordsResponseDTO;
 import com.seoul.publicbooksearcher.domain.models.KeywordEntity;
@@ -10,8 +8,10 @@ import com.seoul.publicbooksearcher.infrastructure.Requery;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import io.requery.query.Tuple;
 import rx.Observable;
 
 /**
@@ -28,8 +28,10 @@ public class GetRecentKeywordsUseCase extends UseCase<GetRecentKeywordsRequestDT
     protected Observable buildUseCaseObservable(GetRecentKeywordsRequestDTO getRecentKeywordsRequestDTO) {
         return Observable.create(subscriber -> {
             try {
-                List<KeywordEntity> result = mRequery.getData().select(KeywordEntity.class).orderBy(KeywordEntity.CREATE_AT.desc()).get().toList();
-                subscriber.onNext(new GetRecentKeywordsResponseDTO(Stream.of(result).map(keywordEntity -> keywordEntity.getValue()).collect(Collectors.toList())));
+                List<Tuple> results = mRequery.getData().select(KeywordEntity.VALUE).distinct().orderBy(KeywordEntity.CREATE_AT.desc()).get().toList();
+                List<String> keywords = new ArrayList();
+                for (Tuple result : results) keywords.add(result.get(0));
+                subscriber.onNext(new GetRecentKeywordsResponseDTO(keywords));
                 subscriber.onCompleted();
             }catch (Exception e){
                 subscriber.onError(e);

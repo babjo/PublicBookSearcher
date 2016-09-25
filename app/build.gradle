@@ -11,8 +11,8 @@ android {
         applicationId "com.seoul.publicbooksearcher"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 3
-        versionName "1.0.2"
+        versionCode 5
+        versionName "1.0.4"
     }
     buildTypes {
         release {
@@ -55,9 +55,6 @@ dependencies {
     compile 'io.requery:requery:1.0.0-rc4'
     compile 'io.requery:requery-android:1.0.0-rc4' // for android
     apt 'io.requery:requery-processor:1.0.0-rc4'   // use an APT plugin
-
-    // java stream support
-    compile 'com.annimon:stream:1.1.2'
 }
 
 

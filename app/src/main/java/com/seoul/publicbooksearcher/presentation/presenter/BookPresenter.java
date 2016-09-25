@@ -3,8 +3,6 @@ package com.seoul.publicbooksearcher.presentation.presenter;
 import android.text.Html;
 import android.util.Log;
 
-import com.seoul.publicbooksearcher.domain.models.Keyword;
-import com.seoul.publicbooksearcher.domain.models.NullSubscriber;
 import com.seoul.publicbooksearcher.domain.dto.AddRecentKeywordRequestDTO;
 import com.seoul.publicbooksearcher.domain.dto.GetRecentKeywordsRequestDTO;
 import com.seoul.publicbooksearcher.domain.dto.GetRecentKeywordsResponseDTO;
@@ -13,6 +11,7 @@ import com.seoul.publicbooksearcher.domain.dto.SearchBooksResponseDTO;
 import com.seoul.publicbooksearcher.domain.dto.SearchTitlesRequestDTO;
 import com.seoul.publicbooksearcher.domain.dto.SearchTitlesResponseDTO;
 import com.seoul.publicbooksearcher.domain.exception.BookSearchException;
+import com.seoul.publicbooksearcher.domain.models.NullSubscriber;
 import com.seoul.publicbooksearcher.domain.usecase.AddRecentKeywordUseCase;
 import com.seoul.publicbooksearcher.domain.usecase.GetRecentKeywordsUseCase;
 import com.seoul.publicbooksearcher.domain.usecase.SearchBooksUseCase;
@@ -86,10 +85,8 @@ public class BookPresenter implements Presenter{
             @Override
             public void onNext(SearchTitlesResponseDTO searchTitlesResponseDTO) {
                 Log.i("UPDATE", "3");
-
                 List highlighted = new ArrayList();
-                for(String title : searchTitlesResponseDTO.getTitles())
-                    highlighted.add(highlight(title));
+                for(String title : searchTitlesResponseDTO.getTitles()) highlighted.add(highlight(title));
                 mMainView.onLoadRecentKeywords(highlighted);
             }
             private Object highlight(String title) {

@@ -17,8 +17,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.annimon.stream.Collectors;
-import com.annimon.stream.Stream;
 import com.fsn.cauly.CaulyAdInfo;
 import com.fsn.cauly.CaulyAdInfoBuilder;
 import com.fsn.cauly.CaulyInterstitialAd;
@@ -92,11 +90,11 @@ public class MainActivity extends AppCompatActivity implements MainView, Locatio
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_sort) {
-            onPreSortLibraries();
             boolean isGPSEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            if(isGPSEnabled)
+            if(isGPSEnabled) {
+                onPreSortLibraries();
                 sortLibraries();
-            else{
+            } else{
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("위치 서비스 사용")
                         .setMessage("위치 정보를 사용하려면, 단말기의 설정에서 '위치 서비스' 사용을 허용해주세요.")
@@ -220,6 +218,11 @@ public class MainActivity extends AppCompatActivity implements MainView, Locatio
     }
     @Override
     public void onProviderDisabled(String provider) {
+    }
+
+    @Override
+    protected void onDestroy() {
+        mBookPresenter.destroy();
     }
 
     public class BackPressCloseHandler {
