@@ -222,6 +222,7 @@ public class MainActivity extends AppCompatActivity implements MainView, Locatio
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         mBookPresenter.destroy();
     }
 

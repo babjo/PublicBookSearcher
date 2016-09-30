@@ -3,7 +3,6 @@ package com.seoul.publicbooksearcher.presentation.view.adapter;
 
 import android.content.Context;
 import android.os.Build;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +23,6 @@ import com.seoul.publicbooksearcher.domain.models.Location;
 import com.seoul.publicbooksearcher.presentation.view.component.CircleView;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +59,6 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
     public BookParentViewHolder onCreateParentViewHolder(ViewGroup viewGroup) {
         View view = mInflater.inflate(R.layout.book_listview_parent_item, viewGroup, false);
         final BookParentViewHolder bookParentViewHolder = new BookParentViewHolder(view);
-        
         return bookParentViewHolder;
     }
 
@@ -219,11 +216,11 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
             for(int j=0; j< childSize; j++)
                 notifyChildItemInserted(position, j);
 
-            notifyParentItemChangedByHandler(position);
+            notifyParentItemChanged(position);
 
             // progressGone
             bookListViewItemList.get(position).setSearchState(BookListViewItem.SEARCH_COMPLETE);
-            notifyParentItemChangedByHandler(position);
+            notifyParentItemChanged(position);
         }
     }
 
@@ -234,13 +231,13 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
     public void progressVisible(Long libraryId) {
         int position = getPosition(libraryId);
         bookListViewItemList.get(position).setSearchState(BookListViewItem.SEARCH_BEFORE);
-        notifyParentItemChangedByHandler(position);
+        notifyParentItemChanged(position);
     }
 
     public void showError(Long libraryId, String message) {
         int position = getPosition(libraryId);
         bookListViewItemList.get(position).setSearchState(BookListViewItem.ERROR);
-        notifyParentItemChangedByHandler(position);
+        notifyParentItemChanged(position);
     }
 
     public void sort(Location currentLocation) {
@@ -249,27 +246,13 @@ public class BookListViewAdapter extends ExpandableRecyclerAdapter<BookListViewA
             bookListViewItem.setSortState(BookListViewItem.SORT_COMPLETE);
         }
 
-        Collections.sort(bookListViewItemList, new Comparator<BookListViewItem>() {
-            @Override
-            public int compare(BookListViewItem lhs, BookListViewItem rhs) {
-                if(lhs.getDistance() < rhs.getDistance()) return -1;
-                else return 1;
-            }
+        Collections.sort(bookListViewItemList, (lhs, rhs) -> {
+            if(lhs.getDistance() < rhs.getDistance()) return -1;
+            else return 1;
         });
 
         for(int i=0; i<bookListViewItemList.size(); i++)
-            notifyParentItemChangedByHandler(i);
+            notifyParentItemChanged(i);
         updateLibraryPosition();
     }
-
-    private Handler handler = new Handler();
-    private void notifyParentItemChangedByHandler(final int position) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                notifyParentItemChanged(position);
-            }
-        });
-    }
-
 }
