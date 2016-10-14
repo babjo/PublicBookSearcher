@@ -17,7 +17,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <com.seoul.publicbooksearcher.presentation.view.component.CircleView
+            <com.seoul.publicbooksearcher.view.component.CircleView
                 android:layout_gravity="center"
                 android:layout_marginRight="?android:attr/listPreferredItemPaddingRight"
                 android:id="@+id/library_icon"

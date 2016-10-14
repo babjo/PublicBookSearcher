@@ -1,4 +1,4 @@
-package com.seoul.publicbooksearcher.presentation.view.adapter;
+package com.seoul.publicbooksearcher.view.adapter;
 
 
 import android.content.Context;
@@ -20,7 +20,7 @@ import com.bignerdranch.expandablerecyclerview.ViewHolder.ParentViewHolder;
 import com.seoul.publicbooksearcher.R;
 import com.seoul.publicbooksearcher.domain.models.Book;
 import com.seoul.publicbooksearcher.domain.models.Location;
-import com.seoul.publicbooksearcher.presentation.view.component.CircleView;
+import com.seoul.publicbooksearcher.view.component.CircleView;
 
 import java.util.Collections;
 import java.util.HashMap;

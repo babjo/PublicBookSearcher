@@ -1,4 +1,4 @@
-package com.seoul.publicbooksearcher.presentation.view.component;
+package com.seoul.publicbooksearcher.view.component;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -15,8 +15,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 
 import com.seoul.publicbooksearcher.R;
-import com.seoul.publicbooksearcher.presentation.presenter.BookPresenter;
-import com.seoul.publicbooksearcher.presentation.view.adapter.BookTitleAutoCompleteTextViewAdapter;
+import com.seoul.publicbooksearcher.presenter.BookPresenter;
+import com.seoul.publicbooksearcher.view.adapter.BookTitleAutoCompleteTextViewAdapter;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EBean;

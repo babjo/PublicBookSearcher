@@ -1,4 +1,4 @@
-package com.seoul.publicbooksearcher.presentation.view.activity;
+package com.seoul.publicbooksearcher.view.activity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -25,11 +25,11 @@ import com.seoul.publicbooksearcher.Const;
 import com.seoul.publicbooksearcher.R;
 import com.seoul.publicbooksearcher.Utils;
 import com.seoul.publicbooksearcher.domain.models.Book;
-import com.seoul.publicbooksearcher.presentation.presenter.BookPresenter;
-import com.seoul.publicbooksearcher.presentation.view.MainView;
-import com.seoul.publicbooksearcher.presentation.view.component.ActionBarProgressBarView;
-import com.seoul.publicbooksearcher.presentation.view.component.BookListView;
-import com.seoul.publicbooksearcher.presentation.view.component.BookTitleAutoCompleteTextView;
+import com.seoul.publicbooksearcher.presenter.BookPresenter;
+import com.seoul.publicbooksearcher.view.MainView;
+import com.seoul.publicbooksearcher.view.component.ActionBarProgressBarView;
+import com.seoul.publicbooksearcher.view.component.BookListView;
+import com.seoul.publicbooksearcher.view.component.BookTitleAutoCompleteTextView;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;

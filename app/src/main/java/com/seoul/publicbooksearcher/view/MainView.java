@@ -1,4 +1,4 @@
-package com.seoul.publicbooksearcher.presentation.view;
+package com.seoul.publicbooksearcher.view;
 
 import com.seoul.publicbooksearcher.domain.models.Book;
 

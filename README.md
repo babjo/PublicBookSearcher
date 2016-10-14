@@ -24,7 +24,7 @@
 ## 디렉토리 구조
 - src 
     - data : 최근 검색어 저장, 검색 결과 캐싱 
-    - domain
+    - domain : Model 레이어
         - dto : 사용자에게 전달한 데이터를 담는 클래스
         - exception : 각종 예외 클래스 (책 검색 실패 예외)
         - models : 앱 도메인 클래스 (책, 도서관, 위치 등)
@@ -33,5 +33,6 @@
         - crawler
             - book : 도서검색을 위한 웹 크롤러 
             - title : 검색어 자동완성을 위한 웹 크롤러 (반디앤루니스 사용)
-    - presentation : Presenter 클래스로 화면 출력 
+    - presenter : Presenter 레이어
+    - view : View 레이어 (안드로이드 액티비티, 뷰 컴포넌트)
   

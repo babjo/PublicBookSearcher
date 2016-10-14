@@ -1,4 +1,4 @@
-package com.seoul.publicbooksearcher.presentation.presenter;
+package com.seoul.publicbooksearcher.presenter;
 
 import android.text.Html;
 import android.util.Log;
@@ -19,7 +19,7 @@ import com.seoul.publicbooksearcher.domain.usecase.SearchTitlesUseCase;
 import com.seoul.publicbooksearcher.domain.usecase.UseCase;
 import com.seoul.publicbooksearcher.infrastructure.crawler.book.BookCrawler;
 import com.seoul.publicbooksearcher.infrastructure.crawler.book.BookCrawlerCollection;
-import com.seoul.publicbooksearcher.presentation.view.activity.MainActivity;
+import com.seoul.publicbooksearcher.view.activity.MainActivity;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;

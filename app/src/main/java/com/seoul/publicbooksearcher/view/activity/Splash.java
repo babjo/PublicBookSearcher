@@ -1,4 +1,4 @@
-package com.seoul.publicbooksearcher.presentation.view.activity;
+package com.seoul.publicbooksearcher.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package com.seoul.publicbooksearcher.presentation.view.adapter;
+package com.seoul.publicbooksearcher.view.adapter;
 
 import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
 import com.seoul.publicbooksearcher.domain.models.Book;

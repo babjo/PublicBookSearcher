@@ -40,7 +40,7 @@
             android:layout_height="match_parent"
             android:paddingBottom="5dp"
             >
-            <com.seoul.publicbooksearcher.presentation.view.component.InstantAutoCompleteView
+            <com.seoul.publicbooksearcher.view.component.InstantAutoCompleteView
                 android:id="@+id/auto_edit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

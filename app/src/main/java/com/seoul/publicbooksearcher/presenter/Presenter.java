@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.seoul.publicbooksearcher.presentation.presenter;
+package com.seoul.publicbooksearcher.presenter;
 
 /**
  * Interface representing a Presenter in a model view presenter (MVP) pattern.

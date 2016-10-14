@@ -1,4 +1,4 @@
-package com.seoul.publicbooksearcher.presentation.view.component;
+package com.seoul.publicbooksearcher.view.component;
 
 
 import android.view.Menu;

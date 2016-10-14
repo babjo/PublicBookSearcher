@@ -1,4 +1,4 @@
-package com.seoul.publicbooksearcher.presentation.view.component;
+package com.seoul.publicbooksearcher.view.component;
 
 import android.content.Context;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -11,8 +11,8 @@ import com.seoul.publicbooksearcher.data.LibraryRepository;
 import com.seoul.publicbooksearcher.domain.models.Book;
 import com.seoul.publicbooksearcher.domain.models.Library;
 import com.seoul.publicbooksearcher.domain.models.Location;
-import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewAdapter;
-import com.seoul.publicbooksearcher.presentation.view.adapter.BookListViewItem;
+import com.seoul.publicbooksearcher.view.adapter.BookListViewAdapter;
+import com.seoul.publicbooksearcher.view.adapter.BookListViewItem;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
