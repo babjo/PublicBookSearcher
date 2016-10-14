@@ -25,7 +25,6 @@ import com.seoul.publicbooksearcher.Const;
 import com.seoul.publicbooksearcher.R;
 import com.seoul.publicbooksearcher.Utils;
 import com.seoul.publicbooksearcher.domain.models.Book;
-import com.seoul.publicbooksearcher.domain.models.KeywordEntity;
 import com.seoul.publicbooksearcher.presentation.presenter.BookPresenter;
 import com.seoul.publicbooksearcher.presentation.view.MainView;
 import com.seoul.publicbooksearcher.presentation.view.component.ActionBarProgressBarView;
